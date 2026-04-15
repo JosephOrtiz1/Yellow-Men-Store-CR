@@ -1,37 +1,43 @@
 import { Link } from "react-router-dom";
 import { Instagram } from "lucide-react";
+import logoFull from "@/assets/logo-full.png";
 
 export const Footer = () => (
-  <footer className="bg-secondary text-secondary-foreground py-12 mt-20">
+  <footer className="bg-secondary text-foreground py-12 mt-20 border-t border-border">
     <div className="container mx-auto px-4">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div>
-          <h3 className="font-heading text-2xl tracking-wider mb-3">YELLOW MEN STORE</h3>
+          <img src={logoFull} alt="Yellow Men Store" className="h-12 mb-4" />
           <p className="text-muted-foreground text-sm font-body">
             Ropa moderna para hombres. De Instagram al mundo.
           </p>
         </div>
         <div>
-          <h4 className="font-heading text-lg tracking-wider mb-3">CATEGORÍAS</h4>
+          <h4 className="font-heading text-lg tracking-wider mb-3 text-primary">CATEGORÍAS</h4>
           <div className="flex flex-col gap-2">
-            {["street-wear", "casual", "cybertech", "japan-style"].map((slug) => (
+            {[
+              { slug: "street-wear", name: "Street Wear" },
+              { slug: "casual", name: "Casual" },
+              { slug: "cyber-wear", name: "Cyber Wear" },
+              { slug: "japan-style", name: "Japan Style" },
+            ].map((cat) => (
               <Link
-                key={slug}
-                to={`/category/${slug}`}
-                className="text-sm text-muted-foreground hover:text-secondary-foreground transition-colors font-body capitalize"
+                key={cat.slug}
+                to={`/category/${cat.slug}`}
+                className="text-sm text-muted-foreground hover:text-primary transition-colors font-body touch-manipulation"
               >
-                {slug.replace("-", " ")}
+                {cat.name}
               </Link>
             ))}
           </div>
         </div>
         <div>
-          <h4 className="font-heading text-lg tracking-wider mb-3">SÍGUENOS</h4>
+          <h4 className="font-heading text-lg tracking-wider mb-3 text-primary">SÍGUENOS</h4>
           <a
             href="https://instagram.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-secondary-foreground transition-colors font-body"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors font-body touch-manipulation"
           >
             <Instagram className="h-5 w-5" />
             @yellowmenstore
