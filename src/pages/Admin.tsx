@@ -516,6 +516,7 @@ const Admin = () => {
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="font-body font-semibold text-sm truncate">{p.title}</h4>
+                        <p className="text-[10px] text-muted-foreground font-mono truncate" title={p.id}>ID: {p.id}</p>
                         <p className="text-xs text-primary font-body font-semibold">
                           ₡{p.price_colones.toLocaleString("es-CR")}
                         </p>
@@ -546,7 +547,8 @@ const Admin = () => {
                     </div>
                   ))}
                 </div>
-              )}
+                );
+              })()}
             </CardContent>
           </Card>
         </div>
