@@ -8,7 +8,7 @@ const categoryNames: Record<string, string> = {
   "street-wear": "Street Wear",
   "casual": "Casual",
   "cyber-wear": "Cyber Wear",
-  "japan-style": "Japan Style",
+  "old-money": "Old Money",
 };
 
 const Category = () => {

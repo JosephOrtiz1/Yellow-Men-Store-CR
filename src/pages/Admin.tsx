@@ -16,7 +16,7 @@ const CATEGORIES = [
   { value: "street-wear", label: "Street Wear" },
   { value: "casual", label: "Casual" },
   { value: "cyber-wear", label: "Cyber Wear" },
-  { value: "japan-style", label: "Japan Style" },
+  { value: "old-money", label: "Old Money" },
 ];
 
 const COMMON_SIZES = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
