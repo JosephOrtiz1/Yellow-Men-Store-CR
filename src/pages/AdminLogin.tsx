@@ -30,6 +30,15 @@ const AdminLogin = ({ onLogin }: AdminLoginProps) => {
     setLoading(false);
   };
 
+  const handleGoogle = async () => {
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin + "/admin",
+    });
+    if (result.error) {
+      toast.error("Error al iniciar sesión con Google", { position: "top-center" });
+    }
+  };
+
   return (
     <div className="min-h-screen pt-20 flex items-center justify-center">
       <Card className="w-full max-w-md mx-4">
