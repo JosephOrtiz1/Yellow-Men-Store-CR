@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Lock, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { lovable } from "@/integrations/lovable";
 
 interface AdminLoginProps {
   onLogin: (email: string, password: string) => Promise<{ error: any }>;
