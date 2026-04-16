@@ -11,6 +11,7 @@ import ProductDetail from "./pages/ProductDetail";
 import Category from "./pages/Category";
 import About from "./pages/About";
 import Admin from "./pages/Admin";
+import SearchPage from "./pages/Search";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const AppContent = () => {
           <Route path="/category/:slug" element={<Category />} />
           <Route path="/about" element={<About />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/search" element={<SearchPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
