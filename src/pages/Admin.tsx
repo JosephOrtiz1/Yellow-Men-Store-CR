@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Plus, X, LogOut, Trash2, Upload, Ruler } from "lucide-react";
+import { Loader2, Plus, X, LogOut, Trash2, Upload, Ruler, Search } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,7 +16,7 @@ const CATEGORIES = [
   { value: "street-wear", label: "Street Wear" },
   { value: "casual", label: "Casual" },
   { value: "cyber-wear", label: "Cyber Wear" },
-  { value: "japan-style", label: "Japan Style" },
+  { value: "old-money", label: "Old Money" },
 ];
 
 const COMMON_SIZES = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
@@ -55,6 +55,7 @@ const Admin = () => {
   // Products list
   const [products, setProducts] = useState<ProductRow[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (isAdmin) loadProducts();
@@ -477,15 +478,32 @@ const Admin = () => {
               </Button>
             </CardHeader>
             <CardContent>
+              <div className="relative mb-4">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Buscar por nombre o ID..."
+                  className="font-body pl-9"
+                />
+              </div>
               {loadingProducts ? (
                 <div className="flex justify-center py-10">
                   <Loader2 className="h-6 w-6 animate-spin text-primary" />
                 </div>
               ) : products.length === 0 ? (
                 <p className="text-center text-muted-foreground font-body py-10">No hay productos aún.</p>
-              ) : (
+              ) : (() => {
+                const q = searchQuery.trim().toLowerCase();
+                const filtered = q
+                  ? products.filter((p) => p.title.toLowerCase().includes(q) || p.id.toLowerCase().includes(q))
+                  : products;
+                if (filtered.length === 0) {
+                  return <p className="text-center text-muted-foreground font-body py-10">Sin coincidencias.</p>;
+                }
+                return (
                 <div className="space-y-3 max-h-[600px] overflow-y-auto">
-                  {products.map((p) => (
+                  {filtered.map((p) => (
                     <div key={p.id} className="flex items-center gap-3 p-3 border border-border rounded-sm">
                       <div className="w-14 h-14 bg-card rounded-sm overflow-hidden flex-shrink-0 border border-border">
                         {p.product_colors?.[0]?.image_url ? (
@@ -498,6 +516,7 @@ const Admin = () => {
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="font-body font-semibold text-sm truncate">{p.title}</h4>
+                        <p className="text-[10px] text-muted-foreground font-mono truncate" title={p.id}>ID: {p.id}</p>
                         <p className="text-xs text-primary font-body font-semibold">
                           ₡{p.price_colones.toLocaleString("es-CR")}
                         </p>
@@ -528,7 +547,8 @@ const Admin = () => {
                     </div>
                   ))}
                 </div>
-              )}
+                );
+              })()}
             </CardContent>
           </Card>
         </div>

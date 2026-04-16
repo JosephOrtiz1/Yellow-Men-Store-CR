@@ -21,7 +21,7 @@ const About = () => (
         <p>
           Hoy, Yellow Men Store es tu destino online para encontrar ropa que refleja tu personalidad. 
           Desde el <strong className="text-foreground">Street Wear</strong> más audaz hasta el estilo 
-          <strong className="text-foreground"> Japan Style</strong> más refinado, pasando por 
+          <strong className="text-foreground"> Old Money</strong> más refinado, pasando por 
           <strong className="text-foreground"> Cyber Wear</strong> futurista y piezas 
           <strong className="text-foreground"> Casual</strong> para el día a día.
         </p>

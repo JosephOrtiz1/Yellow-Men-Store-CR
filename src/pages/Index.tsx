@@ -10,7 +10,7 @@ const categories = [
   { name: "Street Wear", slug: "street-wear", description: "Estilo urbano y audaz" },
   { name: "Casual", slug: "casual", description: "Comodidad con estilo" },
   { name: "Cyber Wear", slug: "cyber-wear", description: "Futurismo en cada prenda" },
-  { name: "Japan Style", slug: "japan-style", description: "Inspiración oriental moderna" },
+  { name: "Old Money", slug: "old-money", description: "Elegancia atemporal" },
 ];
 
 const Index = () => {

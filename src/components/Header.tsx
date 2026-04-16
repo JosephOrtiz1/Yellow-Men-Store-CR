@@ -8,7 +8,7 @@ const categories = [
   { name: "Street Wear", slug: "street-wear" },
   { name: "Casual", slug: "casual" },
   { name: "Cyber Wear", slug: "cyber-wear" },
-  { name: "Japan Style", slug: "japan-style" },
+  { name: "Old Money", slug: "old-money" },
 ];
 
 export const Header = () => {
@@ -17,7 +17,7 @@ export const Header = () => {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-secondary border-b border-border">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/about" className="flex items-center gap-2">
           <img src={isotipo} alt="Yellow Men Store" className="h-10 w-10" />
           <span className="font-heading text-2xl md:text-3xl text-primary tracking-wider">YELLOW MEN STORE</span>
         </Link>
@@ -33,12 +33,6 @@ export const Header = () => {
               {cat.name}
             </Link>
           ))}
-          <Link
-            to="/about"
-            className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors uppercase tracking-wide font-body"
-          >
-            Nosotros
-          </Link>
         </nav>
 
         <div className="flex items-center gap-3">
@@ -67,13 +61,6 @@ export const Header = () => {
                 {cat.name}
               </Link>
             ))}
-            <Link
-              to="/about"
-              onClick={() => setMenuOpen(false)}
-              className="text-base font-medium text-muted-foreground hover:text-primary py-3 uppercase tracking-wide font-body touch-manipulation"
-            >
-              Nosotros
-            </Link>
           </nav>
         </div>
       )}
