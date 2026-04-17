@@ -27,25 +27,17 @@ export const Header = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-secondary border-b border-border">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-3">
+      <div className="container mx-auto px-4 h-16 flex items-center gap-6">
+        {/* Left: Logo */}
         <Link to="/about" className="flex items-center gap-2 flex-shrink-0">
           <img src={isotipo} alt="Yellow Men Store" className="h-10 w-10" />
-          <span className="font-heading text-xl md:text-3xl text-primary tracking-wider whitespace-nowrap">YELLOW MEN STORE</span>
+          <span className="font-heading text-xl md:text-2xl text-primary tracking-wider whitespace-nowrap">
+            YELLOW MEN STORE
+          </span>
         </Link>
 
-        {/* Desktop search */}
-        <form onSubmit={submitSearch} className="hidden md:flex flex-1 max-w-md relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-          <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar productos..."
-            className="pl-9 font-body bg-background border-border h-9"
-          />
-        </form>
-
-        {/* Desktop nav */}
-        <nav className="hidden lg:flex items-center gap-5">
+        {/* Center: Categories */}
+        <nav className="hidden lg:flex items-center justify-center gap-7 flex-1">
           {categories.map((cat) => (
             <Link
               key={cat.slug}
@@ -57,22 +49,38 @@ export const Header = () => {
           ))}
         </nav>
 
-        <div className="flex items-center gap-1 flex-shrink-0">
-          <Link
-            to="/"
-            className="p-2 text-foreground hover:text-primary transition-colors touch-manipulation"
-            aria-label="Inicio"
-          >
-            <Home className="h-5 w-5" />
-          </Link>
-          <CartDrawer />
-          <button
-            className="lg:hidden text-foreground p-2 -mr-2 touch-manipulation"
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="Toggle menu"
-          >
-            {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
+        {/* Spacer for non-lg screens to push right items */}
+        <div className="flex-1 lg:hidden" />
+
+        {/* Right: Search + icons */}
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <form onSubmit={submitSearch} className="hidden md:flex relative w-56 lg:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Buscar productos..."
+              className="pl-9 font-body bg-background border-border h-9"
+            />
+          </form>
+
+          <div className="flex items-center gap-2 pl-1 md:border-l md:border-border md:pl-3">
+            <Link
+              to="/"
+              className="p-2 text-foreground hover:text-primary transition-colors touch-manipulation"
+              aria-label="Inicio"
+            >
+              <Home className="h-5 w-5" />
+            </Link>
+            <CartDrawer />
+            <button
+              className="lg:hidden text-foreground p-2 -mr-2 touch-manipulation"
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label="Toggle menu"
+            >
+              {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+          </div>
         </div>
       </div>
 
