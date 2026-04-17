@@ -1,23 +1,73 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { ShoppingCart, Minus, Plus, Trash2, ExternalLink, Loader2 } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Trash2, ExternalLink, Loader2, LogIn } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const CartDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart } = useCartStore();
+  const [saving, setSaving] = useState(false);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart, clearCart } = useCartStore();
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + (parseFloat(item.price.amount) * item.quantity), 0);
 
   useEffect(() => { if (isOpen) syncCart(); }, [isOpen, syncCart]);
 
-  const handleCheckout = () => {
-    const checkoutUrl = getCheckoutUrl();
-    if (checkoutUrl) {
-      window.open(checkoutUrl, '_blank');
+  const handleCheckout = async () => {
+    if (!user) {
       setIsOpen(false);
+      toast.info("Inicia sesión para continuar con tu compra", { position: "top-center" });
+      navigate("/auth", { state: { from: "/" } });
+      return;
+    }
+
+    const checkoutUrl = getCheckoutUrl();
+    if (!checkoutUrl) return;
+
+    setSaving(true);
+    try {
+      // Save order snapshot
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name, email, phone, address")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      const orderItems = items.map((it) => ({
+        title: it.product.node.title,
+        variantTitle: it.variantTitle,
+        quantity: it.quantity,
+        price: parseFloat(it.price.amount),
+        image: it.product.node.images?.edges?.[0]?.node?.url,
+      }));
+
+      await supabase.from("orders").insert({
+        user_id: user.id,
+        items: orderItems,
+        total_colones: totalPrice,
+        status: "pending",
+        contact_name: profile?.full_name ?? null,
+        contact_email: profile?.email ?? user.email ?? null,
+        contact_phone: profile?.phone ?? null,
+        contact_address: profile?.address ?? null,
+      });
+
+      window.open(checkoutUrl, "_blank");
+      setIsOpen(false);
+    } catch (err) {
+      console.error("Failed to save order:", err);
+      // proceed to checkout anyway
+      window.open(checkoutUrl, "_blank");
+      setIsOpen(false);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -87,8 +137,14 @@ export const CartDrawer = () => {
                   <span className="text-lg font-heading tracking-wider">TOTAL</span>
                   <span className="text-xl font-bold font-body">${totalPrice.toFixed(2)}</span>
                 </div>
-                <Button onClick={handleCheckout} className="w-full bg-primary text-primary-foreground hover:bg-primary/90 touch-manipulation" size="lg" disabled={items.length === 0 || isLoading || isSyncing}>
-                  {isLoading || isSyncing ? <Loader2 className="w-4 h-4 animate-spin" /> : <><ExternalLink className="w-4 h-4 mr-2" />Pagar con Shopify</>}
+                <Button onClick={handleCheckout} className="w-full bg-primary text-primary-foreground hover:bg-primary/90 touch-manipulation" size="lg" disabled={items.length === 0 || isLoading || isSyncing || saving}>
+                  {isLoading || isSyncing || saving ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : !user ? (
+                    <><LogIn className="w-4 h-4 mr-2" />Iniciar sesión para pagar</>
+                  ) : (
+                    <><ExternalLink className="w-4 h-4 mr-2" />Pagar con Shopify</>
+                  )}
                 </Button>
               </div>
             </>

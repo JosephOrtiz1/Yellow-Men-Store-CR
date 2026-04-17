@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      orders: {
+        Row: {
+          contact_address: string | null
+          contact_email: string | null
+          contact_name: string | null
+          contact_phone: string | null
+          created_at: string
+          id: string
+          items: Json
+          status: string
+          total_colones: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          contact_address?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          items?: Json
+          status?: string
+          total_colones?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          contact_address?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          items?: Json
+          status?: string
+          total_colones?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       product_colors: {
         Row: {
           color_hex: string | null
@@ -54,6 +96,7 @@ export type Database = {
           category: string
           created_at: string
           created_by: string | null
+          deleted_at: string | null
           description: string | null
           handle: string | null
           id: string
@@ -68,6 +111,7 @@ export type Database = {
           category?: string
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
           description?: string | null
           handle?: string | null
           id?: string
@@ -82,6 +126,7 @@ export type Database = {
           category?: string
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
           description?: string | null
           handle?: string | null
           id?: string
@@ -91,6 +136,39 @@ export type Database = {
           sizes?: string[]
           title?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          address: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }

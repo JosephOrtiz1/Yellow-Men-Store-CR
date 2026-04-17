@@ -5,7 +5,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Plus, X, LogOut, Trash2, Upload, Ruler, Search } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Loader2, Plus, X, LogOut, Trash2, Upload, Ruler, Search, Users, Package } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -57,8 +59,18 @@ const Admin = () => {
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Users + Orders
+  const [users, setUsers] = useState<any[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [loadingOrders, setLoadingOrders] = useState(false);
+
   useEffect(() => {
-    if (isAdmin) loadProducts();
+    if (isAdmin) {
+      loadProducts();
+      loadUsers();
+      loadOrders();
+    }
   }, [isAdmin]);
 
   const loadProducts = async () => {
@@ -66,10 +78,31 @@ const Admin = () => {
     const { data, error } = await supabase
       .from("products")
       .select("id, title, price_colones, category, sizes, is_active, product_colors(color_name, image_url)")
+      .is("deleted_at", null)
       .order("created_at", { ascending: false });
 
     if (!error && data) setProducts(data as unknown as ProductRow[]);
     setLoadingProducts(false);
+  };
+
+  const loadUsers = async () => {
+    setLoadingUsers(true);
+    const { data } = await supabase
+      .from("profiles")
+      .select("user_id, full_name, email, phone, address, created_at")
+      .order("created_at", { ascending: false });
+    setUsers(data || []);
+    setLoadingUsers(false);
+  };
+
+  const loadOrders = async () => {
+    setLoadingOrders(true);
+    const { data } = await supabase
+      .from("orders")
+      .select("id, user_id, items, total_colones, status, contact_name, contact_email, contact_phone, created_at")
+      .order("created_at", { ascending: false });
+    setOrders(data || []);
+    setLoadingOrders(false);
   };
 
   const toggleSize = (size: string) => {
@@ -201,8 +234,11 @@ const Admin = () => {
   };
 
   const handleDeleteProduct = async (id: string) => {
-    if (!confirm("¿Estás seguro de eliminar este producto?")) return;
-    const { error } = await supabase.from("products").delete().eq("id", id);
+    if (!confirm("¿Eliminar este producto? Desaparecerá de la tienda pero seguirá visible en pedidos antiguos.")) return;
+    const { error } = await supabase
+      .from("products")
+      .update({ deleted_at: new Date().toISOString(), is_active: false })
+      .eq("id", id);
     if (error) {
       toast.error("Error al eliminar", { position: "top-center" });
     } else {
@@ -260,6 +296,14 @@ const Admin = () => {
           </div>
         </div>
 
+        <Tabs defaultValue="products" className="w-full">
+          <TabsList className="mb-6">
+            <TabsTrigger value="products" className="font-body"><Package className="w-4 h-4 mr-2" />Productos</TabsTrigger>
+            <TabsTrigger value="users" className="font-body"><Users className="w-4 h-4 mr-2" />Usuarios ({users.length})</TabsTrigger>
+            <TabsTrigger value="orders" className="font-body"><Package className="w-4 h-4 mr-2" />Pedidos ({orders.length})</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="products">
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
           {/* Create product form */}
           <Card>
@@ -552,6 +596,104 @@ const Admin = () => {
             </CardContent>
           </Card>
         </div>
+          </TabsContent>
+
+          <TabsContent value="users">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="font-heading text-2xl tracking-wider">USUARIOS REGISTRADOS</CardTitle>
+                <Button variant="outline" size="sm" onClick={loadUsers} disabled={loadingUsers} className="font-body">
+                  {loadingUsers ? <Loader2 className="w-4 h-4 animate-spin" /> : "Actualizar"}
+                </Button>
+              </CardHeader>
+              <CardContent>
+                {loadingUsers ? (
+                  <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
+                ) : users.length === 0 ? (
+                  <p className="text-center text-muted-foreground font-body py-10">No hay usuarios registrados.</p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="font-body">Nombre</TableHead>
+                          <TableHead className="font-body">Email</TableHead>
+                          <TableHead className="font-body">Teléfono</TableHead>
+                          <TableHead className="font-body">Dirección</TableHead>
+                          <TableHead className="font-body">Pedidos</TableHead>
+                          <TableHead className="font-body">Registro</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {users.map((u) => {
+                          const userOrders = orders.filter((o) => o.user_id === u.user_id);
+                          return (
+                            <TableRow key={u.user_id}>
+                              <TableCell className="font-body">{u.full_name || "—"}</TableCell>
+                              <TableCell className="font-body text-xs">{u.email}</TableCell>
+                              <TableCell className="font-body text-xs">{u.phone || "—"}</TableCell>
+                              <TableCell className="font-body text-xs max-w-[200px] truncate" title={u.address}>{u.address || "—"}</TableCell>
+                              <TableCell className="font-body">{userOrders.length}</TableCell>
+                              <TableCell className="font-body text-xs">{new Date(u.created_at).toLocaleDateString("es-CR")}</TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="orders">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="font-heading text-2xl tracking-wider">PEDIDOS</CardTitle>
+                <Button variant="outline" size="sm" onClick={loadOrders} disabled={loadingOrders} className="font-body">
+                  {loadingOrders ? <Loader2 className="w-4 h-4 animate-spin" /> : "Actualizar"}
+                </Button>
+              </CardHeader>
+              <CardContent>
+                {loadingOrders ? (
+                  <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
+                ) : orders.length === 0 ? (
+                  <p className="text-center text-muted-foreground font-body py-10">No hay pedidos aún.</p>
+                ) : (
+                  <div className="space-y-4">
+                    {orders.map((o) => (
+                      <div key={o.id} className="border border-border rounded-sm p-4">
+                        <div className="flex justify-between items-start mb-2 flex-wrap gap-2">
+                          <div>
+                            <p className="font-body font-semibold text-sm">Pedido #{o.id.slice(0, 8)}</p>
+                            <p className="text-xs text-muted-foreground font-body">
+                              {o.contact_name || "—"} · {o.contact_email || "—"} · {o.contact_phone || "—"}
+                            </p>
+                            <p className="text-xs text-muted-foreground font-body">
+                              {new Date(o.created_at).toLocaleString("es-CR")}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-body font-bold text-primary">₡{Number(o.total_colones).toLocaleString("es-CR")}</p>
+                            <span className="text-xs px-2 py-0.5 rounded-sm bg-secondary text-muted-foreground font-body uppercase">{o.status}</span>
+                          </div>
+                        </div>
+                        <ul className="text-xs font-body space-y-1 mt-2 border-t border-border pt-2">
+                          {(o.items || []).map((it: any, i: number) => (
+                            <li key={i} className="flex justify-between">
+                              <span className="truncate">{it.title} {it.variantTitle ? `(${it.variantTitle})` : ""} × {it.quantity}</span>
+                              <span className="text-muted-foreground">₡{(Number(it.price) * it.quantity).toLocaleString("es-CR")}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

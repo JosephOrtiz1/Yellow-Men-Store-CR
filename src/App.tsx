@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { RequireAuth } from "@/components/RequireAuth";
 import { useCartSync } from "@/hooks/useCartSync";
 import Index from "./pages/Index";
 import ProductDetail from "./pages/ProductDetail";
@@ -12,6 +13,8 @@ import Category from "./pages/Category";
 import About from "./pages/About";
 import Admin from "./pages/Admin";
 import SearchPage from "./pages/Search";
+import Auth from "./pages/Auth";
+import Orders from "./pages/Orders";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,7 +31,9 @@ const AppContent = () => {
           <Route path="/category/:slug" element={<Category />} />
           <Route path="/about" element={<About />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/auth" element={<Auth />} />
           <Route path="/search" element={<SearchPage />} />
+          <Route path="/orders" element={<RequireAuth><Orders /></RequireAuth>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

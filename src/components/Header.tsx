@@ -1,8 +1,18 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, X, Home, Search } from "lucide-react";
+import { Menu, X, Home, Search, User as UserIcon, LogOut } from "lucide-react";
 import { useState } from "react";
 import { CartDrawer } from "./CartDrawer";
 import { Input } from "./ui/input";
+import { Button } from "./ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 import isotipo from "@/assets/isotipo.png";
 
 const categories = [
@@ -16,6 +26,7 @@ export const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
+  const { user, isAdmin, signOut } = useAuth();
 
   const submitSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,7 +39,6 @@ export const Header = () => {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-secondary border-b border-border">
       <div className="container mx-auto px-4 h-16 flex items-center gap-6">
-        {/* Left: Logo */}
         <Link to="/about" className="flex items-center gap-2 flex-shrink-0">
           <img src={isotipo} alt="Yellow Men Store" className="h-10 w-10" />
           <span className="font-heading text-xl md:text-2xl text-primary tracking-wider whitespace-nowrap">
@@ -36,7 +46,6 @@ export const Header = () => {
           </span>
         </Link>
 
-        {/* Center: Categories */}
         <nav className="hidden lg:flex items-center justify-center gap-7 flex-1">
           {categories.map((cat) => (
             <Link
@@ -49,10 +58,8 @@ export const Header = () => {
           ))}
         </nav>
 
-        {/* Spacer for non-lg screens to push right items */}
         <div className="flex-1 lg:hidden" />
 
-        {/* Right: Search + icons */}
         <div className="flex items-center gap-3 flex-shrink-0">
           <form onSubmit={submitSearch} className="hidden md:flex relative w-56 lg:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
@@ -73,6 +80,41 @@ export const Header = () => {
               <Home className="h-5 w-5" />
             </Link>
             <CartDrawer />
+
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="text-foreground" aria-label="Cuenta">
+                    <UserIcon className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel className="font-body truncate">{user.email}</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate("/orders")} className="font-body cursor-pointer">
+                    Mis pedidos
+                  </DropdownMenuItem>
+                  {isAdmin && (
+                    <DropdownMenuItem onClick={() => navigate("/admin")} className="font-body cursor-pointer">
+                      Panel admin
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => signOut()} className="font-body cursor-pointer text-destructive">
+                    <LogOut className="w-4 h-4 mr-2" /> Cerrar sesión
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link
+                to="/auth"
+                className="p-2 text-foreground hover:text-primary transition-colors touch-manipulation"
+                aria-label="Iniciar sesión"
+              >
+                <UserIcon className="h-5 w-5" />
+              </Link>
+            )}
+
             <button
               className="lg:hidden text-foreground p-2 -mr-2 touch-manipulation"
               onClick={() => setMenuOpen(!menuOpen)}
@@ -84,7 +126,6 @@ export const Header = () => {
         </div>
       </div>
 
-      {/* Mobile nav */}
       {menuOpen && (
         <div className="lg:hidden bg-secondary border-t border-border pb-4">
           <div className="container mx-auto px-4 pt-3 space-y-3">
