@@ -5,7 +5,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Plus, X, LogOut, Trash2, Upload, Ruler, Search } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Loader2, Plus, X, LogOut, Trash2, Upload, Ruler, Search, Users, Package } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -57,8 +59,18 @@ const Admin = () => {
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Users + Orders
+  const [users, setUsers] = useState<any[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [loadingOrders, setLoadingOrders] = useState(false);
+
   useEffect(() => {
-    if (isAdmin) loadProducts();
+    if (isAdmin) {
+      loadProducts();
+      loadUsers();
+      loadOrders();
+    }
   }, [isAdmin]);
 
   const loadProducts = async () => {
@@ -66,10 +78,31 @@ const Admin = () => {
     const { data, error } = await supabase
       .from("products")
       .select("id, title, price_colones, category, sizes, is_active, product_colors(color_name, image_url)")
+      .is("deleted_at", null)
       .order("created_at", { ascending: false });
 
     if (!error && data) setProducts(data as unknown as ProductRow[]);
     setLoadingProducts(false);
+  };
+
+  const loadUsers = async () => {
+    setLoadingUsers(true);
+    const { data } = await supabase
+      .from("profiles")
+      .select("user_id, full_name, email, phone, address, created_at")
+      .order("created_at", { ascending: false });
+    setUsers(data || []);
+    setLoadingUsers(false);
+  };
+
+  const loadOrders = async () => {
+    setLoadingOrders(true);
+    const { data } = await supabase
+      .from("orders")
+      .select("id, user_id, items, total_colones, status, contact_name, contact_email, contact_phone, created_at")
+      .order("created_at", { ascending: false });
+    setOrders(data || []);
+    setLoadingOrders(false);
   };
 
   const toggleSize = (size: string) => {
@@ -201,8 +234,11 @@ const Admin = () => {
   };
 
   const handleDeleteProduct = async (id: string) => {
-    if (!confirm("¿Estás seguro de eliminar este producto?")) return;
-    const { error } = await supabase.from("products").delete().eq("id", id);
+    if (!confirm("¿Eliminar este producto? Desaparecerá de la tienda pero seguirá visible en pedidos antiguos.")) return;
+    const { error } = await supabase
+      .from("products")
+      .update({ deleted_at: new Date().toISOString(), is_active: false })
+      .eq("id", id);
     if (error) {
       toast.error("Error al eliminar", { position: "top-center" });
     } else {
