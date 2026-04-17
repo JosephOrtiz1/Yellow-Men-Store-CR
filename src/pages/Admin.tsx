@@ -596,6 +596,104 @@ const Admin = () => {
             </CardContent>
           </Card>
         </div>
+          </TabsContent>
+
+          <TabsContent value="users">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="font-heading text-2xl tracking-wider">USUARIOS REGISTRADOS</CardTitle>
+                <Button variant="outline" size="sm" onClick={loadUsers} disabled={loadingUsers} className="font-body">
+                  {loadingUsers ? <Loader2 className="w-4 h-4 animate-spin" /> : "Actualizar"}
+                </Button>
+              </CardHeader>
+              <CardContent>
+                {loadingUsers ? (
+                  <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
+                ) : users.length === 0 ? (
+                  <p className="text-center text-muted-foreground font-body py-10">No hay usuarios registrados.</p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="font-body">Nombre</TableHead>
+                          <TableHead className="font-body">Email</TableHead>
+                          <TableHead className="font-body">Teléfono</TableHead>
+                          <TableHead className="font-body">Dirección</TableHead>
+                          <TableHead className="font-body">Pedidos</TableHead>
+                          <TableHead className="font-body">Registro</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {users.map((u) => {
+                          const userOrders = orders.filter((o) => o.user_id === u.user_id);
+                          return (
+                            <TableRow key={u.user_id}>
+                              <TableCell className="font-body">{u.full_name || "—"}</TableCell>
+                              <TableCell className="font-body text-xs">{u.email}</TableCell>
+                              <TableCell className="font-body text-xs">{u.phone || "—"}</TableCell>
+                              <TableCell className="font-body text-xs max-w-[200px] truncate" title={u.address}>{u.address || "—"}</TableCell>
+                              <TableCell className="font-body">{userOrders.length}</TableCell>
+                              <TableCell className="font-body text-xs">{new Date(u.created_at).toLocaleDateString("es-CR")}</TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="orders">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="font-heading text-2xl tracking-wider">PEDIDOS</CardTitle>
+                <Button variant="outline" size="sm" onClick={loadOrders} disabled={loadingOrders} className="font-body">
+                  {loadingOrders ? <Loader2 className="w-4 h-4 animate-spin" /> : "Actualizar"}
+                </Button>
+              </CardHeader>
+              <CardContent>
+                {loadingOrders ? (
+                  <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
+                ) : orders.length === 0 ? (
+                  <p className="text-center text-muted-foreground font-body py-10">No hay pedidos aún.</p>
+                ) : (
+                  <div className="space-y-4">
+                    {orders.map((o) => (
+                      <div key={o.id} className="border border-border rounded-sm p-4">
+                        <div className="flex justify-between items-start mb-2 flex-wrap gap-2">
+                          <div>
+                            <p className="font-body font-semibold text-sm">Pedido #{o.id.slice(0, 8)}</p>
+                            <p className="text-xs text-muted-foreground font-body">
+                              {o.contact_name || "—"} · {o.contact_email || "—"} · {o.contact_phone || "—"}
+                            </p>
+                            <p className="text-xs text-muted-foreground font-body">
+                              {new Date(o.created_at).toLocaleString("es-CR")}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-body font-bold text-primary">₡{Number(o.total_colones).toLocaleString("es-CR")}</p>
+                            <span className="text-xs px-2 py-0.5 rounded-sm bg-secondary text-muted-foreground font-body uppercase">{o.status}</span>
+                          </div>
+                        </div>
+                        <ul className="text-xs font-body space-y-1 mt-2 border-t border-border pt-2">
+                          {(o.items || []).map((it: any, i: number) => (
+                            <li key={i} className="flex justify-between">
+                              <span className="truncate">{it.title} {it.variantTitle ? `(${it.variantTitle})` : ""} × {it.quantity}</span>
+                              <span className="text-muted-foreground">₡{(Number(it.price) * it.quantity).toLocaleString("es-CR")}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
