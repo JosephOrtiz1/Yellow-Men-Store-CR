@@ -296,6 +296,14 @@ const Admin = () => {
           </div>
         </div>
 
+        <Tabs defaultValue="products" className="w-full">
+          <TabsList className="mb-6">
+            <TabsTrigger value="products" className="font-body"><Package className="w-4 h-4 mr-2" />Productos</TabsTrigger>
+            <TabsTrigger value="users" className="font-body"><Users className="w-4 h-4 mr-2" />Usuarios ({users.length})</TabsTrigger>
+            <TabsTrigger value="orders" className="font-body"><Package className="w-4 h-4 mr-2" />Pedidos ({orders.length})</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="products">
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
           {/* Create product form */}
           <Card>
