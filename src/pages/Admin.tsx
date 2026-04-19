@@ -433,10 +433,18 @@ const Admin = () => {
 
                         <div>
                           {color.imagePreview ? (
-                            <div className="relative w-full h-40 rounded-sm overflow-hidden border border-border">
-                              <img src={color.imagePreview} alt={color.name} className="w-full h-full object-cover" />
+                            <div
+                              className="relative w-full h-40 rounded-sm overflow-hidden border border-border"
+                              onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                              onDrop={(e) => {
+                                e.preventDefault(); e.stopPropagation();
+                                const f = e.dataTransfer.files?.[0];
+                                if (f && f.type.startsWith("image/")) updateColor(i, "imageFile", f);
+                              }}
+                            >
+                              <img src={color.imagePreview} alt={color.name} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                               <label className="absolute inset-0 flex items-center justify-center bg-background/60 opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
-                                <span className="font-body text-sm text-foreground">Cambiar imagen</span>
+                                <span className="font-body text-sm text-foreground">Cambiar o arrastra una imagen</span>
                                 <input
                                   type="file"
                                   accept="image/*"
@@ -446,9 +454,19 @@ const Admin = () => {
                               </label>
                             </div>
                           ) : (
-                            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border rounded-sm cursor-pointer hover:border-primary transition-colors">
+                            <label
+                              className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border rounded-sm cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors"
+                              onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); e.currentTarget.classList.add("border-primary","bg-primary/5"); }}
+                              onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); e.currentTarget.classList.remove("bg-primary/5"); }}
+                              onDrop={(e) => {
+                                e.preventDefault(); e.stopPropagation();
+                                e.currentTarget.classList.remove("bg-primary/5");
+                                const f = e.dataTransfer.files?.[0];
+                                if (f && f.type.startsWith("image/")) updateColor(i, "imageFile", f);
+                              }}
+                            >
                               <Upload className="w-6 h-6 text-muted-foreground mb-2" />
-                              <span className="text-sm text-muted-foreground font-body">Subir imagen para este color</span>
+                              <span className="text-sm text-muted-foreground font-body">Arrastra o haz clic para subir</span>
                               <input
                                 type="file"
                                 accept="image/*"
@@ -483,9 +501,19 @@ const Admin = () => {
                       </div>
                     </div>
                   ) : (
-                    <label className="flex flex-col items-center justify-center w-full h-28 mt-2 border-2 border-dashed border-border rounded-sm cursor-pointer hover:border-primary transition-colors">
+                    <label
+                      className="flex flex-col items-center justify-center w-full h-28 mt-2 border-2 border-dashed border-border rounded-sm cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors"
+                      onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); e.currentTarget.classList.add("border-primary","bg-primary/5"); }}
+                      onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); e.currentTarget.classList.remove("bg-primary/5"); }}
+                      onDrop={(e) => {
+                        e.preventDefault(); e.stopPropagation();
+                        e.currentTarget.classList.remove("bg-primary/5");
+                        const f = e.dataTransfer.files?.[0];
+                        if (f && f.type.startsWith("image/")) handleSizeGuide(f);
+                      }}
+                    >
                       <Ruler className="w-6 h-6 text-muted-foreground mb-2" />
-                      <span className="text-sm text-muted-foreground font-body">Subir imagen de guía de tallas</span>
+                      <span className="text-sm text-muted-foreground font-body">Arrastra o haz clic para subir guía de tallas</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -551,7 +579,7 @@ const Admin = () => {
                     <div key={p.id} className="flex items-center gap-3 p-3 border border-border rounded-sm">
                       <div className="w-14 h-14 bg-card rounded-sm overflow-hidden flex-shrink-0 border border-border">
                         {p.product_colors?.[0]?.image_url ? (
-                          <img src={p.product_colors[0].image_url} alt="" className="w-full h-full object-cover" />
+                          <img src={p.product_colors[0].image_url} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs font-body">
                             Sin img
