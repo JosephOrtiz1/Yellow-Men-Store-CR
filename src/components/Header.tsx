@@ -84,8 +84,21 @@ export const Header = () => {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="text-foreground" aria-label="Cuenta">
-                    <UserIcon className="h-5 w-5" />
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="relative gap-2 px-2 h-9 border border-primary/40 bg-primary/10 hover:bg-primary/20"
+                    aria-label="Cuenta"
+                  >
+                    <div className="relative">
+                      <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-heading text-sm tracking-wider">
+                        {(user.email?.[0] || "U").toUpperCase()}
+                      </div>
+                      <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-green-500 border-2 border-secondary" />
+                    </div>
+                    <span className="hidden sm:inline font-body text-xs uppercase tracking-wider text-primary max-w-[100px] truncate">
+                      {user.email?.split("@")[0]}
+                    </span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
