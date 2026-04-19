@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/ProductCard";
 import { fetchProducts, type ShopifyProduct } from "@/lib/shopify";
 import { ArrowRight, Loader2 } from "lucide-react";
-import techwearHero from "@/assets/techwear-hero.jpg";
+import techwearHero from "@/assets/hero-techwear.jpg";
 
 const categories = [
   { name: "Street Wear", slug: "street-wear", description: "Estilo urbano y audaz" },
@@ -29,6 +29,10 @@ const Index = () => {
         <img
           src={techwearHero}
           alt="Yellow Men Store - Techwear"
+          fetchPriority="high"
+          decoding="async"
+          width={1600}
+          height={1600}
           className="absolute right-0 top-0 h-full w-1/2 object-cover object-top opacity-60 md:opacity-80"
         />
         <div className="container mx-auto px-4 relative z-20">
