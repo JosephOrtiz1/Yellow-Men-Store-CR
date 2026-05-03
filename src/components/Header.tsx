@@ -39,12 +39,23 @@ export const Header = () => {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-secondary border-b border-border">
       <div className="container mx-auto px-4 h-16 flex items-center gap-6">
-        <Link to="/about" className="flex items-center gap-2 flex-shrink-0">
+        <Link to="/about" className="flex items-center gap-2 flex-shrink-0" aria-label="Yellow Men Store - Inicio">
           <img src={isotipo} alt="Yellow Men Store" className="h-10 w-10" />
-          <span className="font-heading text-xl md:text-2xl text-primary tracking-wider whitespace-nowrap">
+          <span className="hidden md:inline font-heading text-xl md:text-2xl text-primary tracking-wider whitespace-nowrap">
             YELLOW MEN STORE
           </span>
         </Link>
+
+        {/* Mobile search bar (replaces brand text on small screens) */}
+        <form onSubmit={submitSearch} className="flex md:hidden relative flex-1 min-w-0">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar..."
+            className="pl-9 font-body bg-background border-border h-9"
+          />
+        </form>
 
         <nav className="hidden lg:flex items-center justify-center gap-7 flex-1">
           {categories.map((cat) => (
@@ -58,7 +69,7 @@ export const Header = () => {
           ))}
         </nav>
 
-        <div className="flex-1 lg:hidden" />
+        <div className="hidden md:flex lg:hidden flex-1" />
 
         <div className="flex items-center gap-3 flex-shrink-0">
           <form onSubmit={submitSearch} className="hidden md:flex relative w-56 lg:w-64">
@@ -142,7 +153,7 @@ export const Header = () => {
       {menuOpen && (
         <div className="lg:hidden bg-secondary border-t border-border pb-4">
           <div className="container mx-auto px-4 pt-3 space-y-3">
-            <form onSubmit={submitSearch} className="relative">
+            <form onSubmit={submitSearch} className="hidden md:block relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
               <Input
                 value={search}
