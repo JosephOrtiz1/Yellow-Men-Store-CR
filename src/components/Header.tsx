@@ -153,7 +153,7 @@ export const Header = () => {
       {menuOpen && (
         <div className="lg:hidden bg-secondary border-t border-border pb-4">
           <div className="container mx-auto px-4 pt-3 space-y-3">
-            <form onSubmit={submitSearch} className="relative">
+            <form onSubmit={submitSearch} className="hidden md:block relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
               <Input
                 value={search}
