@@ -140,8 +140,25 @@ const Admin = () => {
     setSizeGuidePreview(URL.createObjectURL(file));
   };
 
+  const buildSafeFilePath = (path: string) =>
+    path
+      .split("/")
+      .map((segment) =>
+        segment
+          .trim()
+          .toLowerCase()
+          .replace(/[^a-z0-9._-]+/g, "-")
+          .replace(/-+/g, "-")
+          .replace(/^-|-$/g, "")
+      )
+      .filter(Boolean)
+      .join("/");
+
   const uploadFile = async (file: File, bucket: string, path: string) => {
-    const { data, error } = await supabase.storage.from(bucket).upload(path, file, { upsert: true });
+    const safePath = buildSafeFilePath(path);
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .upload(safePath, file, { cacheControl: "3600" });
     if (error) throw error;
     const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(data.path);
     return urlData.publicUrl;
@@ -199,7 +216,7 @@ const Admin = () => {
         const imageUrl = await uploadFile(
           c.imageFile!,
           "product-images",
-          `${product.id}/${timestamp}-${c.name.toLowerCase().replace(/\s+/g, "-")}.${c.imageFile!.name.split(".").pop()}`
+          `${product.id}/${timestamp}-${c.name}.${c.imageFile!.name.split(".").pop()}`
         );
 
         const { error: colorError } = await supabase.from("product_colors").insert({
