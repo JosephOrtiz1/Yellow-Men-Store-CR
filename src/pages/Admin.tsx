@@ -230,13 +230,23 @@ const Admin = () => {
           `${product.id}/${timestamp}-${c.name}.${c.imageFile!.name.split(".").pop()}`
         );
 
+        let hoverUrl: string | null = null;
+        if (c.hoverImageFile) {
+          hoverUrl = await uploadFile(
+            c.hoverImageFile,
+            "product-images",
+            `${product.id}/${timestamp}-${c.name}-hover.${c.hoverImageFile.name.split(".").pop()}`
+          );
+        }
+
         const { error: colorError } = await supabase.from("product_colors").insert({
           product_id: product.id,
           color_name: c.name.trim(),
           color_hex: c.hex,
           image_url: imageUrl,
+          hover_image_url: hoverUrl,
           sort_order: i,
-        });
+        } as any);
 
         if (colorError) throw colorError;
       }
