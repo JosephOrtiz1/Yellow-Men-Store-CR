@@ -12,7 +12,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
   return (
     <Link to={`/product/${handle}`} className="group block">
-      <div className="aspect-[3/4] bg-muted rounded-sm overflow-hidden mb-3">
+      <div className="aspect-[3/4] bg-muted rounded-xl overflow-hidden mb-3">
         {image ? (
           <img
             src={`${image.url}${image.url.includes("?") ? "&" : "?"}width=600`}
