@@ -469,20 +469,45 @@ const Admin = () => {
                           </Button>
                         </div>
 
-                        <div>
-                          {color.imagePreview ? (
-                            <div
-                              className="relative w-full h-40 rounded-sm overflow-hidden border border-border"
-                              onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
-                              onDrop={(e) => {
-                                e.preventDefault(); e.stopPropagation();
-                                const f = e.dataTransfer.files?.[0];
-                                if (f && f.type.startsWith("image/")) updateColor(i, "imageFile", f);
-                              }}
-                            >
-                              <img src={color.imagePreview} alt={color.name} className="w-full h-full object-cover" loading="lazy" decoding="async" />
-                              <label className="absolute inset-0 flex items-center justify-center bg-background/60 opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
-                                <span className="font-body text-sm text-foreground">Cambiar o arrastra una imagen</span>
+                        <div className="grid grid-cols-2 gap-3">
+                          {/* Primary image */}
+                          <div>
+                            <p className="text-xs font-body text-muted-foreground mb-1">Imagen principal *</p>
+                            {color.imagePreview ? (
+                              <div
+                                className="relative w-full h-40 rounded-lg overflow-hidden border border-border"
+                                onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                                onDrop={(e) => {
+                                  e.preventDefault(); e.stopPropagation();
+                                  const f = e.dataTransfer.files?.[0];
+                                  if (f && f.type.startsWith("image/")) updateColor(i, "imageFile", f);
+                                }}
+                              >
+                                <img src={color.imagePreview} alt={color.name} className="w-full h-full object-cover" loading="lazy" decoding="async" />
+                                <label className="absolute inset-0 flex items-center justify-center bg-background/60 opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
+                                  <span className="font-body text-xs text-foreground text-center px-2">Cambiar imagen</span>
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={(e) => e.target.files?.[0] && updateColor(i, "imageFile", e.target.files[0])}
+                                  />
+                                </label>
+                              </div>
+                            ) : (
+                              <label
+                                className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-border rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors"
+                                onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); e.currentTarget.classList.add("border-primary","bg-primary/5"); }}
+                                onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); e.currentTarget.classList.remove("bg-primary/5"); }}
+                                onDrop={(e) => {
+                                  e.preventDefault(); e.stopPropagation();
+                                  e.currentTarget.classList.remove("bg-primary/5");
+                                  const f = e.dataTransfer.files?.[0];
+                                  if (f && f.type.startsWith("image/")) updateColor(i, "imageFile", f);
+                                }}
+                              >
+                                <Upload className="w-5 h-5 text-muted-foreground mb-1" />
+                                <span className="text-xs text-muted-foreground font-body text-center px-2">Subir principal</span>
                                 <input
                                   type="file"
                                   accept="image/*"
@@ -490,29 +515,69 @@ const Admin = () => {
                                   onChange={(e) => e.target.files?.[0] && updateColor(i, "imageFile", e.target.files[0])}
                                 />
                               </label>
-                            </div>
-                          ) : (
-                            <label
-                              className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border rounded-sm cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors"
-                              onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); e.currentTarget.classList.add("border-primary","bg-primary/5"); }}
-                              onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); e.currentTarget.classList.remove("bg-primary/5"); }}
-                              onDrop={(e) => {
-                                e.preventDefault(); e.stopPropagation();
-                                e.currentTarget.classList.remove("bg-primary/5");
-                                const f = e.dataTransfer.files?.[0];
-                                if (f && f.type.startsWith("image/")) updateColor(i, "imageFile", f);
-                              }}
-                            >
-                              <Upload className="w-6 h-6 text-muted-foreground mb-2" />
-                              <span className="text-sm text-muted-foreground font-body">Arrastra o haz clic para subir</span>
-                              <input
-                                type="file"
-                                accept="image/*"
-                                className="hidden"
-                                onChange={(e) => e.target.files?.[0] && updateColor(i, "imageFile", e.target.files[0])}
-                              />
-                            </label>
-                          )}
+                            )}
+                          </div>
+
+                          {/* Hover image */}
+                          <div>
+                            <p className="text-xs font-body text-muted-foreground mb-1">Imagen al pasar el mouse</p>
+                            {color.hoverImagePreview ? (
+                              <div
+                                className="relative w-full h-40 rounded-lg overflow-hidden border border-border"
+                                onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                                onDrop={(e) => {
+                                  e.preventDefault(); e.stopPropagation();
+                                  const f = e.dataTransfer.files?.[0];
+                                  if (f && f.type.startsWith("image/")) updateColor(i, "hoverImageFile", f);
+                                }}
+                              >
+                                <img src={color.hoverImagePreview} alt={`${color.name} hover`} className="w-full h-full object-cover" loading="lazy" decoding="async" />
+                                <label className="absolute inset-0 flex items-center justify-center bg-background/60 opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
+                                  <span className="font-body text-xs text-foreground text-center px-2">Cambiar imagen</span>
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={(e) => e.target.files?.[0] && updateColor(i, "hoverImageFile", e.target.files[0])}
+                                  />
+                                </label>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setColors((prev) => {
+                                      const u = [...prev];
+                                      u[i] = { ...u[i], hoverImageFile: null, hoverImagePreview: "" };
+                                      return u;
+                                    });
+                                  }}
+                                  className="absolute top-1 right-1 bg-background/80 rounded-sm p-1 hover:bg-background"
+                                >
+                                  <X className="w-3 h-3" />
+                                </button>
+                              </div>
+                            ) : (
+                              <label
+                                className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-border rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors"
+                                onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); e.currentTarget.classList.add("border-primary","bg-primary/5"); }}
+                                onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); e.currentTarget.classList.remove("bg-primary/5"); }}
+                                onDrop={(e) => {
+                                  e.preventDefault(); e.stopPropagation();
+                                  e.currentTarget.classList.remove("bg-primary/5");
+                                  const f = e.dataTransfer.files?.[0];
+                                  if (f && f.type.startsWith("image/")) updateColor(i, "hoverImageFile", f);
+                                }}
+                              >
+                                <Upload className="w-5 h-5 text-muted-foreground mb-1" />
+                                <span className="text-xs text-muted-foreground font-body text-center px-2">Subir hover (opcional)</span>
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  className="hidden"
+                                  onChange={(e) => e.target.files?.[0] && updateColor(i, "hoverImageFile", e.target.files[0])}
+                                />
+                              </label>
+                            )}
+                          </div>
                         </div>
                       </div>
                     ))}
