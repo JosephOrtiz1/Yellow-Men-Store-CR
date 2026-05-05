@@ -28,6 +28,8 @@ interface ColorEntry {
   hex: string;
   imageFile: File | null;
   imagePreview: string;
+  hoverImageFile: File | null;
+  hoverImagePreview: string;
 }
 
 interface ProductRow {
@@ -112,7 +114,10 @@ const Admin = () => {
   };
 
   const addColor = () => {
-    setColors((prev) => [...prev, { name: "", hex: "#000000", imageFile: null, imagePreview: "" }]);
+    setColors((prev) => [
+      ...prev,
+      { name: "", hex: "#000000", imageFile: null, imagePreview: "", hoverImageFile: null, hoverImagePreview: "" },
+    ]);
   };
 
   const removeColor = (index: number) => {
@@ -127,6 +132,12 @@ const Admin = () => {
           ...updated[index],
           imageFile: value,
           imagePreview: URL.createObjectURL(value),
+        };
+      } else if (field === "hoverImageFile" && value instanceof File) {
+        updated[index] = {
+          ...updated[index],
+          hoverImageFile: value,
+          hoverImagePreview: URL.createObjectURL(value),
         };
       } else {
         updated[index] = { ...updated[index], [field]: value };
