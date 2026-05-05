@@ -1,0 +1,1 @@
+ALTER TABLE public.product_colors ADD COLUMN IF NOT EXISTS hover_image_url text;
