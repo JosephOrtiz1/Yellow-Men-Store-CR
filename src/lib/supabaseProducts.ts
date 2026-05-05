@@ -13,6 +13,7 @@ export interface SupabaseProductListItem {
     color_name: string;
     color_hex: string | null;
     image_url: string;
+    hover_image_url: string | null;
     sort_order: number;
   }[];
 }
@@ -20,7 +21,7 @@ export interface SupabaseProductListItem {
 export async function fetchSupabaseProducts(category?: string, limit = 50): Promise<SupabaseProductListItem[]> {
   let query = supabase
     .from("products")
-    .select("id, title, handle, price_colones, category, description, sizes, size_guide_url, product_colors(color_name, color_hex, image_url, sort_order)")
+    .select("id, title, handle, price_colones, category, description, sizes, size_guide_url, product_colors(color_name, color_hex, image_url, hover_image_url, sort_order)")
     .eq("is_active", true)
     .is("deleted_at", null)
     .order("created_at", { ascending: false })
@@ -39,7 +40,7 @@ export async function fetchSupabaseProducts(category?: string, limit = 50): Prom
 export async function fetchSupabaseProductByHandle(handle: string): Promise<SupabaseProductListItem | null> {
   const { data, error } = await supabase
     .from("products")
-    .select("id, title, handle, price_colones, category, description, sizes, size_guide_url, product_colors(color_name, color_hex, image_url, sort_order)")
+    .select("id, title, handle, price_colones, category, description, sizes, size_guide_url, product_colors(color_name, color_hex, image_url, hover_image_url, sort_order)")
     .eq("handle", handle)
     .eq("is_active", true)
     .is("deleted_at", null)
