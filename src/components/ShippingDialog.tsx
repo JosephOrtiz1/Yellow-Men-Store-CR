@@ -69,7 +69,7 @@ export const ShippingDialog = ({ open, onOpenChange, onConfirm, saving, defaultN
       toast.error("Debes confirmar que entendiste las condiciones de envío", { position: "top-center" });
       return;
     }
-    await onConfirm(parsed.data);
+    await onConfirm(parsed.data as ShippingData);
   };
 
   return (
