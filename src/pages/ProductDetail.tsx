@@ -86,8 +86,8 @@ const ProductDetail = () => {
       <div className="min-h-screen pt-20">
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <div>
-              <div className="aspect-[3/4] bg-muted rounded-sm overflow-hidden mb-3">
+          <div>
+            <div className="aspect-[3/4] bg-muted rounded-2xl overflow-hidden mb-3">
                 {currentImage ? (
                   <img src={currentImage} alt={localProduct.title} className="w-full h-full object-cover" />
                 ) : (
@@ -100,7 +100,7 @@ const ProductDetail = () => {
                     <button
                       key={i}
                       onClick={() => setSelectedColor(i)}
-                      className={`w-16 h-16 rounded-sm overflow-hidden flex-shrink-0 border-2 transition-colors ${
+                    className={`w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border-2 transition-colors ${
                         i === selectedColor ? "border-primary" : "border-transparent"
                       }`}
                     >
@@ -123,7 +123,7 @@ const ProductDetail = () => {
                       <button
                         key={i}
                         onClick={() => setSelectedColor(i)}
-                        className={`px-4 py-2 text-sm font-body border rounded-sm transition-colors ${
+                        className={`px-4 py-2 text-sm font-body border rounded-xl transition-colors ${
                           i === selectedColor ? "bg-primary text-primary-foreground border-primary" : "border-border hover:border-primary"
                         }`}
                       >
@@ -142,7 +142,7 @@ const ProductDetail = () => {
                       <button
                         key={s}
                         onClick={() => setSelectedSize(s)}
-                        className={`px-4 py-2 text-sm font-body border rounded-sm transition-colors ${
+                        className={`px-4 py-2 text-sm font-body border rounded-xl transition-colors ${
                           selectedSize === s ? "bg-primary text-primary-foreground border-primary" : "border-border hover:border-primary"
                         }`}
                       >
@@ -218,7 +218,7 @@ const ProductDetail = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {/* Images */}
           <div>
-            <div className="aspect-[3/4] bg-muted rounded-sm overflow-hidden mb-3">
+            <div className="aspect-[3/4] bg-muted rounded-2xl overflow-hidden mb-3">
               {images[selectedImage]?.node ? (
                 <img
                   src={images[selectedImage].node.url}
@@ -235,7 +235,7 @@ const ProductDetail = () => {
                   <button
                     key={i}
                     onClick={() => setSelectedImage(i)}
-                    className={`w-16 h-16 rounded-sm overflow-hidden flex-shrink-0 border-2 transition-colors ${
+                    className={`w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border-2 transition-colors ${
                       i === selectedImage ? "border-primary" : "border-transparent"
                     }`}
                   >
@@ -267,7 +267,7 @@ const ProductDetail = () => {
                     <button
                       key={value}
                       onClick={() => setSelectedOptions((prev) => ({ ...prev, [option.name]: value }))}
-                      className={`px-4 py-2 text-sm font-body border rounded-sm transition-colors ${
+                      className={`px-4 py-2 text-sm font-body border rounded-xl transition-colors ${
                         selectedOptions[option.name] === value
                           ? "bg-primary text-primary-foreground border-primary"
                           : "border-border hover:border-primary"
@@ -284,7 +284,7 @@ const ProductDetail = () => {
               onClick={handleAddToCart}
               disabled={isLoading || !selectedVariant?.availableForSale}
               size="lg"
-              className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-body uppercase tracking-wider"
+              className="w-full rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-body uppercase tracking-wider"
             >
               {isLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

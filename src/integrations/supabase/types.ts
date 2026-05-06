@@ -23,6 +23,13 @@ export type Database = {
           created_at: string
           id: string
           items: Json
+          shipping_canton: string | null
+          shipping_country: string
+          shipping_district: string | null
+          shipping_exact_address: string | null
+          shipping_phone: string | null
+          shipping_province: string | null
+          shipping_recipient_name: string | null
           status: string
           total_colones: number
           updated_at: string
@@ -36,6 +43,13 @@ export type Database = {
           created_at?: string
           id?: string
           items?: Json
+          shipping_canton?: string | null
+          shipping_country?: string
+          shipping_district?: string | null
+          shipping_exact_address?: string | null
+          shipping_phone?: string | null
+          shipping_province?: string | null
+          shipping_recipient_name?: string | null
           status?: string
           total_colones?: number
           updated_at?: string
@@ -49,6 +63,13 @@ export type Database = {
           created_at?: string
           id?: string
           items?: Json
+          shipping_canton?: string | null
+          shipping_country?: string
+          shipping_district?: string | null
+          shipping_exact_address?: string | null
+          shipping_phone?: string | null
+          shipping_province?: string | null
+          shipping_recipient_name?: string | null
           status?: string
           total_colones?: number
           updated_at?: string
