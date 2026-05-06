@@ -8,10 +8,15 @@ import { useCartStore } from "@/stores/cartStore";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { ShippingDialog, OrderConfirmationDialog, type ShippingData } from "@/components/ShippingDialog";
 
 export const CartDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [shippingOpen, setShippingOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [lastOrderId, setLastOrderId] = useState<string | null>(null);
+  const [profile, setProfile] = useState<{ full_name?: string | null; phone?: string | null; address?: string | null; email?: string | null } | null>(null);
   const navigate = useNavigate();
   const { user } = useAuth();
   const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart, clearCart } = useCartStore();
@@ -20,26 +25,31 @@ export const CartDrawer = () => {
 
   useEffect(() => { if (isOpen) syncCart(); }, [isOpen, syncCart]);
 
-  const handleCheckout = async () => {
+  const openShipping = async () => {
     if (!user) {
       setIsOpen(false);
       toast.info("Inicia sesión para continuar con tu compra", { position: "top-center" });
       navigate("/auth", { state: { from: "/" } });
       return;
     }
-
     const checkoutUrl = getCheckoutUrl();
     if (!checkoutUrl) return;
+    // Prefill from profile
+    const { data } = await supabase
+      .from("profiles")
+      .select("full_name, email, phone, address")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    setProfile(data ?? null);
+    setShippingOpen(true);
+  };
 
+  const handleConfirmShipping = async (shipping: ShippingData) => {
+    if (!user) return;
+    const checkoutUrl = getCheckoutUrl();
+    if (!checkoutUrl) return;
     setSaving(true);
     try {
-      // Save order snapshot
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("full_name, email, phone, address")
-        .eq("user_id", user.id)
-        .maybeSingle();
-
       const orderItems = items.map((it) => ({
         title: it.product.node.title,
         variantTitle: it.variantTitle,
@@ -48,30 +58,44 @@ export const CartDrawer = () => {
         image: it.product.node.images?.edges?.[0]?.node?.url,
       }));
 
-      await supabase.from("orders").insert({
-        user_id: user.id,
-        items: orderItems,
-        total_colones: totalPrice,
-        status: "pending",
-        contact_name: profile?.full_name ?? null,
-        contact_email: profile?.email ?? user.email ?? null,
-        contact_phone: profile?.phone ?? null,
-        contact_address: profile?.address ?? null,
-      });
+      const { data: inserted, error } = await supabase
+        .from("orders")
+        .insert({
+          user_id: user.id,
+          items: orderItems,
+          total_colones: totalPrice,
+          status: "pending",
+          contact_name: shipping.recipient_name,
+          contact_email: profile?.email ?? user.email ?? null,
+          contact_phone: shipping.phone,
+          contact_address: `${shipping.exact_address}, ${shipping.district}, ${shipping.canton}, ${shipping.province}`,
+          shipping_recipient_name: shipping.recipient_name,
+          shipping_province: shipping.province,
+          shipping_canton: shipping.canton,
+          shipping_district: shipping.district,
+          shipping_exact_address: shipping.exact_address,
+          shipping_phone: shipping.phone,
+          shipping_country: "CR",
+        })
+        .select("id")
+        .single();
+      if (error) throw error;
 
-      window.open(checkoutUrl, "_blank");
+      setLastOrderId(inserted?.id ?? null);
+      setShippingOpen(false);
       setIsOpen(false);
+      setConfirmOpen(true);
+      window.open(checkoutUrl, "_blank");
     } catch (err) {
       console.error("Failed to save order:", err);
-      // proceed to checkout anyway
-      window.open(checkoutUrl, "_blank");
-      setIsOpen(false);
+      toast.error("No se pudo registrar tu pedido. Intenta de nuevo.", { position: "top-center" });
     } finally {
       setSaving(false);
     }
   };
 
   return (
+    <>
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="relative text-foreground touch-manipulation">
@@ -137,13 +161,13 @@ export const CartDrawer = () => {
                   <span className="text-lg font-heading tracking-wider">TOTAL</span>
                   <span className="text-xl font-bold font-body">${totalPrice.toFixed(2)}</span>
                 </div>
-                <Button onClick={handleCheckout} className="w-full bg-primary text-primary-foreground hover:bg-primary/90 touch-manipulation" size="lg" disabled={items.length === 0 || isLoading || isSyncing || saving}>
+                <Button onClick={openShipping} className="w-full rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 touch-manipulation" size="lg" disabled={items.length === 0 || isLoading || isSyncing || saving}>
                   {isLoading || isSyncing || saving ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
                   ) : !user ? (
                     <><LogIn className="w-4 h-4 mr-2" />Iniciar sesión para pagar</>
                   ) : (
-                    <><ExternalLink className="w-4 h-4 mr-2" />Pagar con Shopify</>
+                    <><ExternalLink className="w-4 h-4 mr-2" />Pagar con tarjeta</>
                   )}
                 </Button>
               </div>
@@ -152,5 +176,17 @@ export const CartDrawer = () => {
         </div>
       </SheetContent>
     </Sheet>
+
+    <ShippingDialog
+      open={shippingOpen}
+      onOpenChange={setShippingOpen}
+      onConfirm={handleConfirmShipping}
+      saving={saving}
+      defaultName={profile?.full_name ?? undefined}
+      defaultPhone={profile?.phone ?? undefined}
+      defaultAddress={profile?.address ?? undefined}
+    />
+    <OrderConfirmationDialog open={confirmOpen} onOpenChange={setConfirmOpen} orderId={lastOrderId} />
+    </>
   );
 };
