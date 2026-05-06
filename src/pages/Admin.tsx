@@ -796,7 +796,7 @@ const Admin = () => {
                       <div key={o.id} className="border border-border rounded-sm p-4">
                         <div className="flex justify-between items-start mb-2 flex-wrap gap-2">
                           <div>
-                            <p className="font-body font-semibold text-sm">Pedido #{o.id.slice(0, 8)}</p>
+                            <p className="font-body font-semibold text-sm">Pedido #{o.id.slice(0, 8).toUpperCase()}</p>
                             <p className="text-xs text-muted-foreground font-body">
                               {o.contact_name || "—"} · {o.contact_email || "—"} · {o.contact_phone || "—"}
                             </p>
@@ -809,6 +809,15 @@ const Admin = () => {
                             <span className="text-xs px-2 py-0.5 rounded-sm bg-secondary text-muted-foreground font-body uppercase">{o.status}</span>
                           </div>
                         </div>
+                        {(o.shipping_recipient_name || o.shipping_province) && (
+                          <div className="text-xs font-body bg-muted/40 rounded-sm p-2 mt-2 space-y-0.5">
+                            <p className="font-semibold uppercase tracking-wide text-[10px] text-muted-foreground">Envío Costa Rica</p>
+                            <p><strong>Recibe:</strong> {o.shipping_recipient_name || "—"}</p>
+                            <p><strong>Tel:</strong> {o.shipping_phone || "—"}</p>
+                            <p><strong>Ubicación:</strong> {[o.shipping_district, o.shipping_canton, o.shipping_province].filter(Boolean).join(", ") || "—"}</p>
+                            <p><strong>Dirección exacta:</strong> {o.shipping_exact_address || "—"}</p>
+                          </div>
+                        )}
                         <ul className="text-xs font-body space-y-1 mt-2 border-t border-border pt-2">
                           {(o.items || []).map((it: any, i: number) => (
                             <li key={i} className="flex justify-between">
