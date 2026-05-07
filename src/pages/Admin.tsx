@@ -693,7 +693,7 @@ const Admin = () => {
                         <h4 className="font-body font-semibold text-sm truncate">{p.title}</h4>
                         <p className="text-[10px] text-muted-foreground font-mono truncate" title={p.id}>ID: {p.id}</p>
                         <p className="text-xs text-primary font-body font-semibold">
-                          ₡{p.price_colones.toLocaleString("es-CR")}
+                          ₡{Math.round(p.price_colones).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
                         </p>
                         <div className="flex gap-1 mt-1 flex-wrap">
                           <span className="text-[10px] px-1.5 py-0.5 bg-secondary rounded-sm font-body text-muted-foreground">

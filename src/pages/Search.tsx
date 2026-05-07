@@ -102,7 +102,7 @@ const SearchPage = () => {
                   </p>
                   <h3 className="font-body font-semibold text-sm truncate">{p.title}</h3>
                   <p className="text-primary font-body font-bold text-sm mt-1">
-                    ₡{p.price_colones.toLocaleString("es-CR")}
+                    ₡{Math.round(p.price_colones).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
                   </p>
                 </div>
               </Link>
