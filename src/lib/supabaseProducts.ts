@@ -53,5 +53,15 @@ export async function fetchSupabaseProductByHandle(handle: string): Promise<Supa
 }
 
 export function formatColones(amount: number): string {
-  return new Intl.NumberFormat("es-CR", { style: "currency", currency: "CRC", maximumFractionDigits: 0 }).format(amount);
+  // Formato con espacios cada 3 dígitos: "₡1 000 000"
+  const rounded = Math.round(amount);
+  const withSpaces = rounded.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  return `₡${withSpaces}`;
+}
+
+export function formatNumberSpaces(amount: number, decimals = 0): string {
+  const fixed = decimals > 0 ? amount.toFixed(decimals) : Math.round(amount).toString();
+  const [intPart, decPart] = fixed.split(".");
+  const withSpaces = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  return decPart ? `${withSpaces}.${decPart}` : withSpaces;
 }

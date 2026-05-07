@@ -31,7 +31,9 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       </div>
       <h3 className="font-body font-semibold text-sm uppercase tracking-wide truncate">{title}</h3>
       <p className="font-body text-sm text-muted-foreground mt-1">
-        ${parseFloat(price.amount).toFixed(2)} {price.currencyCode}
+        {price.currencyCode === "CRC"
+          ? `₡${Math.round(parseFloat(price.amount)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}`
+          : `$${parseFloat(price.amount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))(?=.*\.)/g, " ")}`} {price.currencyCode !== "CRC" && price.currencyCode}
       </p>
     </Link>
   );
