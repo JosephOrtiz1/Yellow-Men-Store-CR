@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import type { ShopifyProduct } from "@/lib/shopify";
+import { formatNumberSpaces } from "@/lib/supabaseProducts";
 
 interface ProductCardProps {
   product: ShopifyProduct;
@@ -32,8 +33,8 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       <h3 className="font-body font-semibold text-sm uppercase tracking-wide truncate">{title}</h3>
       <p className="font-body text-sm text-muted-foreground mt-1">
         {price.currencyCode === "CRC"
-          ? `₡${Math.round(parseFloat(price.amount)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}`
-          : `$${parseFloat(price.amount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))(?=.*\.)/g, " ")}`} {price.currencyCode !== "CRC" && price.currencyCode}
+          ? `₡${formatNumberSpaces(parseFloat(price.amount))}`
+          : `$${formatNumberSpaces(parseFloat(price.amount), 2)} ${price.currencyCode}`}
       </p>
     </Link>
   );
