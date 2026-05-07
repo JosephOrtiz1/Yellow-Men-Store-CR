@@ -77,7 +77,13 @@ const ProductDetail = () => {
   // Render Supabase product (admin-created)
   if (localProduct) {
     const colors = [...(localProduct.product_colors || [])].sort((a, b) => a.sort_order - b.sort_order);
-    const currentImage = colors[selectedColor]?.image_url;
+    // All images flattened across colors (main + hover) for this product
+    const allImages: { url: string; colorIndex: number; label: string }[] = colors.flatMap((c, i) => {
+      const arr = [{ url: c.image_url, colorIndex: i, label: c.color_name }];
+      if (c.hover_image_url) arr.push({ url: c.hover_image_url, colorIndex: i, label: `${c.color_name} (alt)` });
+      return arr;
+    });
+    const currentImage = allImages[selectedImage]?.url ?? colors[selectedColor]?.image_url;
     const igMessage = encodeURIComponent(
       `Hola! Me interesa: ${localProduct.title}${selectedSize ? ` (Talla ${selectedSize})` : ""}${colors[selectedColor] ? ` - Color ${colors[selectedColor].color_name}` : ""}`
     );
@@ -94,17 +100,17 @@ const ProductDetail = () => {
                   <div className="w-full h-full flex items-center justify-center text-muted-foreground font-body">Sin imagen</div>
                 )}
               </div>
-              {colors.length > 1 && (
+              {allImages.length > 1 && (
                 <div className="flex gap-2 overflow-x-auto">
-                  {colors.map((c, i) => (
+                  {allImages.map((img, i) => (
                     <button
                       key={i}
-                      onClick={() => setSelectedColor(i)}
+                      onClick={() => { setSelectedImage(i); setSelectedColor(img.colorIndex); }}
                     className={`w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border-2 transition-colors ${
-                        i === selectedColor ? "border-primary" : "border-transparent"
+                        i === selectedImage ? "border-primary" : "border-transparent"
                       }`}
                     >
-                      <img src={c.image_url} alt={c.color_name} className="w-full h-full object-cover" />
+                      <img src={img.url} alt={img.label} className="w-full h-full object-cover" />
                     </button>
                   ))}
                 </div>
@@ -122,7 +128,11 @@ const ProductDetail = () => {
                     {colors.map((c, i) => (
                       <button
                         key={i}
-                        onClick={() => setSelectedColor(i)}
+                        onClick={() => {
+                          setSelectedColor(i);
+                          const idx = allImages.findIndex((im) => im.colorIndex === i);
+                          if (idx >= 0) setSelectedImage(idx);
+                        }}
                         className={`px-4 py-2 text-sm font-body border rounded-xl transition-colors ${
                           i === selectedColor ? "bg-primary text-primary-foreground border-primary" : "border-border hover:border-primary"
                         }`}
@@ -282,14 +292,12 @@ const ProductDetail = () => {
 
             <Button
               onClick={handleAddToCart}
-              disabled={isLoading || !selectedVariant?.availableForSale}
+              disabled={isLoading || !selectedVariant}
               size="lg"
               className="w-full rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-body uppercase tracking-wider"
             >
               {isLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
-              ) : !selectedVariant?.availableForSale ? (
-                "Agotado"
               ) : (
                 <>
                   <ShoppingCart className="w-4 h-4 mr-2" />
