@@ -17,7 +17,7 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
-  const { addItem, isLoading } = useCartStore();
+  const { addItem, addLocalItem, isLoading } = useCartStore();
 
   useEffect(() => {
     if (!handle) return;
@@ -87,6 +87,32 @@ const ProductDetail = () => {
     const igMessage = encodeURIComponent(
       `Hola! Me interesa: ${localProduct.title}${selectedSize ? ` (Talla ${selectedSize})` : ""}${colors[selectedColor] ? ` - Color ${colors[selectedColor].color_name}` : ""}`
     );
+
+    const handleAddLocalToCart = () => {
+      const color = colors[selectedColor];
+      const variantId = `local:${localProduct.id}:${color?.color_name ?? "default"}:${selectedSize || "default"}`;
+      const variantTitle = `${color?.color_name ?? ""}${selectedSize ? ` / ${selectedSize}` : ""}`.trim();
+      addLocalItem({
+        product: {
+          node: {
+            id: localProduct.id,
+            title: localProduct.title,
+            handle: localProduct.handle ?? localProduct.id,
+            description: localProduct.description ?? "",
+            images: { edges: color?.image_url ? [{ node: { url: color.image_url, altText: localProduct.title } }] : [] },
+          },
+        } as any,
+        variantId,
+        variantTitle: variantTitle || "Default",
+        price: { amount: String(localProduct.price_colones), currencyCode: "CRC" },
+        quantity: 1,
+        selectedOptions: [
+          ...(color ? [{ name: "Color", value: color.color_name }] : []),
+          ...(selectedSize ? [{ name: "Talla", value: selectedSize }] : []),
+        ],
+      });
+      toast.success("Agregado al carrito", { position: "top-center" });
+    };
 
     return (
       <div className="min-h-screen pt-20">
@@ -164,9 +190,18 @@ const ProductDetail = () => {
               )}
 
               <Button
+                onClick={handleAddLocalToCart}
+                size="lg"
+                className="w-full mb-3 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-body uppercase tracking-wider"
+              >
+                <ShoppingCart className="w-4 h-4 mr-2" /> Agregar al Carrito
+              </Button>
+
+              <Button
                 asChild
                 size="lg"
-                className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-body uppercase tracking-wider"
+                variant="outline"
+                className="w-full rounded-xl font-body uppercase tracking-wider"
               >
                 <a href={`https://ig.me/m/yellowmen.store?text=${igMessage}`} target="_blank" rel="noopener noreferrer">
                   <Instagram className="w-4 h-4 mr-2" /> Consultar por Instagram

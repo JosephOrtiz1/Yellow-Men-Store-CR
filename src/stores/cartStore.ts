@@ -26,6 +26,7 @@ interface CartStore {
   isLoading: boolean;
   isSyncing: boolean;
   addItem: (item: Omit<CartItem, 'lineId'>) => Promise<void>;
+  addLocalItem: (item: Omit<CartItem, 'lineId'>) => void;
   updateQuantity: (variantId: string, quantity: number) => Promise<void>;
   removeItem: (variantId: string) => Promise<void>;
   clearCart: () => void;
@@ -78,6 +79,20 @@ export const useCartStore = create<CartStore>()(
           console.error('Failed to add item:', error);
         } finally {
           set({ isLoading: false });
+        }
+      },
+
+      addLocalItem: (item) => {
+        const { items } = get();
+        const existing = items.find((i) => i.variantId === item.variantId);
+        if (existing) {
+          set({
+            items: items.map((i) =>
+              i.variantId === item.variantId ? { ...i, quantity: i.quantity + item.quantity } : i
+            ),
+          });
+        } else {
+          set({ items: [...items, { ...item, lineId: null }] });
         }
       },
 
