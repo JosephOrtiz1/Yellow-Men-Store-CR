@@ -57,9 +57,32 @@
 
   body {
     @apply bg-background text-foreground font-body;
+    caret-color: transparent;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
+  }
+
+  /* Hide text caret site-wide, keep copy/paste (selection) available */
+  *:not(input):not(textarea):not([contenteditable="true"]) {
+    caret-color: transparent;
+  }
+  input, textarea, [contenteditable="true"] {
+    caret-color: auto;
+  }
+
+  /* Prevent dragging media/links */
+  img, a, video, svg {
+    -webkit-user-drag: none;
+    user-drag: none;
+  }
+
+  /* Remove focus outlines on non-input elements (no visible click marker) */
+  button:focus, button:focus-visible,
+  a:focus, a:focus-visible,
+  [role="button"]:focus, [role="button"]:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
   }
 }
