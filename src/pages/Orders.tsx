@@ -69,7 +69,7 @@ const Orders = () => {
                     </div>
                     <div className="text-right">
                       <p className="font-body font-bold text-primary">
-                        ₡{Number(o.total_colones).toLocaleString("es-CR")}
+                        ₡{Math.round(Number(o.total_colones)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
                       </p>
                       <span className="text-xs px-2 py-0.5 rounded-sm bg-secondary text-muted-foreground font-body uppercase">
                         {o.status}
@@ -85,7 +85,7 @@ const Orders = () => {
                           {it.title} {it.variantTitle ? `(${it.variantTitle})` : ""} × {it.quantity}
                         </span>
                         <span className="text-muted-foreground">
-                          ₡{(Number(it.price) * it.quantity).toLocaleString("es-CR")}
+                          ₡{Math.round(Number(it.price) * it.quantity).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
                         </span>
                       </li>
                     ))}
