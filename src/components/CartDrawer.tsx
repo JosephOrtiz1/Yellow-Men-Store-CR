@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ShippingDialog, OrderConfirmationDialog, type ShippingData } from "@/components/ShippingDialog";
+import { formatNumberSpaces } from "@/lib/supabaseProducts";
 
 export const CartDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -136,7 +137,11 @@ export const CartDrawer = () => {
                       <div className="flex-1 min-w-0">
                         <h4 className="font-body font-semibold text-sm truncate">{item.product.node.title}</h4>
                         <p className="text-xs text-muted-foreground font-body">{item.selectedOptions.map(o => o.value).join(' • ')}</p>
-                        <p className="font-semibold text-sm mt-1">${parseFloat(item.price.amount).toFixed(2)}</p>
+                        <p className="font-semibold text-sm mt-1">
+                          {item.price.currencyCode === "CRC"
+                            ? `₡${formatNumberSpaces(parseFloat(item.price.amount))}`
+                            : `$${formatNumberSpaces(parseFloat(item.price.amount), 2)}`}
+                        </p>
                       </div>
                       <div className="flex flex-col items-end gap-2 flex-shrink-0">
                         <Button variant="ghost" size="icon" className="h-8 w-8 touch-manipulation" onClick={() => removeItem(item.variantId)}>
@@ -159,7 +164,11 @@ export const CartDrawer = () => {
               <div className="flex-shrink-0 space-y-4 pt-4 border-t">
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-heading tracking-wider">TOTAL</span>
-                  <span className="text-xl font-bold font-body">${totalPrice.toFixed(2)}</span>
+                  <span className="text-xl font-bold font-body">
+                    {items[0]?.price.currencyCode === "CRC"
+                      ? `₡${formatNumberSpaces(totalPrice)}`
+                      : `$${formatNumberSpaces(totalPrice, 2)}`}
+                  </span>
                 </div>
                 <Button onClick={openShipping} className="w-full rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 touch-manipulation" size="lg" disabled={items.length === 0 || isLoading || isSyncing || saving}>
                   {isLoading || isSyncing || saving ? (

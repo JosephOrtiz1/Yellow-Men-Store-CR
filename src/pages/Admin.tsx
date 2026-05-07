@@ -693,7 +693,7 @@ const Admin = () => {
                         <h4 className="font-body font-semibold text-sm truncate">{p.title}</h4>
                         <p className="text-[10px] text-muted-foreground font-mono truncate" title={p.id}>ID: {p.id}</p>
                         <p className="text-xs text-primary font-body font-semibold">
-                          ₡{p.price_colones.toLocaleString("es-CR")}
+                          ₡{Math.round(p.price_colones).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
                         </p>
                         <div className="flex gap-1 mt-1 flex-wrap">
                           <span className="text-[10px] px-1.5 py-0.5 bg-secondary rounded-sm font-body text-muted-foreground">
@@ -805,7 +805,7 @@ const Admin = () => {
                             </p>
                           </div>
                           <div className="text-right">
-                            <p className="font-body font-bold text-primary">₡{Number(o.total_colones).toLocaleString("es-CR")}</p>
+                            <p className="font-body font-bold text-primary">₡{Math.round(Number(o.total_colones)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}</p>
                             <span className="text-xs px-2 py-0.5 rounded-sm bg-secondary text-muted-foreground font-body uppercase">{o.status}</span>
                           </div>
                         </div>
@@ -822,7 +822,7 @@ const Admin = () => {
                           {(o.items || []).map((it: any, i: number) => (
                             <li key={i} className="flex justify-between">
                               <span className="truncate">{it.title} {it.variantTitle ? `(${it.variantTitle})` : ""} × {it.quantity}</span>
-                              <span className="text-muted-foreground">₡{(Number(it.price) * it.quantity).toLocaleString("es-CR")}</span>
+                              <span className="text-muted-foreground">₡{Math.round(Number(it.price) * it.quantity).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}</span>
                             </li>
                           ))}
                         </ul>
