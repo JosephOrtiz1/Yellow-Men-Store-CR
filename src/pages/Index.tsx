@@ -40,7 +40,6 @@ const Index = () => {
         <img
           src={techwearHero}
           alt="Yellow Men Store - Techwear"
-          fetchpriority="high"
           decoding="async"
           width={1600}
           height={1600}
