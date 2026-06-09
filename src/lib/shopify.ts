@@ -3,7 +3,9 @@ import { toast } from "sonner";
 const SHOPIFY_API_VERSION = '2025-07';
 const SHOPIFY_STORE_PERMANENT_DOMAIN = 'style-hub-online-m2tpq.myshopify.com';
 const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
-const SHOPIFY_STOREFRONT_TOKEN = '8969d397dd8acb8626beb871de760aa9';
+const SHOPIFY_STOREFRONT_TOKEN =
+  (import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN as string | undefined) ||
+  '8969d397dd8acb8626beb871de760aa9';
 
 export interface ShopifyProduct {
   node: {

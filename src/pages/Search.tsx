@@ -35,11 +35,18 @@ const SearchPage = () => {
       return;
     }
     setLoading(true);
-    supabase
+    // Sanitize input: strip characters meaningful to PostgREST filter syntax
+    const sanitized = q.replace(/[,()."'\\*]/g, "").slice(0, 100);
+    let query = supabase
       .from("products")
       .select("id, title, handle, price_colones, category, product_colors(image_url)")
-      .eq("is_active", true)
-      .or(`title.ilike.%${q}%,id.eq.${isUuid(q) ? q : "00000000-0000-0000-0000-000000000000"}`)
+      .eq("is_active", true);
+    if (isUuid(q)) {
+      query = query.eq("id", q);
+    } else {
+      query = query.ilike("title", `%${sanitized}%`);
+    }
+    query
       .order("created_at", { ascending: false })
       .then(({ data }) => {
         setResults((data as unknown as ProductResult[]) || []);
