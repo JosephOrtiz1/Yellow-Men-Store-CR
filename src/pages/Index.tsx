@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ProductCard } from "@/components/ProductCard";
 import { SupabaseProductCard } from "@/components/SupabaseProductCard";
-import { fetchProducts, type ShopifyProduct } from "@/lib/shopify";
 import { fetchSupabaseProducts, type SupabaseProductListItem } from "@/lib/supabaseProducts";
 import { ArrowRight, Loader2 } from "lucide-react";
 import techwearHero from "@/assets/hero-techwear.jpg";
@@ -16,19 +14,13 @@ const categories = [
 ];
 
 const Index = () => {
-  const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [localProducts, setLocalProducts] = useState<SupabaseProductListItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([
-      fetchProducts(12).catch((e) => { console.error(e); return [] as ShopifyProduct[]; }),
-      fetchSupabaseProducts(undefined, 24).catch((e) => { console.error(e); return [] as SupabaseProductListItem[]; }),
-    ])
-      .then(([shop, local]) => {
-        setProducts(shop);
-        setLocalProducts(local);
-      })
+    fetchSupabaseProducts(undefined, 24)
+      .catch((e) => { console.error(e); return [] as SupabaseProductListItem[]; })
+      .then((local) => setLocalProducts(local))
       .finally(() => setLoading(false));
   }, []);
 
@@ -91,7 +83,7 @@ const Index = () => {
             <div className="flex justify-center py-20">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
-          ) : products.length === 0 && localProducts.length === 0 ? (
+          ) : localProducts.length === 0 ? (
             <div className="text-center py-20 bg-card rounded-sm">
               <p className="font-body text-lg text-muted-foreground">No hay productos aún.</p>
               <p className="font-body text-sm text-muted-foreground mt-2">Los productos aparecerán aquí cuando se agreguen a la tienda.</p>
@@ -100,9 +92,6 @@ const Index = () => {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
               {localProducts.map((p) => (
                 <SupabaseProductCard key={`local-${p.id}`} product={p} />
-              ))}
-              {products.map((product) => (
-                <ProductCard key={product.node.id} product={product} />
               ))}
             </div>
           )}

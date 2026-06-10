@@ -1,47 +1,31 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchProductByHandle } from "@/lib/shopify";
 import { fetchSupabaseProductByHandle, formatColones, type SupabaseProductListItem } from "@/lib/supabaseProducts";
 import { supabase } from "@/integrations/supabase/client";
 import { useCartStore } from "@/stores/cartStore";
 import { Button } from "@/components/ui/button";
-import { Loader2, ShoppingCart, Check, Instagram } from "lucide-react";
+import { Loader2, ShoppingCart, Instagram } from "lucide-react";
 import { toast } from "sonner";
 
 const ProductDetail = () => {
   const { handle } = useParams<{ handle: string }>();
-  const [product, setProduct] = useState<any>(null);
   const [localProduct, setLocalProduct] = useState<SupabaseProductListItem | null>(null);
   const [selectedColor, setSelectedColor] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
-  const { addItem, addLocalItem, isLoading } = useCartStore();
+  const { addItem } = useCartStore();
 
   useEffect(() => {
     if (!handle) return;
     setLoading(true);
     (async () => {
       try {
-        const p = await fetchProductByHandle(handle).catch(() => null);
-        if (p) {
-          setProduct(p);
-          if (p.options) {
-            const defaults: Record<string, string> = {};
-            p.options.forEach((opt: { name: string; values: string[] }) => {
-              if (opt.name !== "Title") defaults[opt.name] = opt.values[0];
-            });
-            setSelectedOptions(defaults);
-          }
-          return;
-        }
-        // Fallback: Supabase product (by handle, then by id)
         let local = await fetchSupabaseProductByHandle(handle);
         if (!local) {
           const { data } = await supabase
             .from("products")
-            .select("id, title, handle, price_colones, category, description, sizes, size_guide_url, product_colors(color_name, color_hex, image_url, sort_order)")
+            .select("id, title, handle, price_colones, category, description, sizes, size_guide_url, available, product_colors(color_name, color_hex, image_url, hover_image_url, sort_order, available)")
             .eq("id", handle)
             .eq("is_active", true)
             .is("deleted_at", null)
@@ -66,7 +50,7 @@ const ProductDetail = () => {
     );
   }
 
-  if (!product && !localProduct) {
+  if (!localProduct) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="font-body text-lg text-muted-foreground">Producto no encontrado.</p>
@@ -74,9 +58,12 @@ const ProductDetail = () => {
     );
   }
 
-  // Render Supabase product (admin-created)
-  if (localProduct) {
+  {
     const colors = [...(localProduct.product_colors || [])].sort((a, b) => a.sort_order - b.sort_order);
+    const productAvailable = localProduct.available !== false;
+    const currentColor = colors[selectedColor];
+    const colorAvailable = currentColor ? currentColor.available !== false : true;
+    const canBuy = productAvailable && colorAvailable;
     // All images flattened across colors (main + hover) for this product
     const allImages: { url: string; colorIndex: number; label: string }[] = colors.flatMap((c, i) => {
       const arr = [{ url: c.image_url, colorIndex: i, label: c.color_name }];
@@ -89,27 +76,18 @@ const ProductDetail = () => {
     );
 
     const handleAddLocalToCart = () => {
+      if (!canBuy) return;
       const color = colors[selectedColor];
-      const variantId = `local:${localProduct.id}:${color?.color_name ?? "default"}:${selectedSize || "default"}`;
-      const variantTitle = `${color?.color_name ?? ""}${selectedSize ? ` / ${selectedSize}` : ""}`.trim();
-      addLocalItem({
-        product: {
-          node: {
-            id: localProduct.id,
-            title: localProduct.title,
-            handle: localProduct.handle ?? localProduct.id,
-            description: localProduct.description ?? "",
-            images: { edges: color?.image_url ? [{ node: { url: color.image_url, altText: localProduct.title } }] : [] },
-          },
-        } as any,
-        variantId,
-        variantTitle: variantTitle || "Default",
-        price: { amount: String(localProduct.price_colones), currencyCode: "CRC" },
-        quantity: 1,
-        selectedOptions: [
-          ...(color ? [{ name: "Color", value: color.color_name }] : []),
-          ...(selectedSize ? [{ name: "Talla", value: selectedSize }] : []),
-        ],
+      const lineId = `${localProduct.id}:${color?.color_name ?? "default"}:${selectedSize || "default"}`;
+      addItem({
+        id: lineId,
+        productId: localProduct.id,
+        title: localProduct.title,
+        handle: localProduct.handle ?? localProduct.id,
+        imageUrl: color?.image_url ?? null,
+        color: color?.color_name ?? null,
+        size: selectedSize || null,
+        priceColones: Number(localProduct.price_colones),
       });
       toast.success("Agregado al carrito", { position: "top-center" });
     };
@@ -159,9 +137,10 @@ const ProductDetail = () => {
                           const idx = allImages.findIndex((im) => im.colorIndex === i);
                           if (idx >= 0) setSelectedImage(idx);
                         }}
+                        disabled={c.available === false}
                         className={`px-4 py-2 text-sm font-body border rounded-xl transition-colors ${
                           i === selectedColor ? "bg-primary text-primary-foreground border-primary" : "border-border hover:border-primary"
-                        }`}
+                        } ${c.available === false ? "opacity-40 line-through cursor-not-allowed" : ""}`}
                       >
                         {c.color_name}
                       </button>
@@ -192,9 +171,11 @@ const ProductDetail = () => {
               <Button
                 onClick={handleAddLocalToCart}
                 size="lg"
+                disabled={!canBuy}
                 className="w-full mb-3 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-body uppercase tracking-wider"
               >
-                <ShoppingCart className="w-4 h-4 mr-2" /> Agregar al Carrito
+                <ShoppingCart className="w-4 h-4 mr-2" />
+                {canBuy ? "Agregar al Carrito" : "Agotado"}
               </Button>
 
               <Button
@@ -233,137 +214,7 @@ const ProductDetail = () => {
       </div>
     );
   }
-
-  const images = product.images?.edges || [];
-  const options = (product.options || []).filter((o: { name: string }) => o.name !== "Title");
-
-  const selectedVariant = product.variants?.edges?.find(
-    (v: { node: { selectedOptions: Array<{ name: string; value: string }> } }) =>
-      v.node.selectedOptions.every(
-        (opt: { name: string; value: string }) => opt.name === "Title" || selectedOptions[opt.name] === opt.value
-      )
-  )?.node || product.variants?.edges?.[0]?.node;
-
-  const handleAddToCart = async () => {
-    if (!selectedVariant) return;
-    await addItem({
-      product: { node: product },
-      variantId: selectedVariant.id,
-      variantTitle: selectedVariant.title,
-      price: selectedVariant.price,
-      quantity: 1,
-      selectedOptions: selectedVariant.selectedOptions || [],
-    });
-    toast.success("Agregado al carrito", { position: "top-center" });
-  };
-
-  return (
-    <div className="min-h-screen pt-20">
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          {/* Images */}
-          <div>
-            <div className="aspect-[3/4] bg-muted rounded-2xl overflow-hidden mb-3">
-              {images[selectedImage]?.node ? (
-                <img
-                  src={images[selectedImage].node.url}
-                  alt={images[selectedImage].node.altText || product.title}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-muted-foreground font-body">Sin imagen</div>
-              )}
-            </div>
-            {images.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto">
-                {images.map((img: any, i: number) => (
-                  <button
-                    key={i}
-                    onClick={() => setSelectedImage(i)}
-                    className={`w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border-2 transition-colors ${
-                      i === selectedImage ? "border-primary" : "border-transparent"
-                    }`}
-                  >
-                    <img src={img.node.url} alt="" className="w-full h-full object-cover" />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Info */}
-          <div>
-            <h1 className="font-heading text-4xl md:text-5xl tracking-wider mb-4">{product.title.toUpperCase()}</h1>
-            <p className="font-body text-2xl font-bold mb-6">
-              ${parseFloat(selectedVariant?.price?.amount || product.priceRange.minVariantPrice.amount).toFixed(2)}{" "}
-              <span className="text-sm font-normal text-muted-foreground">
-                {selectedVariant?.price?.currencyCode || product.priceRange.minVariantPrice.currencyCode}
-              </span>
-            </p>
-
-            {/* Options */}
-            {options.map((option: { name: string; values: string[] }) => (
-              <div key={option.name} className="mb-6">
-                <label className="font-body font-semibold text-sm uppercase tracking-wide mb-2 block">
-                  {option.name}
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {option.values.map((value: string) => (
-                    <button
-                      key={value}
-                      onClick={() => setSelectedOptions((prev) => ({ ...prev, [option.name]: value }))}
-                      className={`px-4 py-2 text-sm font-body border rounded-xl transition-colors ${
-                        selectedOptions[option.name] === value
-                          ? "bg-primary text-primary-foreground border-primary"
-                          : "border-border hover:border-primary"
-                      }`}
-                    >
-                      {value}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
-
-            <Button
-              onClick={handleAddToCart}
-              disabled={isLoading || !selectedVariant}
-              size="lg"
-              className="w-full rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-body uppercase tracking-wider"
-            >
-              {isLoading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <>
-                  <ShoppingCart className="w-4 h-4 mr-2" />
-                  Agregar al Carrito
-                </>
-              )}
-            </Button>
-
-            {product.description && (
-              <div className="mt-8 pt-6 border-t border-border">
-                <h3 className="font-heading text-xl tracking-wider mb-3">DESCRIPCIÓN</h3>
-                <p className="font-body text-muted-foreground leading-relaxed">{product.description}</p>
-              </div>
-            )}
-
-            {product.tags?.length > 0 && (
-              <div className="mt-6">
-                <div className="flex flex-wrap gap-2">
-                  {product.tags.map((tag: string) => (
-                    <span key={tag} className="text-xs font-body bg-muted text-muted-foreground px-3 py-1 rounded-sm uppercase tracking-wide">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  return null;
 };
 
 export default ProductDetail;

@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchProducts, type ShopifyProduct } from "@/lib/shopify";
 import { fetchSupabaseProducts, type SupabaseProductListItem } from "@/lib/supabaseProducts";
-import { ProductCard } from "@/components/ProductCard";
 import { SupabaseProductCard } from "@/components/SupabaseProductCard";
 import { Loader2 } from "lucide-react";
 
@@ -15,7 +13,6 @@ const categoryNames: Record<string, string> = {
 
 const Category = () => {
   const { slug } = useParams<{ slug: string }>();
-  const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [localProducts, setLocalProducts] = useState<SupabaseProductListItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -24,15 +21,9 @@ const Category = () => {
   useEffect(() => {
     if (!slug) return;
     setLoading(true);
-    const tagQuery = `tag:${slug}`;
-    Promise.all([
-      fetchProducts(50, tagQuery).catch((e) => { console.error(e); return [] as ShopifyProduct[]; }),
-      fetchSupabaseProducts(slug, 50).catch((e) => { console.error(e); return [] as SupabaseProductListItem[]; }),
-    ])
-      .then(([shop, local]) => {
-        setProducts(shop);
-        setLocalProducts(local);
-      })
+    fetchSupabaseProducts(slug, 50)
+      .catch((e) => { console.error(e); return [] as SupabaseProductListItem[]; })
+      .then((local) => setLocalProducts(local))
       .finally(() => setLoading(false));
   }, [slug]);
 
@@ -45,7 +36,7 @@ const Category = () => {
           <div className="flex justify-center py-20">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
-        ) : products.length === 0 && localProducts.length === 0 ? (
+        ) : localProducts.length === 0 ? (
           <div className="text-center py-20 bg-card rounded-sm">
             <p className="font-body text-lg text-muted-foreground">No hay productos en esta categoría.</p>
           </div>
@@ -53,9 +44,6 @@ const Category = () => {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
             {localProducts.map((p) => (
               <SupabaseProductCard key={`local-${p.id}`} product={p} />
-            ))}
-            {products.map((product) => (
-              <ProductCard key={product.node.id} product={product} />
             ))}
           </div>
         )}
