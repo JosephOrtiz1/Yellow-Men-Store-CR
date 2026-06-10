@@ -15,7 +15,11 @@ interface OrderItem {
 interface Order {
   id: string;
   total_colones: number;
+  subtotal_colones?: number;
+  shipping_cost_colones?: number;
   status: string;
+  payment_status?: string;
+  payment_checkout_url?: string | null;
   items: OrderItem[];
   created_at: string;
 }
@@ -29,7 +33,7 @@ const Orders = () => {
     if (!user) return;
     supabase
       .from("orders")
-      .select("id, total_colones, status, items, created_at")
+      .select("id, total_colones, subtotal_colones, shipping_cost_colones, status, payment_status, payment_checkout_url, items, created_at")
       .order("created_at", { ascending: false })
       .then(({ data }) => {
         setOrders((data as unknown as Order[]) || []);
@@ -71,9 +75,16 @@ const Orders = () => {
                       <p className="font-body font-bold text-primary">
                         ₡{Math.round(Number(o.total_colones)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
                       </p>
-                      <span className="text-xs px-2 py-0.5 rounded-sm bg-secondary text-muted-foreground font-body uppercase">
-                        {o.status}
-                      </span>
+                      <div className="flex gap-1 justify-end mt-1">
+                        <span className="text-xs px-2 py-0.5 rounded-sm bg-secondary text-muted-foreground font-body uppercase">
+                          {o.status}
+                        </span>
+                        {o.payment_status && (
+                          <span className={`text-xs px-2 py-0.5 rounded-sm font-body uppercase ${o.payment_status === 'paid' ? 'bg-primary/20 text-primary' : 'bg-destructive/10 text-destructive'}`}>
+                            {o.payment_status === 'paid' ? 'Pagado' : 'Sin pagar'}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </CardHeader>
@@ -90,6 +101,21 @@ const Orders = () => {
                       </li>
                     ))}
                   </ul>
+                  {o.shipping_cost_colones != null && (
+                    <p className="text-xs text-muted-foreground font-body mt-3 pt-3 border-t border-border">
+                      Envío: ₡{Math.round(Number(o.shipping_cost_colones)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
+                    </p>
+                  )}
+                  {o.payment_status !== 'paid' && o.payment_checkout_url && (
+                    <a
+                      href={o.payment_checkout_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block mt-3 text-sm font-body text-primary underline"
+                    >
+                      Continuar al pago →
+                    </a>
+                  )}
                 </CardContent>
               </Card>
             ))}

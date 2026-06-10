@@ -200,7 +200,7 @@ export const OrderConfirmationDialog = ({ open, onOpenChange, orderId }: OrderCo
         <Alert className="border-primary/40 bg-muted/40 rounded-xl">
           <Camera className="h-4 w-4" />
           <AlertDescription className="font-body text-xs leading-relaxed">
-            <strong>Importante:</strong> Tómale una foto o anota tu <strong>ID de pedido</strong> y guarda también el <strong>comprobante de pago</strong> que te entrega Shopify. Los necesitarás si algo ocurre con tu envío.
+            <strong>Importante:</strong> Tómale una foto o anota tu <strong>ID de pedido</strong> y guarda también el <strong>comprobante de pago</strong> que te entrega la pasarela. Los necesitarás si algo ocurre con tu envío.
           </AlertDescription>
         </Alert>
 
