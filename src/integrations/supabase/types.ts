@@ -23,7 +23,12 @@ export type Database = {
           created_at: string
           id: string
           items: Json
+          payment_checkout_url: string | null
+          payment_provider: string | null
+          payment_reference: string | null
+          payment_status: string
           shipping_canton: string | null
+          shipping_cost_colones: number
           shipping_country: string
           shipping_district: string | null
           shipping_exact_address: string | null
@@ -31,6 +36,7 @@ export type Database = {
           shipping_province: string | null
           shipping_recipient_name: string | null
           status: string
+          subtotal_colones: number
           total_colones: number
           updated_at: string
           user_id: string
@@ -43,7 +49,12 @@ export type Database = {
           created_at?: string
           id?: string
           items?: Json
+          payment_checkout_url?: string | null
+          payment_provider?: string | null
+          payment_reference?: string | null
+          payment_status?: string
           shipping_canton?: string | null
+          shipping_cost_colones?: number
           shipping_country?: string
           shipping_district?: string | null
           shipping_exact_address?: string | null
@@ -51,6 +62,7 @@ export type Database = {
           shipping_province?: string | null
           shipping_recipient_name?: string | null
           status?: string
+          subtotal_colones?: number
           total_colones?: number
           updated_at?: string
           user_id: string
@@ -63,7 +75,12 @@ export type Database = {
           created_at?: string
           id?: string
           items?: Json
+          payment_checkout_url?: string | null
+          payment_provider?: string | null
+          payment_reference?: string | null
+          payment_status?: string
           shipping_canton?: string | null
+          shipping_cost_colones?: number
           shipping_country?: string
           shipping_district?: string | null
           shipping_exact_address?: string | null
@@ -71,6 +88,7 @@ export type Database = {
           shipping_province?: string | null
           shipping_recipient_name?: string | null
           status?: string
+          subtotal_colones?: number
           total_colones?: number
           updated_at?: string
           user_id?: string
@@ -79,6 +97,7 @@ export type Database = {
       }
       product_colors: {
         Row: {
+          available: boolean
           color_hex: string | null
           color_name: string
           hover_image_url: string | null
@@ -88,6 +107,7 @@ export type Database = {
           sort_order: number
         }
         Insert: {
+          available?: boolean
           color_hex?: string | null
           color_name: string
           hover_image_url?: string | null
@@ -97,6 +117,7 @@ export type Database = {
           sort_order?: number
         }
         Update: {
+          available?: boolean
           color_hex?: string | null
           color_name?: string
           hover_image_url?: string | null
@@ -117,6 +138,7 @@ export type Database = {
       }
       products: {
         Row: {
+          available: boolean
           category: string
           created_at: string
           created_by: string | null
@@ -132,6 +154,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          available?: boolean
           category?: string
           created_at?: string
           created_by?: string | null
@@ -147,6 +170,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          available?: boolean
           category?: string
           created_at?: string
           created_by?: string | null
