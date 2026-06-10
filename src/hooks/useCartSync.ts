@@ -1,15 +1,5 @@
-import { useEffect } from 'react';
-import { useCartStore } from '@/stores/cartStore';
-
-export function useCartSync() {
-  const syncCart = useCartStore(state => state.syncCart);
-
-  useEffect(() => {
-    syncCart();
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') syncCart();
-    };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [syncCart]);
-}
+/**
+ * No-op hook retained for compatibility after migrating to a local cart.
+ * The cart is now persisted in localStorage and needs no remote sync.
+ */
+export function useCartSync() {}
