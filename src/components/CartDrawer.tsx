@@ -49,44 +49,34 @@ export const CartDrawer = () => {
     if (items.length === 0) return;
     setSaving(true);
     try {
-      const orderItems = items.map((it) => ({
+      const orderItemsPayload = items.map((it) => ({
         product_id: it.productId,
-        title: it.title,
-        color: it.color,
-        size: it.size,
-        variantTitle: [it.color, it.size].filter(Boolean).join(" / "),
+        color: it.color ?? null,
+        size: it.size ?? null,
         quantity: it.quantity,
-        price: it.priceColones,
-        image: it.imageUrl,
       }));
 
-      const { data: inserted, error } = await supabase
-        .from("orders")
-        .insert({
-          user_id: user.id,
-          items: orderItems,
-          subtotal_colones: subtotal,
-          shipping_cost_colones: SHIPPING_COST_COLONES,
-          total_colones: totalPrice,
-          status: "pending",
-          payment_status: "unpaid",
-          payment_provider: "tilopay",
-          contact_name: shipping.recipient_name,
-          contact_email: profile?.email ?? user.email ?? null,
-          contact_phone: shipping.phone,
-          contact_address: `${shipping.exact_address}, ${shipping.district}, ${shipping.canton}, ${shipping.province}`,
-          shipping_recipient_name: shipping.recipient_name,
-          shipping_province: shipping.province,
-          shipping_canton: shipping.canton,
-          shipping_district: shipping.district,
-          shipping_exact_address: shipping.exact_address,
-          shipping_phone: shipping.phone,
-          shipping_country: "CR",
-        })
-        .select("id")
-        .single();
-      if (error) throw error;
-      const orderId = inserted?.id ?? null;
+      const { data: created, error: createErr } = await supabase.functions.invoke(
+        "create-order",
+        {
+          body: {
+            items: orderItemsPayload,
+            shipping: {
+              recipient_name: shipping.recipient_name,
+              phone: shipping.phone,
+              province: shipping.province,
+              canton: shipping.canton,
+              district: shipping.district,
+              exact_address: shipping.exact_address,
+            },
+          },
+        }
+      );
+      if (createErr || !created?.order_id) {
+        const msg = (created as { error?: string } | null)?.error || createErr?.message;
+        throw new Error(msg || "No se pudo registrar el pedido");
+      }
+      const orderId: string = created.order_id;
       setLastOrderId(orderId);
 
       // Try to create Tilopay checkout
