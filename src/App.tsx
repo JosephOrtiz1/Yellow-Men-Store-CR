@@ -6,7 +6,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { RequireAuth } from "@/components/RequireAuth";
-import { useCartSync } from "@/hooks/useCartSync";
 import Index from "./pages/Index";
 import ProductDetail from "./pages/ProductDetail";
 import Category from "./pages/Category";
@@ -19,10 +18,8 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const AppContent = () => {
-  useCartSync();
-  return (
-    <>
+const AppContent = () => (
+  <>
       <Header />
       <main>
         <Routes>
@@ -38,9 +35,8 @@ const AppContent = () => {
         </Routes>
       </main>
       <Footer />
-    </>
-  );
-};
+  </>
+);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
