@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import isotipo from "@/assets/isotipo.png";
+import isotipo from "@/assets/brand/isotipo.png";
 
 const categories = [
   { name: "Street Wear", slug: "street-wear" },

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Instagram } from "lucide-react";
-import logoFull from "@/assets/logo-full.png";
+import logoFull from "@/assets/brand/logo-full.png";
 
 export const Footer = () => (
   <footer className="bg-secondary text-foreground py-12 mt-20 border-t border-border">
