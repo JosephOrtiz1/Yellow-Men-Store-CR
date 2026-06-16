@@ -215,6 +215,8 @@ const Admin = () => {
           sizes: selectedSizes,
           size_guide_url: sizeGuideUrl,
           created_by: user!.id,
+          is_active: true,
+          available: true,
         })
         .select("id")
         .single();
