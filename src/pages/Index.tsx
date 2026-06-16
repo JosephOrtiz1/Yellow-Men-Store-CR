@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { SupabaseProductCard } from "@/components/SupabaseProductCard";
 import { fetchSupabaseProducts, type SupabaseProductListItem } from "@/lib/supabaseProducts";
 import { ArrowRight, Loader2 } from "lucide-react";
-import techwearHero from "@/assets/hero-techwear.jpg";
+import techwearHero from "@/assets/hero/hero-techwear.jpg";
 
 const categories = [
   { name: "Street Wear", slug: "street-wear", description: "Estilo urbano y audaz" },

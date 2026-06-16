@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import AdminLogin from "./AdminLogin";
-import techwearImg from "@/assets/techwear-hero.jpg";
+import techwearImg from "@/assets/hero/techwear-hero.jpg";
 
 const CATEGORIES = [
   { value: "street-wear", label: "Street Wear" },
