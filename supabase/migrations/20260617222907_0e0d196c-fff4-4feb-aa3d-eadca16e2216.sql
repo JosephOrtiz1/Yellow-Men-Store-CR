@@ -1,0 +1,1 @@
+REVOKE SELECT (created_by) ON public.products FROM anon, authenticated;
