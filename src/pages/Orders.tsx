@@ -184,6 +184,7 @@ const Orders = () => {
             ))}
           </div>
         )}
+        {successOrder && <PaymentSuccessModal open onClose={() => setSuccessOrder(null)} orderId={successOrder.id} total={successOrder.total} paid method={successOrder.method} />}
       </div>
     </div>
   );
