@@ -29,6 +29,7 @@ const shippingSchema = z.object({
 });
 
 interface Props {
+  inline?: boolean;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirm: (data: ShippingData) => Promise<void>;
@@ -42,6 +43,7 @@ interface Props {
 }
 
 export const ShippingDialog = ({
+  inline = false,
   open,
   onOpenChange,
   onConfirm,
@@ -120,17 +122,16 @@ export const ShippingDialog = ({
     await onConfirm(parsed.data as ShippingData);
   };
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl">
-        <DialogHeader>
-          <DialogTitle className="font-heading text-2xl tracking-wider flex items-center gap-2">
+  const content = (
+    <>
+        <div>
+          <h2 className="font-heading text-2xl tracking-wider flex items-center gap-2">
             <Truck className="w-5 h-5 text-primary" /> DATOS DE ENVÍO
-          </DialogTitle>
-          <DialogDescription className="font-body">
+          </h2>
+          <p className="font-body text-muted-foreground mt-2">
             Completa los datos para que tu pedido llegue correctamente.
-          </DialogDescription>
-        </DialogHeader>
+          </p>
+        </div>
 
         <Alert className="border-primary/40 bg-primary/5 rounded-xl">
           <Info className="h-4 w-4 text-primary" />
@@ -224,15 +225,28 @@ export const ShippingDialog = ({
             </span>
           </label>
 
-          <DialogFooter className="gap-2">
+          <div className="flex flex-wrap justify-end gap-2">
             <Button type="button" variant="outline" className="rounded-xl" onClick={() => onOpenChange(false)} disabled={saving}>
-              Cancelar
+              Volver al carrito
             </Button>
             <Button type="submit" className="rounded-xl bg-primary text-primary-foreground hover:bg-primary/90" disabled={saving}>
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Continuar al pago"}
             </Button>
-          </DialogFooter>
+          </div>
         </form>
+    </>
+  );
+
+  if (inline) return <section className="space-y-6">{content}</section>;
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl">
+        <DialogHeader className="sr-only">
+          <DialogTitle>Datos de envío</DialogTitle>
+          <DialogDescription>Completa la dirección de entrega del pedido.</DialogDescription>
+        </DialogHeader>
+        {content}
       </DialogContent>
     </Dialog>
   );
