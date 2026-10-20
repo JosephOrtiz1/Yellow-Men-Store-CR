@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Package, Smartphone } from "lucide-react";
 import { ReceiptUpload } from "@/components/ReceiptUpload";
-import { SINPE_PHONE, PAYMENT_METHOD_LABELS, ORDER_STATUS_LABELS, type PaymentMethod } from "@/lib/payments";
+import { SINPE_PHONE, SINPE_IBAN, PAYMENT_METHOD_LABELS, ORDER_STATUS_LABELS, type PaymentMethod } from "@/lib/payments";
 import { formatColones } from "@/lib/supabaseProducts";
 
 interface OrderItem {
@@ -147,8 +147,9 @@ const Orders = () => {
                         <Smartphone className="w-4 h-4 text-primary" /> Pago por SINPE Móvil
                       </p>
                       <p className="text-xs font-body text-muted-foreground">
-                        Transfiere <strong className="text-foreground">{formatColones(Number(o.total_colones))}</strong> al número{" "}
-                        <strong className="text-foreground">{SINPE_PHONE}</strong> y sube la foto de tu comprobante aquí.
+                         Transfiere <strong className="text-foreground">{formatColones(Number(o.total_colones))}</strong> al número SINPE{" "}
+                        <strong className="text-foreground">{SINPE_PHONE}</strong> o por IBAN{" "}
+                        <strong className="text-foreground">{SINPE_IBAN}</strong>, y sube la foto de tu comprobante aquí.
                         Tu pedido se confirmará cuando lo revisemos.
                       </p>
                       <ReceiptUpload orderId={o.id} />
