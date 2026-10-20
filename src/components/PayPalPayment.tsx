@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { PayPalScriptProvider, PayPalButtons, PayPalCardFieldsProvider, PayPalNameField, PayPalNumberField, PayPalExpiryField, PayPalCVVField, usePayPalCardFields, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { CreditCard, Loader2, LockKeyhole } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -37,27 +37,29 @@ function PaymentFields({ method, total, ensureOrder, onPaid, config }: Props & {
   const [{ isPending, isRejected, isResolved }] = usePayPalScriptReducer();
   const [error, setError] = useState('');
   const [eligible, setEligible] = useState<boolean | null>(null);
+  const callbacks = useRef({ ensureOrder, onPaid });
+  callbacks.current = { ensureOrder, onPaid };
   useEffect(() => {
     if (!isResolved) return;
     setEligible(window.paypal?.CardFields?.().isEligible() ?? false);
   }, [isResolved]);
-  const createOrder = async () => {
+  const createOrder = useCallback(async () => {
     setError('');
-    const orderId = await ensureOrder();
+    const orderId = await callbacks.current.ensureOrder();
     const { data, error: failure } = await supabase.functions.invoke('paypal-create-order', { body: { order_id: orderId, return_origin: window.location.origin } });
     if (failure || !data?.paypal_order_id) throw new Error('No se pudo preparar el pago. Tu pedido permanece pendiente.');
     return data.paypal_order_id as string;
-  };
-  const onApprove = async ({ orderID }: { orderID: string }) => {
-    const orderId = await ensureOrder();
+  }, []);
+  const onApprove = useCallback(async ({ orderID }: { orderID: string }) => {
+    const orderId = await callbacks.current.ensureOrder();
     const { data, error: failure } = await supabase.functions.invoke('paypal-capture-order', { body: { paypal_order_id: orderID } });
     if (failure || !isConfirmedCapture(data, orderId)) {
       setError('El pago aún no está confirmado. Revisa Mis pedidos antes de volver a pagar.');
       throw new Error('Payment not confirmed');
     }
-    onPaid();
-  };
-  const onError = () => setError('No se completó el pago. Tu pedido no se marca como pagado; puedes reintentarlo.');
+    callbacks.current.onPaid();
+  }, []);
+  const onError = useCallback(() => setError('No se completó el pago. Tu pedido no se marca como pagado; puedes reintentarlo.'), []);
   const css = getComputedStyle(document.documentElement);
   const fieldStyle = { input: { color: `hsl(${css.getPropertyValue('--foreground').trim()})`, background: `hsl(${css.getPropertyValue('--background').trim()})`, fontSize: '16px', fontFamily: 'Arial, sans-serif', padding: '12px' } };
   return <section aria-label={method === 'card' ? 'Datos de tarjeta' : 'Pago con cuenta PayPal'} className="space-y-4">
