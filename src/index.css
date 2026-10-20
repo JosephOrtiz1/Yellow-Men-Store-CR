@@ -115,3 +115,44 @@
     background: hsl(var(--background));
   }
 }
+
+/* Confirmación de pago — animación del check */
+@keyframes success-circle-draw {
+  from { stroke-dashoffset: 300; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes success-check-draw {
+  from { stroke-dashoffset: 80; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes success-card-pop {
+  0% { transform: scale(0.85); opacity: 0; }
+  60% { transform: scale(1.03); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes success-overlay-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.success-overlay {
+  animation: success-overlay-fade 0.25s ease-out;
+}
+.success-card {
+  animation: success-card-pop 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.15);
+}
+.success-circle {
+  stroke-dasharray: 300;
+  stroke-dashoffset: 300;
+  animation: success-circle-draw 0.7s ease-out 0.1s forwards;
+}
+.success-check {
+  stroke-dasharray: 80;
+  stroke-dashoffset: 80;
+  animation: success-check-draw 0.45s ease-out 0.65s forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .success-overlay, .success-card { animation: none; }
+  .success-circle, .success-check { animation: none; stroke-dashoffset: 0; }
+}

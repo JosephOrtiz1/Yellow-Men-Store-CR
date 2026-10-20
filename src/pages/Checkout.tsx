@@ -7,6 +7,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ShippingDialog, type ShippingData } from "@/components/ShippingDialog";
 import { ReceiptUpload } from "@/components/ReceiptUpload";
 import { OrderProgressGuide } from "@/components/OrderProgressGuide";
+import { PaymentSuccessModal } from "@/components/PaymentSuccessModal";
 import { PayPalPayment } from "@/components/PayPalPayment";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -43,6 +44,7 @@ const Checkout = () => {
   const [order, setOrder] = useState<{ id: string; total: number; method: PaymentMethod } | null>(null);
   const orderPromise = useRef<Promise<string> | null>(null);
   const [paid, setPaid] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const subtotal = items.reduce((sum, item) => sum + item.priceColones * item.quantity, 0);
   const total = subtotal + (items.length ? SHIPPING_COST_COLONES : 0);
 
@@ -89,7 +91,7 @@ const Checkout = () => {
   };
 
   const submitOrder = async () => {
-    try { await ensureOrder(); }
+    try { await ensureOrder(); setShowSuccess(true); }
     catch (error) { toast.error(error instanceof Error ? error.message : "No se pudo continuar con el pago."); }
   };
 
@@ -152,7 +154,8 @@ const Checkout = () => {
                   <Button variant="outline" disabled={saving} className="w-full sm:w-auto" onClick={() => setStep("details")}>Volver a los detalles</Button>
                 </section>
               )}
-              {(step === "payment" || order) && shipping && !paid && (order?.method ?? method) !== "sinpe" && <PayPalPayment method={(order?.method ?? method) === "card" ? "card" : "paypal"} total={order?.total ?? total} ensureOrder={ensureOrder} onPaid={() => { setPaid(true); toast.success("Pago confirmado por PayPal"); }} />}
+              {(step === "payment" || order) && shipping && !paid && (order?.method ?? method) !== "sinpe" && <PayPalPayment method={(order?.method ?? method) === "card" ? "card" : "paypal"} total={order?.total ?? total} ensureOrder={ensureOrder} onPaid={() => { setPaid(true); setShowSuccess(true); toast.success("Pago confirmado por PayPal"); }} />}
+              {order && <PaymentSuccessModal open={showSuccess} onClose={() => setShowSuccess(false)} orderId={order.id} total={order.total} paid={order.method === "sinpe" ? false : paid} method={order.method} />}
               <OrderProgressGuide />
             </div>
             <aside aria-label="Resumen de compra" className="border border-border bg-card rounded-lg p-6 lg:sticky lg:top-24 min-w-0">
