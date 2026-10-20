@@ -69,16 +69,10 @@ function PaymentFields({ method, total, ensureOrder, onPaid, config }: Props & {
     <p className="text-sm text-muted-foreground">{config.sandbox ? 'Modo de pruebas: no se realizan cobros reales. ' : ''}Importe en PayPal: <strong className="text-foreground">USD {(total / config.crc_per_usd).toFixed(2)}</strong>.</p>
     {isPending && <p role="status" className="flex gap-2 text-sm text-muted-foreground"><Loader2 className="w-4 h-4 animate-spin" />Cargando pago seguro…</p>}
     {isRejected && <p role="alert" className="text-destructive">No se pudo conectar con PayPal. Recarga la página o selecciona SINPE.</p>}
-    {isResolved && paymentExperience(method) === 'card-fields' && eligible === false && <p role="alert" className="border-l-2 border-primary pl-4 text-sm text-muted-foreground">PayPal no habilita los campos de tarjeta para esta cuenta de comercio. Selecciona cuenta PayPal o SINPE para continuar.</p>}
-    {isResolved && method === 'card' && eligible && <PayPalCardFieldsProvider createOrder={createOrder} onApprove={onApprove} onError={onError} style={fieldStyle}>
-      <div className="space-y-4">
-        <div><p className="text-sm mb-2">Nombre del titular</p><PayPalNameField className="h-12 border border-border rounded" placeholder="Nombre como aparece en la tarjeta" /></div>
-        <div><p className="text-sm mb-2">Número de tarjeta</p><PayPalNumberField className="h-12 border border-border rounded" placeholder="Número de tarjeta" /></div>
-        <div className="grid grid-cols-2 gap-4"><div><p className="text-sm mb-2">Vencimiento</p><PayPalExpiryField className="h-12 border border-border rounded" placeholder="MM/AA" /></div><div><p className="text-sm mb-2">Código de seguridad</p><PayPalCVVField className="h-12 border border-border rounded" placeholder="CVV" /></div></div>
-        <p className="text-xs text-muted-foreground">PayPal protege los datos de tu tarjeta. Yellow Men Store no los recibe ni los guarda.</p>
-        <SubmitCard />
-      </div>
-    </PayPalCardFieldsProvider>}
+    {isResolved && method === 'card' && <div className="space-y-3">
+      <p className="text-sm text-muted-foreground">Pulsa el botón y escribe los datos de tu Visa o Mastercard en la ventana segura de PayPal. No necesitas cuenta de PayPal; Yellow Men Store no recibe ni guarda los datos de tu tarjeta.</p>
+      <PayPalButtons fundingSource="card" createOrder={createOrder} onApprove={onApprove} onError={onError} onCancel={onCancel} style={{ layout: 'vertical', shape: 'rect', height: 48 }} />
+    </div>}
     {isResolved && method === 'paypal' && <PayPalButtons fundingSource="paypal" createOrder={createOrder} onApprove={onApprove} onError={onError} onCancel={onCancel} style={paypalButtonStyle} />}
     {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
   </section>;
