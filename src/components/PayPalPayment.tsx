@@ -12,6 +12,7 @@ type Props = {
   onPaid: () => void;
 };
 type Config = { client_id: string; sandbox: boolean; crc_per_usd: number };
+const paypalButtonStyle = { layout: 'vertical', label: 'pay', shape: 'rect', height: 48 } as const;
 
 function SubmitCard() {
   const { cardFieldsForm } = usePayPalCardFields();
@@ -60,6 +61,7 @@ function PaymentFields({ method, total, ensureOrder, onPaid, config }: Props & {
     callbacks.current.onPaid();
   }, []);
   const onError = useCallback(() => setError('No se completó el pago. Tu pedido no se marca como pagado; puedes reintentarlo.'), []);
+  const onCancel = useCallback(() => setError('Cancelaste el pago. No se confirmó ningún cobro; puedes reintentarlo.'), []);
   const css = getComputedStyle(document.documentElement);
   const fieldStyle = { input: { color: `hsl(${css.getPropertyValue('--foreground').trim()})`, background: `hsl(${css.getPropertyValue('--background').trim()})`, fontSize: '16px', fontFamily: 'Arial, sans-serif', padding: '12px' } };
   return <section aria-label={method === 'card' ? 'Datos de tarjeta' : 'Pago con cuenta PayPal'} className="space-y-4">
@@ -77,7 +79,7 @@ function PaymentFields({ method, total, ensureOrder, onPaid, config }: Props & {
         <SubmitCard />
       </div>
     </PayPalCardFieldsProvider>}
-    {isResolved && method === 'paypal' && <PayPalButtons fundingSource="paypal" createOrder={createOrder} onApprove={onApprove} onError={onError} onCancel={() => setError('Cancelaste el pago. No se confirmó ningún cobro; puedes reintentarlo.')} style={{ layout: 'vertical', label: 'pay', shape: 'rect', height: 48 }} />}
+    {isResolved && method === 'paypal' && <PayPalButtons fundingSource="paypal" createOrder={createOrder} onApprove={onApprove} onError={onError} onCancel={onCancel} style={paypalButtonStyle} />}
     {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
   </section>;
 }
