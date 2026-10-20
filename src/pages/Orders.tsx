@@ -37,6 +37,7 @@ const Orders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [params, setParams] = useSearchParams();
+  const [successOrder, setSuccessOrder] = useState<{ id: string; total: number; method: PaymentMethod | null } | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -57,7 +58,12 @@ const Orders = () => {
         .invoke("paypal-capture-order", { body: { paypal_order_id: token } })
         .then(({ data, error }) => {
           if (error || data?.status !== "paid") toast.error("El pago no se completó. Intenta de nuevo.");
-          else toast.success(`¡Pago confirmado! Guarda tu ID de pedido: ${String(data.order_id).slice(0, 8)}`, { duration: 10000 });
+          else {
+            toast.success(`¡Pago confirmado! Guarda tu ID de pedido: ${String(data.order_id).slice(0, 8)}`, { duration: 10000 });
+            supabase.from("orders").select("total_colones, payment_method").eq("id", String(data.order_id)).maybeSingle().then(({ data: saved }) => {
+              setSuccessOrder({ id: String(data.order_id), total: Number(saved?.total_colones ?? 0), method: (saved?.payment_method as PaymentMethod) ?? null });
+            });
+          }
           setParams({}, { replace: true });
           load();
         });
