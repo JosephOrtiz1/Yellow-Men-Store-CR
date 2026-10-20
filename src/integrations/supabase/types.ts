@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          order_id: string | null
+          read: boolean
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          order_id?: string | null
+          read?: boolean
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          order_id?: string | null
+          read?: boolean
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
           contact_address: string | null
@@ -24,6 +62,7 @@ export type Database = {
           id: string
           items: Json
           payment_checkout_url: string | null
+          payment_method: string | null
           payment_provider: string | null
           payment_reference: string | null
           payment_status: string
@@ -50,6 +89,7 @@ export type Database = {
           id?: string
           items?: Json
           payment_checkout_url?: string | null
+          payment_method?: string | null
           payment_provider?: string | null
           payment_reference?: string | null
           payment_status?: string
@@ -76,6 +116,7 @@ export type Database = {
           id?: string
           items?: Json
           payment_checkout_url?: string | null
+          payment_method?: string | null
           payment_provider?: string | null
           payment_reference?: string | null
           payment_status?: string
@@ -94,6 +135,47 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      payment_receipts: {
+        Row: {
+          admin_note: string | null
+          created_at: string
+          id: string
+          image_path: string
+          order_id: string
+          reviewed_at: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          admin_note?: string | null
+          created_at?: string
+          id?: string
+          image_path: string
+          order_id: string
+          reviewed_at?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          admin_note?: string | null
+          created_at?: string
+          id?: string
+          image_path?: string
+          order_id?: string
+          reviewed_at?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_receipts_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       product_colors: {
         Row: {
@@ -195,6 +277,11 @@ export type Database = {
           full_name: string | null
           id: string
           phone: string | null
+          shipping_canton: string | null
+          shipping_district: string | null
+          shipping_exact_address: string | null
+          shipping_phone: string | null
+          shipping_province: string | null
           updated_at: string
           user_id: string
         }
@@ -205,6 +292,11 @@ export type Database = {
           full_name?: string | null
           id?: string
           phone?: string | null
+          shipping_canton?: string | null
+          shipping_district?: string | null
+          shipping_exact_address?: string | null
+          shipping_phone?: string | null
+          shipping_province?: string | null
           updated_at?: string
           user_id: string
         }
@@ -215,6 +307,11 @@ export type Database = {
           full_name?: string | null
           id?: string
           phone?: string | null
+          shipping_canton?: string | null
+          shipping_district?: string | null
+          shipping_exact_address?: string | null
+          shipping_phone?: string | null
+          shipping_province?: string | null
           updated_at?: string
           user_id?: string
         }
