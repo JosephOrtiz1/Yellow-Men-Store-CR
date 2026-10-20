@@ -3,146 +3,27 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { ShoppingCart, Minus, Plus, Trash2, CreditCard, Loader2, LogIn } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Trash2, CreditCard, LogIn } from "lucide-react";
 import { useCartStore, SHIPPING_COST_COLONES } from "@/stores/cartStore";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { ShippingDialog, OrderConfirmationDialog, type ShippingData } from "@/components/ShippingDialog";
-import { PaymentMethodDialog } from "@/components/PaymentMethodDialog";
-import { SINPE_PHONE, type PaymentMethod } from "@/lib/payments";
 import { formatColones } from "@/lib/supabaseProducts";
-
-interface ProfileDefaults {
-  full_name?: string | null;
-  phone?: string | null;
-  address?: string | null;
-  shipping_province?: string | null;
-  shipping_canton?: string | null;
-  shipping_district?: string | null;
-  shipping_exact_address?: string | null;
-  shipping_phone?: string | null;
-}
 
 export const CartDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [shippingOpen, setShippingOpen] = useState(false);
-  const [paymentOpen, setPaymentOpen] = useState(false);
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [lastOrderId, setLastOrderId] = useState<string | null>(null);
-  const [pendingShipping, setPendingShipping] = useState<ShippingData | null>(null);
-  const [profile, setProfile] = useState<ProfileDefaults | null>(null);
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { items, updateQuantity, removeItem, clearCart } = useCartStore();
+  const { items, updateQuantity, removeItem } = useCartStore();
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = items.reduce((sum, item) => sum + item.priceColones * item.quantity, 0);
   const shipping = items.length > 0 ? SHIPPING_COST_COLONES : 0;
   const totalPrice = subtotal + shipping;
 
-  const openShipping = async () => {
-    if (!user) {
-      setIsOpen(false);
-      toast.info("Inicia sesión para continuar con tu compra", { position: "top-center" });
-      navigate("/auth", { state: { from: "/" } });
-      return;
-    }
-    if (items.length === 0) return;
-    // Prefill from saved profile shipping data
-    const { data } = await supabase
-      .from("profiles")
-      .select("full_name, phone, address, shipping_province, shipping_canton, shipping_district, shipping_exact_address, shipping_phone")
-      .eq("user_id", user.id)
-      .maybeSingle();
-    setProfile(data ?? null);
-    setShippingOpen(true);
-  };
-
-  const handleConfirmShipping = async (shippingData: ShippingData) => {
-    if (!user) return;
-    setPendingShipping(shippingData);
-    setShippingOpen(false);
-    setPaymentOpen(true);
-  };
-
-  const handleSelectPayment = async (method: PaymentMethod) => {
-    if (!user || !pendingShipping || items.length === 0) return;
-    setSaving(true);
-    try {
-      const orderItemsPayload = items.map((it) => ({
-        product_id: it.productId,
-        color: it.color ?? null,
-        size: it.size ?? null,
-        quantity: it.quantity,
-      }));
-
-      const { data: created, error: createErr } = await supabase.functions.invoke(
-        "create-order",
-        {
-          body: {
-            items: orderItemsPayload,
-            payment_method: method,
-            shipping: {
-              recipient_name: pendingShipping.recipient_name,
-              phone: pendingShipping.phone,
-              province: pendingShipping.province,
-              canton: pendingShipping.canton,
-              district: pendingShipping.district,
-              exact_address: pendingShipping.exact_address,
-            },
-          },
-        }
-      );
-      if (createErr || !created?.order_id) {
-        const msg = (created as { error?: string } | null)?.error || createErr?.message;
-        throw new Error(msg || "No se pudo registrar el pedido");
-      }
-      const orderId: string = created.order_id;
-      setLastOrderId(orderId);
-
-      if (method === "sinpe") {
-        setPaymentOpen(false);
-        setIsOpen(false);
-        clearCart();
-        toast.info(
-          `Realiza el SINPE Móvil al ${SINPE_PHONE} por ${formatColones(totalPrice)} y sube tu comprobante desde "Mis pedidos".`,
-          { position: "top-center", duration: 10000 }
-        );
-        setConfirmOpen(true);
-        return;
-      }
-
-      // card / paypal → PayPal checkout (admite tarjeta y cuenta PayPal)
-      const { data: payData, error: payError } = await supabase.functions.invoke(
-        "paypal-create-order",
-        { body: { order_id: orderId, return_origin: window.location.origin } }
-      );
-
-      setPaymentOpen(false);
-      setIsOpen(false);
-      clearCart();
-
-      if (payError || !payData?.checkout_url) {
-        toast.info(
-          "Pedido registrado, pero no se pudo abrir el pago. Puedes reintentarlo desde Mis pedidos.",
-          { position: "top-center", duration: 6000 }
-        );
-        setConfirmOpen(true);
-        return;
-      }
-
-      window.location.href = payData.checkout_url as string;
-    } catch (err) {
-      console.error("Failed to save order:", err);
-      toast.error("No se pudo registrar tu pedido. Intenta de nuevo.", { position: "top-center" });
-    } finally {
-      setSaving(false);
-    }
+  const openCheckout = () => {
+    setIsOpen(false);
+    navigate("/checkout");
   };
 
   return (
-    <>
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="relative text-foreground touch-manipulation">
@@ -220,10 +101,8 @@ export const CartDrawer = () => {
                     <span className="text-xl font-bold font-body">{formatColones(totalPrice)}</span>
                   </div>
                 </div>
-                <Button onClick={openShipping} className="w-full rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 touch-manipulation" size="lg" disabled={items.length === 0 || saving}>
-                  {saving ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : !user ? (
+                <Button onClick={openCheckout} className="w-full rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 touch-manipulation" size="lg" disabled={items.length === 0}>
+                  {!user ? (
                     <><LogIn className="w-4 h-4 mr-2" />Iniciar sesión para pagar</>
                   ) : (
                     <><CreditCard className="w-4 h-4 mr-2" />Proceder al pago</>
@@ -236,26 +115,5 @@ export const CartDrawer = () => {
       </SheetContent>
     </Sheet>
 
-    <ShippingDialog
-      open={shippingOpen}
-      onOpenChange={setShippingOpen}
-      onConfirm={handleConfirmShipping}
-      saving={saving}
-      defaultName={profile?.full_name ?? undefined}
-      defaultPhone={profile?.shipping_phone ?? profile?.phone ?? undefined}
-      defaultAddress={profile?.shipping_exact_address ?? profile?.address ?? undefined}
-      defaultProvince={profile?.shipping_province ?? undefined}
-      defaultCanton={profile?.shipping_canton ?? undefined}
-      defaultDistrict={profile?.shipping_district ?? undefined}
-    />
-    <PaymentMethodDialog
-      open={paymentOpen}
-      onOpenChange={setPaymentOpen}
-      onSelect={handleSelectPayment}
-      loading={saving}
-      totalColones={totalPrice}
-    />
-    <OrderConfirmationDialog open={confirmOpen} onOpenChange={setConfirmOpen} orderId={lastOrderId} />
-    </>
   );
 };
