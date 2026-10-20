@@ -2,7 +2,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { z } from 'npm:zod@3.23.8';
 
-const SHIPPING_COST_COLONES = 3500;
+const SHIPPING_COST_COLONES = 3000;
 
 const ItemSchema = z.object({
   product_id: z.string().uuid(),
@@ -23,6 +23,7 @@ const ShippingSchema = z.object({
 const BodySchema = z.object({
   items: z.array(ItemSchema).min(1).max(50),
   shipping: ShippingSchema,
+  payment_method: z.enum(['sinpe', 'card', 'paypal']),
 });
 
 function json(body: unknown, status = 200) {
@@ -60,7 +61,7 @@ Deno.serve(async (req) => {
     if (!parsed.success) {
       return json({ error: 'Invalid body', details: parsed.error.flatten() }, 400);
     }
-    const { items, shipping } = parsed.data;
+    const { items, shipping, payment_method } = parsed.data;
 
     const admin = createClient(
       Deno.env.get('SUPABASE_URL')!,
@@ -87,7 +88,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Optional: validate that color (if provided) exists and is available
+    // Validate that color (if provided) exists and is available
     if (items.some((i) => i.color)) {
       const { data: colors } = await admin
         .from('product_colors')
@@ -144,7 +145,8 @@ Deno.serve(async (req) => {
         total_colones: total,
         status: 'pending',
         payment_status: 'unpaid',
-        payment_provider: 'paypal',
+        payment_method,
+        payment_provider: payment_method === 'sinpe' ? 'sinpe' : 'paypal',
         contact_name: shipping.recipient_name,
         contact_email: contactEmail,
         contact_phone: shipping.phone,
@@ -164,6 +166,21 @@ Deno.serve(async (req) => {
       console.error('order insert error', insertError);
       return json({ error: 'Could not create order' }, 500);
     }
+
+    // Save shipping data to the user's profile for future checkouts
+    await admin
+      .from('profiles')
+      .update({
+        full_name: shipping.recipient_name,
+        phone: shipping.phone,
+        address: `${shipping.exact_address}, ${shipping.district}, ${shipping.canton}, ${shipping.province}`,
+        shipping_province: shipping.province,
+        shipping_canton: shipping.canton,
+        shipping_district: shipping.district,
+        shipping_exact_address: shipping.exact_address,
+        shipping_phone: shipping.phone,
+      })
+      .eq('user_id', userId);
 
     return json({
       order_id: inserted.id,
