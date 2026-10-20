@@ -4,5 +4,6 @@
 - [x] Verificar el flujo de compra y la presentación de la página (pedido SINPE de prueba creado; PayPal conserva el modo sandbox existente).
 
 # Tarjeta y cuenta PayPal
-- [ ] Mostrar los campos seguros de tarjeta en checkout y la ventana de PayPal para cuentas.
-- [ ] Conectar creación y captura seguras del pago y verificar disponibilidad real en sandbox.
+- [x] Integrar campos seguros de tarjeta y botón de cuenta PayPal con ventana pequeña.
+- [x] Conectar creación y captura autenticadas; comprobar creación real en sandbox, ventana abierta y reglas de confirmación con pruebas.
+- [ ] Habilitar y probar Visa/Mastercard: PayPal devuelve CardFields no elegible para la cuenta de comercio actual; requiere habilitación por PayPal. No se ha realizado una captura de prueba completa.
