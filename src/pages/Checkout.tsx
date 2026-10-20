@@ -7,6 +7,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ShippingDialog, type ShippingData } from "@/components/ShippingDialog";
 import { ReceiptUpload } from "@/components/ReceiptUpload";
 import { OrderProgressGuide } from "@/components/OrderProgressGuide";
+import { PaymentSuccessModal } from "@/components/PaymentSuccessModal";
 import { PayPalPayment } from "@/components/PayPalPayment";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
