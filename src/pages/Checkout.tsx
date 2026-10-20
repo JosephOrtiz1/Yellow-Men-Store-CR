@@ -46,6 +46,10 @@ const Checkout = () => {
   const total = subtotal + (items.length ? SHIPPING_COST_COLONES : 0);
 
   useEffect(() => {
+    if (order) clearCart();
+  }, [order, clearCart]);
+
+  useEffect(() => {
     if (!user) return;
     let active = true;
     supabase.from("profiles").select("full_name, phone, shipping_phone, shipping_province, shipping_canton, shipping_district, shipping_exact_address")
@@ -74,7 +78,6 @@ const Checkout = () => {
       });
       if (error || !data?.order_id) throw new Error("No se pudo registrar tu pedido. Revisa los datos e inténtalo de nuevo.");
       setOrder({ id: data.order_id, total: Number(data.total_colones), method });
-      clearCart();
       return data.order_id as string;
       } catch (error) {
         orderPromise.current = null;
