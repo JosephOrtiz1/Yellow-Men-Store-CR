@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Package, Smartphone } from "lucide-react";
 import { ReceiptUpload } from "@/components/ReceiptUpload";
+import { OrderProgressGuide } from "@/components/OrderProgressGuide";
 import { SINPE_PHONE, SINPE_IBAN, PAYMENT_METHOD_LABELS, ORDER_STATUS_LABELS, type PaymentMethod } from "@/lib/payments";
 import { formatColones } from "@/lib/supabaseProducts";
 
@@ -73,6 +74,10 @@ const Orders = () => {
     <div className="min-h-screen pt-20">
       <div className="container mx-auto px-4 py-8 max-w-3xl">
         <h1 className="font-heading text-4xl tracking-wider mb-6">MIS PEDIDOS</h1>
+        <details className="mb-6 border-y border-border py-4">
+          <summary className="cursor-pointer font-semibold text-sm text-primary">¿Qué significa cada estado de pago y pedido?</summary>
+          <div className="mt-4"><OrderProgressGuide /></div>
+        </details>
 
         {loading ? (
           <div className="flex justify-center py-20">
