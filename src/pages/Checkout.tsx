@@ -128,14 +128,28 @@ const Checkout = () => {
                 </section>
               ) : !shipping ? (
                 loadingProfile ? <Loader2 className="w-6 h-6 animate-spin text-primary" /> : <ShippingDialog inline open onOpenChange={() => navigate("/")} saving={saving} onConfirm={async data => { setShipping(data); window.scrollTo({ top: 0, behavior: "smooth" }); }} defaultName={profile?.full_name ?? undefined} defaultPhone={profile?.shipping_phone ?? profile?.phone ?? undefined} defaultAddress={profile?.shipping_exact_address ?? undefined} defaultProvince={profile?.shipping_province ?? undefined} defaultCanton={profile?.shipping_canton ?? undefined} defaultDistrict={profile?.shipping_district ?? undefined} />
+              ) : step === "details" ? (
+                <section className="space-y-6" aria-label="Detalles de la compra">
+                  <div><h2 className="font-heading text-3xl">DETALLES DE LA COMPRA</h2><p className="text-muted-foreground mt-2">Revisa los artículos, el subtotal y el total antes de pasar al pago.</p></div>
+                  <ul className="space-y-4 border border-border rounded-lg p-5">{items.map(item => <li key={item.id} className="flex gap-3">{item.imageUrl && <img src={item.imageUrl} alt={item.title} className="w-16 h-20 object-cover rounded shrink-0" />}<div className="min-w-0 flex-1"><p className="font-semibold break-words">{item.title}</p><p className="text-xs text-muted-foreground mt-1">{[item.color, item.size].filter(Boolean).join(" · ")} · × {item.quantity}</p></div><p className="text-sm font-semibold shrink-0">{formatColones(item.priceColones * item.quantity)}</p></li>)}</ul>
+                  <dl className="text-sm space-y-3 border-y border-border py-5">
+                    <div className="flex justify-between"><dt>Subtotal</dt><dd>{formatColones(subtotal)}</dd></div>
+                    <div className="flex justify-between"><dt>Envío nacional</dt><dd>{formatColones(SHIPPING_COST_COLONES)}</dd></div>
+                    <div className="flex justify-between text-lg font-semibold border-t border-border pt-4"><dt>Total</dt><dd className="text-primary">{formatColones(total)}</dd></div>
+                  </dl>
+                  <div className="border-y border-border py-5 space-y-2"><div className="flex justify-between gap-3"><h3 className="font-body font-semibold">Entregar a</h3><Button variant="link" className="h-auto p-0" onClick={() => { setStep("shipping"); }}>Editar</Button></div><p>{shipping.recipient_name} · {shipping.phone}</p><p className="text-sm text-muted-foreground">{shipping.province}, {shipping.canton}, {shipping.district}<br />{shipping.exact_address}</p></div>
+                  <Button size="lg" className="w-full sm:w-auto" onClick={() => { setStep("payment"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>Continuar al pago<ArrowRight className="w-4 h-4 ml-2" /></Button>
+                </section>
               ) : (
                 <section className="space-y-6">
                   <div><h2 className="font-heading text-3xl">ELIGE CÓMO PAGAR</h2><p className="text-muted-foreground mt-2">Revisa el método antes de registrar tu pedido. No se realizará ningún cobro al seleccionar una opción.</p></div>
                   <RadioGroup value={method} onValueChange={value => setMethod(value as PaymentMethod)} disabled={saving} className="gap-3">
                     {methods.map(({ id, title, description, icon: Icon }) => <label key={id} htmlFor={`payment-${id}`} className={`flex gap-4 p-5 border rounded-lg cursor-pointer transition-colors ${method === id ? "border-primary bg-primary/5" : "border-border hover:bg-muted/40"}`}><Icon className="w-6 h-6 text-primary shrink-0" /><span className="min-w-0 flex-1"><span className="block font-semibold">{title}</span><span className="block text-sm text-muted-foreground leading-relaxed mt-1">{description}</span></span><RadioGroupItem id={`payment-${id}`} value={id} aria-label={title} className="shrink-0 mt-1" /></label>)}
                   </RadioGroup>
-                  <div className="border-y border-border py-5 space-y-2"><div className="flex justify-between gap-3"><h3 className="font-body font-semibold">Entregar a</h3><Button variant="link" className="h-auto p-0" disabled={saving} onClick={() => setShipping(null)}>Editar</Button></div><p>{shipping.recipient_name} · {shipping.phone}</p><p className="text-sm text-muted-foreground">{shipping.province}, {shipping.canton}, {shipping.district}<br />{shipping.exact_address}</p></div>
+                  <div className="flex justify-between gap-3 border-y border-border py-5"><div><h3 className="font-body font-semibold">Entregar a</h3><p className="mt-1">{shipping.recipient_name} · {shipping.phone}</p><p className="text-sm text-muted-foreground">{shipping.province}, {shipping.canton}, {shipping.district}<br />{shipping.exact_address}</p></div><Button variant="link" className="h-auto p-0 shrink-0" disabled={saving} onClick={() => setStep("details")}>Editar</Button></div>
+                  <div className="flex justify-between text-lg font-semibold border-b border-border pb-5"><dt>Total a pagar</dt><dd className="text-primary">{formatColones(total)}</dd></div>
                   {method === "sinpe" && <Button size="lg" disabled={saving} className="w-full sm:w-auto" onClick={submitOrder}>{saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <LockKeyhole className="w-4 h-4 mr-2" />}Registrar pedido y subir comprobante</Button>}
+                  <Button variant="outline" disabled={saving} className="w-full sm:w-auto" onClick={() => setStep("details")}>Volver a los detalles</Button>
                 </section>
               )}
               {shipping && !paid && (order?.method ?? method) !== "sinpe" && <PayPalPayment method={(order?.method ?? method) === "card" ? "card" : "paypal"} total={order?.total ?? total} ensureOrder={ensureOrder} onPaid={() => { setPaid(true); toast.success("Pago confirmado por PayPal"); }} />}
