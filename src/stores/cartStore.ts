@@ -66,4 +66,4 @@ export const useCartStore = create<CartStore>()(
   )
 );
 
-export const SHIPPING_COST_COLONES = 3500;
+export const SHIPPING_COST_COLONES = 3000;

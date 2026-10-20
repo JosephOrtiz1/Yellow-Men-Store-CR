@@ -4,7 +4,10 @@ import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Package } from "lucide-react";
+import { Loader2, Package, Smartphone } from "lucide-react";
+import { ReceiptUpload } from "@/components/ReceiptUpload";
+import { SINPE_PHONE, PAYMENT_METHOD_LABELS, ORDER_STATUS_LABELS, type PaymentMethod } from "@/lib/payments";
+import { formatColones } from "@/lib/supabaseProducts";
 
 interface OrderItem {
   title: string;
@@ -21,6 +24,7 @@ interface Order {
   shipping_cost_colones?: number;
   status: string;
   payment_status?: string;
+  payment_method?: PaymentMethod | null;
   payment_checkout_url?: string | null;
   items: OrderItem[];
   created_at: string;
@@ -37,7 +41,7 @@ const Orders = () => {
     const load = () =>
       supabase
         .from("orders")
-        .select("id, total_colones, subtotal_colones, shipping_cost_colones, status, payment_status, payment_checkout_url, items, created_at")
+        .select("id, total_colones, subtotal_colones, shipping_cost_colones, status, payment_status, payment_method, payment_checkout_url, items, created_at")
         .order("created_at", { ascending: false })
         .then(({ data }) => {
           setOrders((data as unknown as Order[]) || []);
@@ -97,15 +101,20 @@ const Orders = () => {
                     </div>
                     <div className="text-right">
                       <p className="font-body font-bold text-primary">
-                        ₡{Math.round(Number(o.total_colones)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
+                        {formatColones(Number(o.total_colones))}
                       </p>
-                      <div className="flex gap-1 justify-end mt-1">
+                      <div className="flex gap-1 justify-end mt-1 flex-wrap">
                         <span className="text-xs px-2 py-0.5 rounded-sm bg-secondary text-muted-foreground font-body uppercase">
-                          {o.status}
+                          {ORDER_STATUS_LABELS[o.status] ?? o.status}
                         </span>
                         {o.payment_status && (
                           <span className={`text-xs px-2 py-0.5 rounded-sm font-body uppercase ${o.payment_status === 'paid' ? 'bg-primary/20 text-primary' : 'bg-destructive/10 text-destructive'}`}>
                             {o.payment_status === 'paid' ? 'Pagado' : 'Sin pagar'}
+                          </span>
+                        )}
+                        {o.payment_method && (
+                          <span className="text-xs px-2 py-0.5 rounded-sm bg-secondary text-muted-foreground font-body uppercase">
+                            {PAYMENT_METHOD_LABELS[o.payment_method] ?? o.payment_method}
                           </span>
                         )}
                       </div>
@@ -120,17 +129,34 @@ const Orders = () => {
                           {it.title} {it.variantTitle ? `(${it.variantTitle})` : ""} × {it.quantity}
                         </span>
                         <span className="text-muted-foreground">
-                          ₡{Math.round(Number(it.price) * it.quantity).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
+                          {formatColones(Number(it.price) * it.quantity)}
                         </span>
                       </li>
                     ))}
                   </ul>
                   {o.shipping_cost_colones != null && (
                     <p className="text-xs text-muted-foreground font-body mt-3 pt-3 border-t border-border">
-                      Envío: ₡{Math.round(Number(o.shipping_cost_colones)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
+                      Envío: {formatColones(Number(o.shipping_cost_colones))}
                     </p>
                   )}
-                  {o.payment_status !== 'paid' && o.payment_checkout_url && (
+
+                  {/* SINPE Móvil: instrucciones + subida de comprobante */}
+                  {o.payment_method === "sinpe" && o.payment_status !== "paid" && (
+                    <div className="mt-3 p-3 border border-primary/40 bg-primary/5 rounded-xl space-y-1">
+                      <p className="text-xs font-body font-semibold flex items-center gap-1.5">
+                        <Smartphone className="w-4 h-4 text-primary" /> Pago por SINPE Móvil
+                      </p>
+                      <p className="text-xs font-body text-muted-foreground">
+                        Transfiere <strong className="text-foreground">{formatColones(Number(o.total_colones))}</strong> al número{" "}
+                        <strong className="text-foreground">{SINPE_PHONE}</strong> y sube la foto de tu comprobante aquí.
+                        Tu pedido se confirmará cuando lo revisemos.
+                      </p>
+                      <ReceiptUpload orderId={o.id} />
+                    </div>
+                  )}
+
+                  {/* PayPal / tarjeta: continuar al pago */}
+                  {o.payment_method !== "sinpe" && o.payment_status !== 'paid' && o.payment_checkout_url && (
                     <a
                       href={o.payment_checkout_url}
                       target="_blank"

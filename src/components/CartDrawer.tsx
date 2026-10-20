@@ -9,15 +9,30 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ShippingDialog, OrderConfirmationDialog, type ShippingData } from "@/components/ShippingDialog";
+import { PaymentMethodDialog } from "@/components/PaymentMethodDialog";
+import { SINPE_PHONE, type PaymentMethod } from "@/lib/payments";
 import { formatColones } from "@/lib/supabaseProducts";
+
+interface ProfileDefaults {
+  full_name?: string | null;
+  phone?: string | null;
+  address?: string | null;
+  shipping_province?: string | null;
+  shipping_canton?: string | null;
+  shipping_district?: string | null;
+  shipping_exact_address?: string | null;
+  shipping_phone?: string | null;
+}
 
 export const CartDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [shippingOpen, setShippingOpen] = useState(false);
+  const [paymentOpen, setPaymentOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [lastOrderId, setLastOrderId] = useState<string | null>(null);
-  const [profile, setProfile] = useState<{ full_name?: string | null; phone?: string | null; address?: string | null; email?: string | null } | null>(null);
+  const [pendingShipping, setPendingShipping] = useState<ShippingData | null>(null);
+  const [profile, setProfile] = useState<ProfileDefaults | null>(null);
   const navigate = useNavigate();
   const { user } = useAuth();
   const { items, updateQuantity, removeItem, clearCart } = useCartStore();
@@ -34,19 +49,25 @@ export const CartDrawer = () => {
       return;
     }
     if (items.length === 0) return;
-    // Prefill from profile
+    // Prefill from saved profile shipping data
     const { data } = await supabase
       .from("profiles")
-      .select("full_name, email, phone, address")
+      .select("full_name, phone, address, shipping_province, shipping_canton, shipping_district, shipping_exact_address, shipping_phone")
       .eq("user_id", user.id)
       .maybeSingle();
     setProfile(data ?? null);
     setShippingOpen(true);
   };
 
-  const handleConfirmShipping = async (shipping: ShippingData) => {
+  const handleConfirmShipping = async (shippingData: ShippingData) => {
     if (!user) return;
-    if (items.length === 0) return;
+    setPendingShipping(shippingData);
+    setShippingOpen(false);
+    setPaymentOpen(true);
+  };
+
+  const handleSelectPayment = async (method: PaymentMethod) => {
+    if (!user || !pendingShipping || items.length === 0) return;
     setSaving(true);
     try {
       const orderItemsPayload = items.map((it) => ({
@@ -61,13 +82,14 @@ export const CartDrawer = () => {
         {
           body: {
             items: orderItemsPayload,
+            payment_method: method,
             shipping: {
-              recipient_name: shipping.recipient_name,
-              phone: shipping.phone,
-              province: shipping.province,
-              canton: shipping.canton,
-              district: shipping.district,
-              exact_address: shipping.exact_address,
+              recipient_name: pendingShipping.recipient_name,
+              phone: pendingShipping.phone,
+              province: pendingShipping.province,
+              canton: pendingShipping.canton,
+              district: pendingShipping.district,
+              exact_address: pendingShipping.exact_address,
             },
           },
         }
@@ -79,18 +101,31 @@ export const CartDrawer = () => {
       const orderId: string = created.order_id;
       setLastOrderId(orderId);
 
+      if (method === "sinpe") {
+        setPaymentOpen(false);
+        setIsOpen(false);
+        clearCart();
+        toast.info(
+          `Realiza el SINPE Móvil al ${SINPE_PHONE} por ${formatColones(totalPrice)} y sube tu comprobante desde "Mis pedidos".`,
+          { position: "top-center", duration: 10000 }
+        );
+        setConfirmOpen(true);
+        return;
+      }
+
+      // card / paypal → PayPal checkout (admite tarjeta y cuenta PayPal)
       const { data: payData, error: payError } = await supabase.functions.invoke(
         "paypal-create-order",
         { body: { order_id: orderId, return_origin: window.location.origin } }
       );
 
-      setShippingOpen(false);
+      setPaymentOpen(false);
       setIsOpen(false);
       clearCart();
 
       if (payError || !payData?.checkout_url) {
         toast.info(
-          "Pedido registrado, pero no se pudo abrir PayPal. Puedes reintentar el pago desde Mis pedidos.",
+          "Pedido registrado, pero no se pudo abrir el pago. Puedes reintentarlo desde Mis pedidos.",
           { position: "top-center", duration: 6000 }
         );
         setConfirmOpen(true);
@@ -191,7 +226,7 @@ export const CartDrawer = () => {
                   ) : !user ? (
                     <><LogIn className="w-4 h-4 mr-2" />Iniciar sesión para pagar</>
                   ) : (
-                    <><CreditCard className="w-4 h-4 mr-2" />Pagar con tarjeta</>
+                    <><CreditCard className="w-4 h-4 mr-2" />Proceder al pago</>
                   )}
                 </Button>
               </div>
@@ -207,8 +242,18 @@ export const CartDrawer = () => {
       onConfirm={handleConfirmShipping}
       saving={saving}
       defaultName={profile?.full_name ?? undefined}
-      defaultPhone={profile?.phone ?? undefined}
-      defaultAddress={profile?.address ?? undefined}
+      defaultPhone={profile?.shipping_phone ?? profile?.phone ?? undefined}
+      defaultAddress={profile?.shipping_exact_address ?? profile?.address ?? undefined}
+      defaultProvince={profile?.shipping_province ?? undefined}
+      defaultCanton={profile?.shipping_canton ?? undefined}
+      defaultDistrict={profile?.shipping_district ?? undefined}
+    />
+    <PaymentMethodDialog
+      open={paymentOpen}
+      onOpenChange={setPaymentOpen}
+      onSelect={handleSelectPayment}
+      loading={saving}
+      totalColones={totalPrice}
     />
     <OrderConfirmationDialog open={confirmOpen} onOpenChange={setConfirmOpen} orderId={lastOrderId} />
     </>

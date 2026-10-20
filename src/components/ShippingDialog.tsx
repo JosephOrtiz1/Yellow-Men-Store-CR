@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Truck, Info, Copy, Instagram, Camera } from "lucide-react";
 import { toast } from "sonner";
+import { COSTA_RICA } from "@/lib/costarica";
 
 export interface ShippingData {
   recipient_name: string;
@@ -34,24 +36,70 @@ interface Props {
   defaultName?: string;
   defaultPhone?: string;
   defaultAddress?: string;
+  defaultProvince?: string;
+  defaultCanton?: string;
+  defaultDistrict?: string;
 }
 
-export const ShippingDialog = ({ open, onOpenChange, onConfirm, saving, defaultName, defaultPhone, defaultAddress }: Props) => {
+export const ShippingDialog = ({
+  open,
+  onOpenChange,
+  onConfirm,
+  saving,
+  defaultName,
+  defaultPhone,
+  defaultAddress,
+  defaultProvince,
+  defaultCanton,
+  defaultDistrict,
+}: Props) => {
   const [form, setForm] = useState<ShippingData>({
-    recipient_name: defaultName ?? "",
+    recipient_name: "",
     province: "",
     canton: "",
     district: "",
-    exact_address: defaultAddress ?? "",
-    phone: defaultPhone ?? "",
+    exact_address: "",
+    phone: "",
   });
   const [errors, setErrors] = useState<Partial<Record<keyof ShippingData, string>>>({});
   const [acknowledged, setAcknowledged] = useState(false);
 
+  // Prefill when the dialog opens with saved profile data
+  useEffect(() => {
+    if (open) {
+      setForm({
+        recipient_name: defaultName ?? "",
+        province: defaultProvince ?? "",
+        canton: defaultCanton ?? "",
+        district: defaultDistrict ?? "",
+        exact_address: defaultAddress ?? "",
+        phone: defaultPhone ?? "",
+      });
+      setErrors({});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
   const set = <K extends keyof ShippingData>(k: K, v: string) => {
-    setForm((f) => ({ ...f, [k]: v }));
+    setForm((f) => {
+      const next = { ...f, [k]: v };
+      // Reset dependent selects
+      if (k === "province") {
+        next.canton = "";
+        next.district = "";
+      }
+      if (k === "canton") {
+        next.district = "";
+      }
+      return next;
+    });
     setErrors((e) => ({ ...e, [k]: undefined }));
   };
+
+  const selectedProvince = COSTA_RICA.find((p) => p.name === form.province);
+  const cantons = selectedProvince?.cantons ?? [];
+  const selectedCanton = cantons.find((c) => c.name === form.canton);
+  const districts = selectedCanton?.districts ?? [];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,20 +148,47 @@ export const ShippingDialog = ({ open, onOpenChange, onConfirm, saving, defaultN
             {errors.recipient_name && <p className="text-xs text-destructive mt-1 font-body">{errors.recipient_name}</p>}
           </div>
 
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             <div>
               <Label className="font-body text-xs uppercase tracking-wide">Provincia</Label>
-              <Input className="rounded-xl" value={form.province} onChange={(e) => set("province", e.target.value)} placeholder="San José" maxLength={60} />
+              <Select value={form.province} onValueChange={(v) => set("province", v)}>
+                <SelectTrigger className="rounded-xl font-body">
+                  <SelectValue placeholder="Seleccionar" />
+                </SelectTrigger>
+                <SelectContent>
+                  {COSTA_RICA.map((p) => (
+                    <SelectItem key={p.name} value={p.name} className="font-body">{p.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               {errors.province && <p className="text-xs text-destructive mt-1 font-body">{errors.province}</p>}
             </div>
             <div>
               <Label className="font-body text-xs uppercase tracking-wide">Cantón</Label>
-              <Input className="rounded-xl" value={form.canton} onChange={(e) => set("canton", e.target.value)} placeholder="Escazú" maxLength={60} />
+              <Select value={form.canton} onValueChange={(v) => set("canton", v)} disabled={!form.province}>
+                <SelectTrigger className="rounded-xl font-body">
+                  <SelectValue placeholder={form.province ? "Seleccionar" : "Elige provincia"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {cantons.map((c) => (
+                    <SelectItem key={c.name} value={c.name} className="font-body">{c.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               {errors.canton && <p className="text-xs text-destructive mt-1 font-body">{errors.canton}</p>}
             </div>
             <div>
               <Label className="font-body text-xs uppercase tracking-wide">Distrito</Label>
-              <Input className="rounded-xl" value={form.district} onChange={(e) => set("district", e.target.value)} placeholder="San Rafael" maxLength={60} />
+              <Select value={form.district} onValueChange={(v) => set("district", v)} disabled={!form.canton}>
+                <SelectTrigger className="rounded-xl font-body">
+                  <SelectValue placeholder={form.canton ? "Seleccionar" : "Elige cantón"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {districts.map((d) => (
+                    <SelectItem key={d} value={d} className="font-body">{d}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               {errors.district && <p className="text-xs text-destructive mt-1 font-body">{errors.district}</p>}
             </div>
           </div>

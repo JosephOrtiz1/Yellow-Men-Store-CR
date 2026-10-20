@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Menu, X, Home, Search, User as UserIcon, LogOut } from "lucide-react";
 import { useState } from "react";
 import { CartDrawer } from "./CartDrawer";
+import { NotificationBell } from "./NotificationBell";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -90,6 +91,7 @@ export const Header = () => {
             >
               <Home className="h-5 w-5" />
             </Link>
+            <NotificationBell />
             <CartDrawer />
 
             {user ? (
