@@ -56,11 +56,12 @@ Deno.serve(async (req) => {
     }
     const approve = data.links?.find((l: { rel: string }) => l.rel === 'approve' || l.rel === 'payer-action')?.href;
 
-    await admin.from('orders').update({
+    const { error: saveError } = await admin.from('orders').update({
       payment_provider: 'paypal',
       payment_reference: data.id,
       payment_checkout_url: approve,
     }).eq('id', order.id);
+    if (saveError) return json({ error: 'Could not save payment reference' }, 500);
 
     return json({ checkout_url: approve, paypal_order_id: data.id, amount_usd: usd });
   } catch (err) {
