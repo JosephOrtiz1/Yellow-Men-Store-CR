@@ -1,6 +1,6 @@
 // Configuración de métodos de pago de la tienda.
-// TODO: reemplazar con el número SINPE Móvil real de la tienda.
-export const SINPE_PHONE = "8888-8888";
+export const SINPE_PHONE = "6488 3639";
+export const SINPE_IBAN = "CR30015202001342380426";
 
 export type PaymentMethod = "sinpe" | "card" | "paypal";
 

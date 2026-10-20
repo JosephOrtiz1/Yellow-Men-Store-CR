@@ -14,7 +14,7 @@ const METHODS: { id: PaymentMethod; title: string; description: string; icon: ty
   {
     id: "sinpe",
     title: "SINPE Móvil",
-    description: "Transfiere al número de la tienda y sube tu comprobante. Lo confirmamos manualmente.",
+    description: "Transfiere al 6488 3639 (o IBAN CR30015202001342380426) y sube tu comprobante. Lo confirmamos manualmente.",
     icon: Smartphone,
   },
   {
