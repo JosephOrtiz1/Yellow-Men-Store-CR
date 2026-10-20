@@ -8,7 +8,7 @@ E-commerce de ropa masculina urbana (street wear, casual, cyber wear, old money)
 - Tailwind CSS + shadcn/ui
 - Zustand (carrito local en `localStorage`)
 - Lovable Cloud (Supabase) — catálogo, autenticación, órdenes, almacenamiento de imágenes
-- Edge Functions: `create-order` (cálculo de totales server-side) y `tilopay-create-payment` (pasarela Tilopay)
+- Edge Functions: `create-order` (cálculo de totales server-side) y `paypal-create-order` y `paypal-capture-order`
 
 ## Estructura
 
@@ -20,4 +20,4 @@ E-commerce de ropa masculina urbana (street wear, casual, cyber wear, old money)
 
 ## Variables sensibles
 
-Las credenciales de Tilopay (`TILOPAY_API_USER`, `TILOPAY_API_PASSWORD`, `TILOPAY_API_KEY`) se configuran como secrets de Lovable Cloud. Mientras no estén presentes, los pedidos se registran como `unpaid` y la pasarela responde 503.
+Las credenciales de PayPal (sandbox) (`PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET` (y opcionales `PAYPAL_ENV=live`, `CRC_PER_USD`)) se configuran como secrets de Lovable Cloud. Mientras no estén presentes, los pedidos se registran como `unpaid` y la pasarela responde 503.

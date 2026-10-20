@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,17 +30,39 @@ const Orders = () => {
   const { user } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [params, setParams] = useSearchParams();
 
   useEffect(() => {
     if (!user) return;
-    supabase
-      .from("orders")
-      .select("id, total_colones, subtotal_colones, shipping_cost_colones, status, payment_status, payment_checkout_url, items, created_at")
-      .order("created_at", { ascending: false })
-      .then(({ data }) => {
-        setOrders((data as unknown as Order[]) || []);
-        setLoading(false);
-      });
+    const load = () =>
+      supabase
+        .from("orders")
+        .select("id, total_colones, subtotal_colones, shipping_cost_colones, status, payment_status, payment_checkout_url, items, created_at")
+        .order("created_at", { ascending: false })
+        .then(({ data }) => {
+          setOrders((data as unknown as Order[]) || []);
+          setLoading(false);
+        });
+
+    const flow = params.get("paypal");
+    const token = params.get("token");
+    if (flow === "return" && token) {
+      supabase.functions
+        .invoke("paypal-capture-order", { body: { paypal_order_id: token } })
+        .then(({ data, error }) => {
+          if (error || data?.status !== "paid") toast.error("El pago no se completó. Intenta de nuevo.");
+          else toast.success(`¡Pago confirmado! Guarda tu ID de pedido: ${String(data.order_id).slice(0, 8)}`, { duration: 10000 });
+          setParams({}, { replace: true });
+          load();
+        });
+    } else {
+      if (flow === "cancel") {
+        toast.info("Pago cancelado. Puedes reintentarlo cuando quieras.");
+        setParams({}, { replace: true });
+      }
+      load();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   return (
