@@ -38,6 +38,7 @@ const Checkout = () => {
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [shipping, setShipping] = useState<ShippingData | null>(null);
   const [method, setMethod] = useState<PaymentMethod>("sinpe");
+  const [step, setStep] = useState<"shipping" | "details" | "payment">("shipping");
   const [saving, setSaving] = useState(false);
   const [order, setOrder] = useState<{ id: string; total: number; method: PaymentMethod } | null>(null);
   const orderPromise = useRef<Promise<string> | null>(null);
