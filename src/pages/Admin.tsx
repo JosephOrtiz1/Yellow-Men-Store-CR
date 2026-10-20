@@ -414,6 +414,7 @@ const Admin = () => {
             <TabsTrigger value="products" className="font-body"><Package className="w-4 h-4 mr-2" />Productos</TabsTrigger>
             <TabsTrigger value="users" className="font-body"><Users className="w-4 h-4 mr-2" />Usuarios ({users.length})</TabsTrigger>
             <TabsTrigger value="orders" className="font-body"><Package className="w-4 h-4 mr-2" />Pedidos ({orders.length})</TabsTrigger>
+            <TabsTrigger value="receipts" className="font-body"><Receipt className="w-4 h-4 mr-2" />Comprobantes ({receipts.filter((r) => r.status === "pending").length})</TabsTrigger>
           </TabsList>
 
           <TabsContent value="products">
@@ -825,7 +826,8 @@ const Admin = () => {
                           <TableHead className="font-body">Nombre</TableHead>
                           <TableHead className="font-body">Email</TableHead>
                           <TableHead className="font-body">Teléfono</TableHead>
-                          <TableHead className="font-body">Dirección</TableHead>
+                          <TableHead className="font-body">Ubicación de envío</TableHead>
+                          <TableHead className="font-body">Dirección exacta</TableHead>
                           <TableHead className="font-body">Pedidos</TableHead>
                           <TableHead className="font-body">Registro</TableHead>
                         </TableRow>
@@ -837,8 +839,11 @@ const Admin = () => {
                             <TableRow key={u.user_id}>
                               <TableCell className="font-body">{u.full_name || "—"}</TableCell>
                               <TableCell className="font-body text-xs">{u.email}</TableCell>
-                              <TableCell className="font-body text-xs">{u.phone || "—"}</TableCell>
-                              <TableCell className="font-body text-xs max-w-[200px] truncate" title={u.address}>{u.address || "—"}</TableCell>
+                              <TableCell className="font-body text-xs">{u.shipping_phone || u.phone || "—"}</TableCell>
+                              <TableCell className="font-body text-xs max-w-[200px] truncate" title={[u.shipping_district, u.shipping_canton, u.shipping_province].filter(Boolean).join(", ")}>
+                                {[u.shipping_district, u.shipping_canton, u.shipping_province].filter(Boolean).join(", ") || "—"}
+                              </TableCell>
+                              <TableCell className="font-body text-xs max-w-[200px] truncate" title={u.shipping_exact_address || u.address}>{u.shipping_exact_address || u.address || "—"}</TableCell>
                               <TableCell className="font-body">{userOrders.length}</TableCell>
                               <TableCell className="font-body text-xs">{new Date(u.created_at).toLocaleDateString("es-CR")}</TableCell>
                             </TableRow>
@@ -879,9 +884,28 @@ const Admin = () => {
                               {new Date(o.created_at).toLocaleString("es-CR")}
                             </p>
                           </div>
-                          <div className="text-right">
-                            <p className="font-body font-bold text-primary">₡{Math.round(Number(o.total_colones)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}</p>
-                            <span className="text-xs px-2 py-0.5 rounded-sm bg-secondary text-muted-foreground font-body uppercase">{o.status}</span>
+                          <div className="text-right space-y-1">
+                             <p className="font-body font-bold text-primary">₡{Math.round(Number(o.total_colones)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}</p>
+                            <div className="flex gap-1 justify-end flex-wrap">
+                              {o.payment_method && (
+                                <span className="text-xs px-2 py-0.5 rounded-sm bg-secondary text-muted-foreground font-body uppercase">
+                                  {PAYMENT_METHOD_LABELS[o.payment_method as keyof typeof PAYMENT_METHOD_LABELS] ?? o.payment_method}
+                                </span>
+                              )}
+                              <span className={`text-xs px-2 py-0.5 rounded-sm font-body uppercase ${o.payment_status === 'paid' ? 'bg-primary/20 text-primary' : 'bg-destructive/10 text-destructive'}`}>
+                                {o.payment_status === 'paid' ? 'Pagado' : 'Sin pagar'}
+                              </span>
+                            </div>
+                            <Select value={o.status} onValueChange={(v) => updateOrderStatus(o, v)}>
+                              <SelectTrigger className="h-8 text-xs font-body rounded-xl w-[140px] ml-auto">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {Object.entries(ORDER_STATUS_LABELS).map(([value, label]) => (
+                                  <SelectItem key={value} value={value} className="font-body text-xs">{label}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
                           </div>
                         </div>
                         {(o.shipping_recipient_name || o.shipping_province) && (
@@ -908,8 +932,88 @@ const Admin = () => {
               </CardContent>
             </Card>
           </TabsContent>
+
+          <TabsContent value="receipts">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="font-heading text-2xl tracking-wider">COMPROBANTES SINPE</CardTitle>
+                <Button variant="outline" size="sm" onClick={loadReceipts} disabled={loadingReceipts} className="font-body">
+                  {loadingReceipts ? <Loader2 className="w-4 h-4 animate-spin" /> : "Actualizar"}
+                </Button>
+              </CardHeader>
+              <CardContent>
+                {loadingReceipts ? (
+                  <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
+                ) : receipts.length === 0 ? (
+                  <p className="text-center text-muted-foreground font-body py-10">No hay comprobantes aún.</p>
+                ) : (
+                  <div className="space-y-4">
+                    {receipts.map((r) => {
+                      const order = orders.find((o) => o.id === r.order_id);
+                      return (
+                        <div key={r.id} className="border border-border rounded-sm p-4 flex flex-col md:flex-row gap-4">
+                          <button
+                            type="button"
+                            onClick={() => receiptUrls[r.id] && setViewingReceipt(receiptUrls[r.id])}
+                            className="w-full md:w-32 h-32 rounded-lg overflow-hidden border border-border flex-shrink-0 bg-muted flex items-center justify-center"
+                          >
+                            {receiptUrls[r.id] ? (
+                              <img src={receiptUrls[r.id]} alt="Comprobante" className="w-full h-full object-cover" loading="lazy" />
+                            ) : (
+                              <Eye className="w-5 h-5 text-muted-foreground" />
+                            )}
+                          </button>
+                          <div className="flex-1 min-w-0 space-y-1">
+                            <p className="font-body font-semibold text-sm">
+                              Pedido #{r.order_id.slice(0, 8).toUpperCase()}
+                              {order && <span className="text-primary ml-2">₡{Math.round(Number(order.total_colones)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}</span>}
+                            </p>
+                            <p className="text-xs text-muted-foreground font-body">
+                              {order?.contact_name || "—"} · {order?.contact_phone || "—"}
+                            </p>
+                            <p className="text-xs text-muted-foreground font-body">
+                              {new Date(r.created_at).toLocaleString("es-CR")}
+                            </p>
+                            <span className={`inline-block text-xs px-2 py-0.5 rounded-sm font-body uppercase ${
+                              r.status === "approved" ? "bg-primary/20 text-primary" :
+                              r.status === "rejected" ? "bg-destructive/10 text-destructive" :
+                              "bg-secondary text-muted-foreground"
+                            }`}>
+                              {r.status === "approved" ? "Aprobado" : r.status === "rejected" ? "Rechazado" : "Pendiente"}
+                            </span>
+                            {r.admin_note && <p className="text-xs font-body text-muted-foreground">Nota: {r.admin_note}</p>}
+                          </div>
+                          {r.status === "pending" && (
+                            <div className="flex md:flex-col gap-2 flex-shrink-0">
+                              <Button size="sm" onClick={() => reviewReceipt(r, true)} className="rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-body">
+                                <CheckCircle2 className="w-4 h-4 mr-1" /> Aprobar
+                              </Button>
+                              <Button size="sm" variant="outline" onClick={() => reviewReceipt(r, false)} className="rounded-xl font-body text-destructive border-destructive/40 hover:bg-destructive/10">
+                                <XCircle className="w-4 h-4 mr-1" /> Rechazar
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </div>
+
+      <Dialog open={!!viewingReceipt} onOpenChange={() => setViewingReceipt(null)}>
+        <DialogContent className="max-w-2xl rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="font-heading text-xl tracking-wider">COMPROBANTE</DialogTitle>
+          </DialogHeader>
+          {viewingReceipt && (
+            <img src={viewingReceipt} alt="Comprobante de pago" className="w-full max-h-[70vh] object-contain rounded-xl" />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
