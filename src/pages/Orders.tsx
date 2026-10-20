@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Package, Smartphone } from "lucide-react";
 import { ReceiptUpload } from "@/components/ReceiptUpload";
 import { OrderProgressGuide } from "@/components/OrderProgressGuide";
+import { PaymentSuccessModal } from "@/components/PaymentSuccessModal";
 import { SINPE_PHONE, SINPE_IBAN, PAYMENT_METHOD_LABELS, ORDER_STATUS_LABELS, type PaymentMethod } from "@/lib/payments";
 import { formatColones } from "@/lib/supabaseProducts";
 

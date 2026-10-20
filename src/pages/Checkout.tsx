@@ -154,7 +154,8 @@ const Checkout = () => {
                   <Button variant="outline" disabled={saving} className="w-full sm:w-auto" onClick={() => setStep("details")}>Volver a los detalles</Button>
                 </section>
               )}
-              {(step === "payment" || order) && shipping && !paid && (order?.method ?? method) !== "sinpe" && <PayPalPayment method={(order?.method ?? method) === "card" ? "card" : "paypal"} total={order?.total ?? total} ensureOrder={ensureOrder} onPaid={() => { setPaid(true); toast.success("Pago confirmado por PayPal"); }} />}
+              {(step === "payment" || order) && shipping && !paid && (order?.method ?? method) !== "sinpe" && <PayPalPayment method={(order?.method ?? method) === "card" ? "card" : "paypal"} total={order?.total ?? total} ensureOrder={ensureOrder} onPaid={() => { setPaid(true); setShowSuccess(true); toast.success("Pago confirmado por PayPal"); }} />}
+              {order && <PaymentSuccessModal open={showSuccess} onClose={() => setShowSuccess(false)} orderId={order.id} total={order.total} paid={order.method === "sinpe" ? false : paid} method={order.method} />}
               <OrderProgressGuide />
             </div>
             <aside aria-label="Resumen de compra" className="border border-border bg-card rounded-lg p-6 lg:sticky lg:top-24 min-w-0">
