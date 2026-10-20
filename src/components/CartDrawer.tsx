@@ -79,42 +79,25 @@ export const CartDrawer = () => {
       const orderId: string = created.order_id;
       setLastOrderId(orderId);
 
-      // Try to create Tilopay checkout
       const { data: payData, error: payError } = await supabase.functions.invoke(
-        "tilopay-create-payment",
-        { body: { order_id: orderId } }
+        "paypal-create-order",
+        { body: { order_id: orderId, return_origin: window.location.origin } }
       );
 
       setShippingOpen(false);
       setIsOpen(false);
+      clearCart();
 
       if (payError || !payData?.checkout_url) {
-        // Tilopay not yet configured — show order confirmation; user can pay later.
-        const msg = (payData as { error?: string } | null)?.error || payError?.message;
-        if (msg?.includes("not configured") || msg?.includes("credentials")) {
-          toast.info(
-            "Pedido registrado. La pasarela de pago aún no está configurada — te contactaremos para coordinar el pago.",
-            { position: "top-center", duration: 6000 }
-          );
-        } else if (msg) {
-          toast.error(`No se pudo iniciar el pago: ${msg}`, { position: "top-center" });
-        }
+        toast.info(
+          "Pedido registrado, pero no se pudo abrir PayPal. Puedes reintentar el pago desde Mis pedidos.",
+          { position: "top-center", duration: 6000 }
+        );
         setConfirmOpen(true);
-        clearCart();
         return;
       }
 
-      // Save the checkout URL on the order (best-effort)
-      if (orderId) {
-        await supabase
-          .from("orders")
-          .update({ payment_checkout_url: payData.checkout_url })
-          .eq("id", orderId);
-      }
-
-      clearCart();
-      setConfirmOpen(true);
-      window.open(payData.checkout_url as string, "_blank");
+      window.location.href = payData.checkout_url as string;
     } catch (err) {
       console.error("Failed to save order:", err);
       toast.error("No se pudo registrar tu pedido. Intenta de nuevo.", { position: "top-center" });

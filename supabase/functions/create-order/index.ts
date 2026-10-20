@@ -144,7 +144,7 @@ Deno.serve(async (req) => {
         total_colones: total,
         status: 'pending',
         payment_status: 'unpaid',
-        payment_provider: 'tilopay',
+        payment_provider: 'paypal',
         contact_name: shipping.recipient_name,
         contact_email: contactEmail,
         contact_phone: shipping.phone,
