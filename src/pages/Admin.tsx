@@ -7,10 +7,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Loader2, Plus, X, LogOut, Trash2, Upload, Ruler, Search, Users, Package } from "lucide-react";
+import { Loader2, Plus, X, LogOut, Trash2, Upload, Ruler, Search, Users, Package, Receipt, CheckCircle2, XCircle, Eye } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { PAYMENT_METHOD_LABELS, ORDER_STATUS_LABELS } from "@/lib/payments";
 import AdminLogin from "./AdminLogin";
 import techwearImg from "@/assets/hero/techwear-hero.jpg";
 
@@ -61,17 +63,22 @@ const Admin = () => {
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Users + Orders
+  // Users + Orders + Receipts
   const [users, setUsers] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [loadingOrders, setLoadingOrders] = useState(false);
+  const [receipts, setReceipts] = useState<any[]>([]);
+  const [receiptUrls, setReceiptUrls] = useState<Record<string, string>>({});
+  const [loadingReceipts, setLoadingReceipts] = useState(false);
+  const [viewingReceipt, setViewingReceipt] = useState<string | null>(null);
 
   useEffect(() => {
     if (isAdmin) {
       loadProducts();
       loadUsers();
       loadOrders();
+      loadReceipts();
     }
   }, [isAdmin]);
 
@@ -91,7 +98,7 @@ const Admin = () => {
     setLoadingUsers(true);
     const { data } = await supabase
       .from("profiles")
-      .select("user_id, full_name, email, phone, address, created_at")
+      .select("user_id, full_name, email, phone, address, created_at, shipping_province, shipping_canton, shipping_district, shipping_exact_address, shipping_phone")
       .order("created_at", { ascending: false });
     setUsers(data || []);
     setLoadingUsers(false);
@@ -101,10 +108,76 @@ const Admin = () => {
     setLoadingOrders(true);
     const { data } = await supabase
       .from("orders")
-      .select("id, user_id, items, total_colones, status, contact_name, contact_email, contact_phone, created_at")
+      .select("id, user_id, items, total_colones, status, payment_status, payment_method, contact_name, contact_email, contact_phone, created_at, shipping_recipient_name, shipping_province, shipping_canton, shipping_district, shipping_exact_address, shipping_phone")
       .order("created_at", { ascending: false });
     setOrders(data || []);
     setLoadingOrders(false);
+  };
+
+  const loadReceipts = async () => {
+    setLoadingReceipts(true);
+    const { data } = await supabase
+      .from("payment_receipts")
+      .select("id, order_id, user_id, image_path, status, admin_note, created_at")
+      .order("created_at", { ascending: false });
+    const rows = data || [];
+    setReceipts(rows);
+    const urls: Record<string, string> = {};
+    for (const r of rows) {
+      const { data: s } = await supabase.storage.from("payment-receipts").createSignedUrl(r.image_path, 600);
+      if (s?.signedUrl) urls[r.id] = s.signedUrl;
+    }
+    setReceiptUrls(urls);
+    setLoadingReceipts(false);
+  };
+
+  const reviewReceipt = async (receipt: any, approved: boolean) => {
+    const note = approved ? null : (window.prompt("Motivo del rechazo (opcional):") || null);
+    const { error } = await supabase
+      .from("payment_receipts")
+      .update({ status: approved ? "approved" : "rejected", admin_note: note, reviewed_at: new Date().toISOString() })
+      .eq("id", receipt.id);
+    if (error) {
+      toast.error("Error al actualizar el comprobante", { position: "top-center" });
+      return;
+    }
+    const shortId = receipt.order_id.slice(0, 8).toUpperCase();
+    if (approved) {
+      await supabase.from("orders").update({ payment_status: "paid", status: "confirmed" }).eq("id", receipt.order_id);
+      await supabase.from("notifications").insert({
+        user_id: receipt.user_id,
+        order_id: receipt.order_id,
+        title: "Pago confirmado",
+        message: `Tu comprobante del pedido #${shortId} fue aprobado. Tu pedido está confirmado.`,
+      });
+    } else {
+      await supabase.from("notifications").insert({
+        user_id: receipt.user_id,
+        order_id: receipt.order_id,
+        title: "Comprobante rechazado",
+        message: `El comprobante del pedido #${shortId} fue rechazado${note ? `: ${note}` : ""}. Sube uno nuevo desde Mis pedidos.`,
+      });
+    }
+    toast.success(approved ? "Comprobante aprobado y pedido confirmado" : "Comprobante rechazado", { position: "top-center" });
+    loadReceipts();
+    loadOrders();
+  };
+
+  const updateOrderStatus = async (order: any, newStatus: string) => {
+    if (newStatus === order.status) return;
+    const { error } = await supabase.from("orders").update({ status: newStatus }).eq("id", order.id);
+    if (error) {
+      toast.error("Error al actualizar el estado", { position: "top-center" });
+      return;
+    }
+    await supabase.from("notifications").insert({
+      user_id: order.user_id,
+      order_id: order.id,
+      title: "Actualización de pedido",
+      message: `Tu pedido #${order.id.slice(0, 8).toUpperCase()} ahora está: ${ORDER_STATUS_LABELS[newStatus] ?? newStatus}.`,
+    });
+    toast.success("Estado actualizado y cliente notificado", { position: "top-center" });
+    loadOrders();
   };
 
   const toggleSize = (size: string) => {
