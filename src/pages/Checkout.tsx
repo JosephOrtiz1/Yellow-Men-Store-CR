@@ -44,6 +44,7 @@ const Checkout = () => {
   const [order, setOrder] = useState<{ id: string; total: number; method: PaymentMethod } | null>(null);
   const orderPromise = useRef<Promise<string> | null>(null);
   const [paid, setPaid] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const subtotal = items.reduce((sum, item) => sum + item.priceColones * item.quantity, 0);
   const total = subtotal + (items.length ? SHIPPING_COST_COLONES : 0);
 
@@ -90,7 +91,7 @@ const Checkout = () => {
   };
 
   const submitOrder = async () => {
-    try { await ensureOrder(); }
+    try { await ensureOrder(); setShowSuccess(true); }
     catch (error) { toast.error(error instanceof Error ? error.message : "No se pudo continuar con el pago."); }
   };
 
