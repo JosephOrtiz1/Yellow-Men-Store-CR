@@ -37,7 +37,8 @@ Deno.serve(async (req) => {
       return json({ error: 'Payment not completed' }, 402);
     }
 
-    await admin.from('orders').update({ payment_status: 'paid', status: 'paid' }).eq('id', order.id);
+    const { error: saveError } = await admin.from('orders').update({ payment_status: 'paid', status: 'paid' }).eq('id', order.id);
+    if (saveError) return json({ error: 'Payment captured but order update pending' }, 500);
     return json({ status: 'paid', order_id: order.id });
   } catch (err) {
     console.error(err);
