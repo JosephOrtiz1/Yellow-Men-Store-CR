@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Check, Copy, CreditCard, Loader2, LockKeyhole, ShoppingBag, Smartphone, Truck, Wallet } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useCartStore, SHIPPING_COST_COLONES } from "@/stores/cartStore";
 import { SINPE_PHONE, SINPE_IBAN, type PaymentMethod } from "@/lib/payments";
 import { formatColones } from "@/lib/supabaseProducts";
+import { saveShippingProfile } from "@/lib/shippingProfile";
 
 interface SavedShipping {
   full_name: string | null;
@@ -34,7 +35,10 @@ const methods = [
 const Checkout = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { items, clearCart } = useCartStore();
+  const [searchParams] = useSearchParams();
+  const directBuy = searchParams.get("buyNow") === "1";
+  const { items: cartItems, buyNowItem, clearCart, clearBuyNow } = useCartStore();
+  const items = directBuy ? (buyNowItem ? [buyNowItem] : []) : cartItems;
   const [profile, setProfile] = useState<SavedShipping | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [shipping, setShipping] = useState<ShippingData | null>(null);
@@ -49,8 +53,10 @@ const Checkout = () => {
   const total = subtotal + (items.length ? SHIPPING_COST_COLONES : 0);
 
   useEffect(() => {
-    if (order) clearCart();
-  }, [order, clearCart]);
+    if (!order) return;
+    if (directBuy) clearBuyNow();
+    else clearCart();
+  }, [order, directBuy, clearCart, clearBuyNow]);
 
   useEffect(() => {
     if (!user) return;
@@ -95,6 +101,21 @@ const Checkout = () => {
     catch (error) { toast.error(error instanceof Error ? error.message : "No se pudo continuar con el pago."); }
   };
 
+  const confirmShipping = async (data: ShippingData) => {
+    if (!user) return;
+    setSaving(true);
+    try {
+      await saveShippingProfile(user.id, data);
+      setShipping(data);
+      setStep("details");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch {
+      toast.error("No se pudieron guardar tus datos de envío. Inténtalo de nuevo.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="min-h-screen pt-24 pb-16">
       <div className="container max-w-6xl mx-auto px-4 sm:px-6">
@@ -129,7 +150,7 @@ const Checkout = () => {
                   <Button asChild variant="outline"><Link to="/orders">Ver Mis pedidos<ArrowRight className="w-4 h-4 ml-2" /></Link></Button>
                 </section>
               ) : step === "shipping" ? (
-                loadingProfile ? <Loader2 className="w-6 h-6 animate-spin text-primary" /> : <ShippingDialog inline open onOpenChange={() => navigate("/")} saving={saving} onConfirm={async data => { setShipping(data); setStep("details"); window.scrollTo({ top: 0, behavior: "smooth" }); }} defaultName={shipping?.recipient_name ?? profile?.full_name ?? undefined} defaultPhone={shipping?.phone ?? profile?.shipping_phone ?? profile?.phone ?? undefined} defaultAddress={shipping?.exact_address ?? profile?.shipping_exact_address ?? undefined} defaultProvince={shipping?.province ?? profile?.shipping_province ?? undefined} defaultCanton={shipping?.canton ?? profile?.shipping_canton ?? undefined} defaultDistrict={shipping?.district ?? profile?.shipping_district ?? undefined} />
+                loadingProfile ? <Loader2 className="w-6 h-6 animate-spin text-primary" /> : <ShippingDialog inline open onOpenChange={() => navigate("/")} saving={saving} onConfirm={confirmShipping} defaultName={shipping?.recipient_name ?? profile?.full_name ?? undefined} defaultPhone={shipping?.phone ?? profile?.shipping_phone ?? profile?.phone ?? undefined} defaultAddress={shipping?.exact_address ?? profile?.shipping_exact_address ?? undefined} defaultProvince={shipping?.province ?? profile?.shipping_province ?? undefined} defaultCanton={shipping?.canton ?? profile?.shipping_canton ?? undefined} defaultDistrict={shipping?.district ?? profile?.shipping_district ?? undefined} />
               ) : step === "details" ? (
                 <section className="space-y-6" aria-label="Detalles de la compra">
                   <div><h2 className="font-heading text-3xl">DETALLES DE LA COMPRA</h2><p className="text-muted-foreground mt-2">Revisa los artículos, el subtotal y el total antes de pasar al pago.</p></div>

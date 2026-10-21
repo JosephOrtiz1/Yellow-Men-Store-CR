@@ -16,6 +16,9 @@ export interface CartItem {
 
 interface CartStore {
   items: CartItem[];
+  buyNowItem: CartItem | null;
+  startBuyNow: (item: Omit<CartItem, 'quantity'>) => void;
+  clearBuyNow: () => void;
   addItem: (item: Omit<CartItem, 'quantity'> & { quantity?: number }) => void;
   updateQuantity: (id: string, quantity: number) => void;
   removeItem: (id: string) => void;
@@ -26,6 +29,9 @@ export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
+      buyNowItem: null,
+      startBuyNow: (item) => set({ buyNowItem: { ...item, quantity: 1 } }),
+      clearBuyNow: () => set({ buyNowItem: null }),
 
       addItem: (item) => {
         const quantity = item.quantity ?? 1;
@@ -61,7 +67,7 @@ export const useCartStore = create<CartStore>()(
     {
       name: 'yms-cart',
       storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ items: state.items }),
+      partialize: (state) => ({ items: state.items, buyNowItem: state.buyNowItem }),
     }
   )
 );
