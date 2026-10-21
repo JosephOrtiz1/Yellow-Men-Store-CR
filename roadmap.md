@@ -9,3 +9,6 @@
 - [x] Integrar campos seguros de tarjeta y botón de cuenta PayPal con ventana pequeña.
 - [x] Conectar creación y captura autenticadas; comprobar creación real en sandbox, ventana abierta y reglas de confirmación con pruebas.
 - [ ] Habilitar y probar Visa/Mastercard: PayPal devuelve CardFields no elegible para la cuenta de comercio actual; requiere habilitación por PayPal. No se ha realizado una captura de prueba completa.
+
+# Edición de productos
+- [x] Agregar edición de productos existentes; guardado, recarga, conservación de imágenes y cancelación verificados con sesión de administrador.

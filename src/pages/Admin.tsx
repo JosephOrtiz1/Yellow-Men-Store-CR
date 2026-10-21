@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Loader2, Plus, X, LogOut, Trash2, Upload, Ruler, Search, Users, Package, Receipt, CheckCircle2, XCircle, Eye } from "lucide-react";
+import { Loader2, Plus, X, LogOut, Trash2, Upload, Ruler, Search, Users, Package, Receipt, CheckCircle2, XCircle, Eye, Pencil, Save } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
@@ -26,6 +26,7 @@ const CATEGORIES = [
 const COMMON_SIZES = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
 
 interface ColorEntry {
+  id?: string;
   name: string;
   hex: string;
   imageFile: File | null;
@@ -57,6 +58,49 @@ const Admin = () => {
   const [sizeGuideFile, setSizeGuideFile] = useState<File | null>(null);
   const [sizeGuidePreview, setSizeGuidePreview] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [originalColorIds, setOriginalColorIds] = useState<string[]>([]);
+  const [loadingEditId, setLoadingEditId] = useState<string | null>(null);
+
+  const resetForm = () => {
+    setEditingId(null);
+    setOriginalColorIds([]);
+    setTitle("");
+    setDescription("");
+    setPrice("");
+    setCategory("casual");
+    setSelectedSizes([]);
+    setColors([]);
+    setSizeGuideFile(null);
+    setSizeGuidePreview("");
+  };
+
+  const editProduct = async (id: string) => {
+    setLoadingEditId(id);
+    const { data, error } = await supabase.from("products")
+      .select("id, title, description, price_colones, category, sizes, size_guide_url, product_colors(id, color_name, color_hex, image_url, hover_image_url, sort_order)")
+      .eq("id", id).is("deleted_at", null).single();
+    setLoadingEditId(null);
+    if (error || !data) {
+      toast.error("No se pudo cargar el producto", { position: "top-center" });
+      return;
+    }
+    setEditingId(data.id);
+    setTitle(data.title);
+    setDescription(data.description ?? "");
+    setPrice(String(data.price_colones));
+    setCategory(data.category);
+    setSelectedSizes(data.sizes);
+    setSizeGuideFile(null);
+    setSizeGuidePreview(data.size_guide_url ?? "");
+    setOriginalColorIds(data.product_colors.map((c) => c.id));
+    setColors([...data.product_colors].sort((a, b) => a.sort_order - b.sort_order).map((c) => ({
+      id: c.id, name: c.color_name, hex: c.color_hex ?? "#000000",
+      imageFile: null, imagePreview: c.image_url,
+      hoverImageFile: null, hoverImagePreview: c.hover_image_url ?? "",
+    })));
+    document.getElementById("admin-product-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   // Products list
   const [products, setProducts] = useState<ProductRow[]>([]);
@@ -250,6 +294,7 @@ const Admin = () => {
 
   const handleCreateProduct = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user || !isAdmin) return;
     if (!title.trim() || !price.trim()) {
       toast.error("Título y precio son obligatorios", { position: "top-center" });
       return;
@@ -258,7 +303,7 @@ const Admin = () => {
       toast.error("Selecciona al menos una talla", { position: "top-center" });
       return;
     }
-    if (colors.length === 0 || colors.some((c) => !c.name.trim() || !c.imageFile)) {
+    if (colors.length === 0 || colors.some((c) => !c.name.trim() || (!c.imageFile && !c.imagePreview))) {
       toast.error("Agrega al menos un color con imagen", { position: "top-center" });
       return;
     }
@@ -268,7 +313,7 @@ const Admin = () => {
       const timestamp = Date.now();
 
       // Upload size guide if provided
-      let sizeGuideUrl: string | null = null;
+      let sizeGuideUrl: string | null = sizeGuidePreview || null;
       if (sizeGuideFile) {
         sizeGuideUrl = await uploadFile(
           sizeGuideFile,
@@ -277,70 +322,68 @@ const Admin = () => {
         );
       }
 
-      // Insert product
-      const { data: product, error: productError } = await supabase
-        .from("products")
-        .insert({
+      const productValues = {
           title: title.trim(),
           description: description.trim() || null,
           price_colones: parseFloat(price),
           category,
           sizes: selectedSizes,
           size_guide_url: sizeGuideUrl,
-          created_by: user!.id,
-          is_active: true,
-          available: true,
-        })
-        .select("id")
-        .single();
+      };
+      const result = editingId
+        ? await supabase.from("products").update(productValues).eq("id", editingId).select("id").single()
+        : await supabase.from("products").insert({ ...productValues, created_by: user.id, is_active: true, available: true }).select("id").single();
+      const { data: product, error: productError } = result;
 
       if (productError) throw productError;
+      if (!product) throw new Error("No se pudo guardar el producto");
 
       // Upload color images and insert colors
       for (let i = 0; i < colors.length; i++) {
         const c = colors[i];
-        const imageUrl = await uploadFile(
-          c.imageFile!,
+        const imageUrl = c.imageFile ? await uploadFile(
+          c.imageFile,
           "product-images",
-          `${product.id}/${timestamp}-${c.name}.${c.imageFile!.name.split(".").pop()}`
-        );
+          `${product.id}/${timestamp}-${i}-${c.name}.${c.imageFile.name.split(".").pop()}`
+        ) : c.imagePreview;
 
-        let hoverUrl: string | null = null;
+        let hoverUrl: string | null = c.hoverImagePreview || null;
         if (c.hoverImageFile) {
           hoverUrl = await uploadFile(
             c.hoverImageFile,
             "product-images",
-            `${product.id}/${timestamp}-${c.name}-hover.${c.hoverImageFile.name.split(".").pop()}`
+            `${product.id}/${timestamp}-${i}-${c.name}-hover.${c.hoverImageFile.name.split(".").pop()}`
           );
         }
 
-        const { error: colorError } = await supabase.from("product_colors").insert({
+        const colorValues = {
           product_id: product.id,
           color_name: c.name.trim(),
           color_hex: c.hex,
           image_url: imageUrl,
           hover_image_url: hoverUrl,
           sort_order: i,
-        } as any);
+        };
+        const { error: colorError } = c.id
+          ? await supabase.from("product_colors").update(colorValues).eq("id", c.id).eq("product_id", product.id)
+          : await supabase.from("product_colors").insert(colorValues);
 
         if (colorError) throw colorError;
       }
 
-      toast.success("Producto creado exitosamente", { position: "top-center" });
+      const removedIds = originalColorIds.filter((id) => !colors.some((c) => c.id === id));
+      if (removedIds.length > 0) {
+        const { error } = await supabase.from("product_colors").delete().in("id", removedIds).eq("product_id", product.id);
+        if (error) throw error;
+      }
+      toast.success(editingId ? "Producto actualizado exitosamente" : "Producto creado exitosamente", { position: "top-center" });
 
       // Reset form
-      setTitle("");
-      setDescription("");
-      setPrice("");
-      setCategory("casual");
-      setSelectedSizes([]);
-      setColors([]);
-      setSizeGuideFile(null);
-      setSizeGuidePreview("");
+      resetForm();
       loadProducts();
     } catch (err: any) {
       console.error(err);
-      toast.error(err.message || "Error al crear producto", { position: "top-center" });
+      toast.error(err.message || "Error al guardar producto", { position: "top-center" });
     } finally {
       setSubmitting(false);
     }
@@ -420,12 +463,13 @@ const Admin = () => {
           <TabsContent value="products">
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
           {/* Create product form */}
-          <Card>
+          <Card id="admin-product-form" className="scroll-mt-24">
             <CardHeader>
-              <CardTitle className="font-heading text-2xl tracking-wider">CREAR PRODUCTO</CardTitle>
+              <CardTitle className="font-heading text-2xl tracking-wider">{editingId ? "EDITAR PRODUCTO" : "CREAR PRODUCTO"}</CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleCreateProduct} className="space-y-5">
+                <fieldset disabled={submitting || loadingEditId !== null} className="space-y-5 min-w-0">
                 {/* Title */}
                 <div>
                   <Label className="font-body">Título *</Label>
@@ -712,10 +756,17 @@ const Admin = () => {
                     <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
                     <>
-                      <Plus className="w-4 h-4 mr-2" /> Crear Producto
+                      {editingId ? <Save className="w-4 h-4 mr-2" /> : <Plus className="w-4 h-4 mr-2" />}
+                      {editingId ? "Guardar cambios" : "Crear Producto"}
                     </>
                   )}
                 </Button>
+                {editingId && (
+                  <Button type="button" variant="outline" onClick={resetForm} className="w-full font-body">
+                    <X className="w-4 h-4 mr-2" /> Cancelar edición
+                  </Button>
+                )}
+                </fieldset>
               </form>
             </CardContent>
           </Card>
@@ -788,9 +839,21 @@ const Admin = () => {
                         </div>
                       </div>
                       <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => editProduct(p.id)}
+                        disabled={submitting || loadingEditId !== null}
+                        aria-label={`Editar ${p.title}`}
+                        className="font-body flex-shrink-0"
+                      >
+                        {loadingEditId === p.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Pencil className="w-4 h-4 mr-1" />}
+                        Editar
+                      </Button>
+                      <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => handleDeleteProduct(p.id)}
+                        disabled={submitting || loadingEditId !== null}
                         className="text-destructive hover:text-destructive flex-shrink-0"
                       >
                         <Trash2 className="w-4 h-4" />

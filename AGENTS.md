@@ -1,4 +1,5 @@
 # Architecture
+- Admin product creation and editing share one form; update existing color rows by ID and preserve unchanged image URLs and availability to avoid resetting catalog data.
 - Checkout lives on an authenticated `/checkout` page; the cart drawer only edits cart lines and links there, so checkout is a full-page flow.
 - Reuse the shipping form and payment/order status explanations across purchase views to keep validation and customer guidance consistent.
 - Save validated shipping to the authenticated user's profile before advancing past shipping, so autofill does not depend on creating an order.
