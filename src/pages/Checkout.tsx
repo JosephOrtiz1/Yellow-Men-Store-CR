@@ -28,8 +28,8 @@ interface SavedShipping {
 
 const methods = [
   { id: "sinpe", title: "SINPE Móvil / transferencia", icon: Smartphone, description: "Paga en colones al número SINPE o IBAN de la tienda. Sube el comprobante y espera nuestra revisión manual." },
-  { id: "card", title: "Tarjeta de crédito o débito", icon: CreditCard, description: "Paga con Visa o Mastercard en los campos seguros de PayPal, sin salir de esta página." },
-  { id: "paypal", title: "Cuenta PayPal", icon: Wallet, description: "Inicia sesión en PayPal y elige uno de los medios de pago disponibles en tu cuenta." },
+  { id: "card", title: "Tarjeta de crédito o débito", icon: CreditCard, description: "Al elegir esta opción aparece aquí mismo el botón seguro de PayPal para pagar con tu Visa o Mastercard, sin salir de la página." },
+  { id: "paypal", title: "Cuenta PayPal", icon: Wallet, description: "Al elegir esta opción aparece aquí mismo el botón para iniciar sesión en PayPal y pagar con los medios de tu cuenta." },
 ] as const;
 
 const Checkout = () => {
@@ -51,6 +51,7 @@ const Checkout = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const subtotal = items.reduce((sum, item) => sum + item.priceColones * item.quantity, 0);
   const total = subtotal + (items.length ? SHIPPING_COST_COLONES : 0);
+  const registered = !!order && (order.method === "sinpe" || paid);
 
   useEffect(() => {
     if (!order) return;
@@ -135,7 +136,7 @@ const Checkout = () => {
         ) : (
           <div className="grid lg:grid-cols-[minmax(0,1fr)_340px] gap-10 lg:gap-16 items-start">
             <div className="min-w-0 space-y-10">
-              {order ? (
+              {registered ? (
                 <section className="space-y-5">
                   <h2 className="font-heading text-3xl">PEDIDO REGISTRADO</h2>
                   <p className="text-muted-foreground">{paid ? "PayPal confirmó tu pago. Recibirás las actualizaciones de tu pedido en tu cuenta." : "Registrar el pedido no significa que ya esté pagado. Guarda una foto de tu ID y del comprobante para cualquier consulta por Instagram."}</p>
