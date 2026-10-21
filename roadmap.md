@@ -11,4 +11,4 @@
 - [ ] Habilitar y probar Visa/Mastercard: PayPal devuelve CardFields no elegible para la cuenta de comercio actual; requiere habilitación por PayPal. No se ha realizado una captura de prueba completa.
 
 # Edición de productos
-- [ ] Agregar edición de productos existentes y verificar guardado y conservación de imágenes.
+- [x] Agregar edición de productos existentes; guardado, recarga, conservación de imágenes y cancelación verificados con sesión de administrador.
