@@ -28,8 +28,8 @@ interface SavedShipping {
 
 const methods = [
   { id: "sinpe", title: "SINPE Móvil / transferencia", icon: Smartphone, description: "Paga en colones al número SINPE o IBAN de la tienda. Sube el comprobante y espera nuestra revisión manual." },
-  { id: "card", title: "Tarjeta de crédito o débito", icon: CreditCard, description: "Paga con Visa o Mastercard en los campos seguros de PayPal, sin salir de esta página." },
-  { id: "paypal", title: "Cuenta PayPal", icon: Wallet, description: "Inicia sesión en PayPal y elige uno de los medios de pago disponibles en tu cuenta." },
+  { id: "card", title: "Tarjeta de crédito o débito", icon: CreditCard, description: "Al elegir esta opción aparece aquí mismo el botón seguro de PayPal para pagar con tu Visa o Mastercard, sin salir de la página." },
+  { id: "paypal", title: "Cuenta PayPal", icon: Wallet, description: "Al elegir esta opción aparece aquí mismo el botón para iniciar sesión en PayPal y pagar con los medios de tu cuenta." },
 ] as const;
 
 const Checkout = () => {
@@ -51,6 +51,7 @@ const Checkout = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const subtotal = items.reduce((sum, item) => sum + item.priceColones * item.quantity, 0);
   const total = subtotal + (items.length ? SHIPPING_COST_COLONES : 0);
+  const registered = !!order && (order.method === "sinpe" || paid);
 
   useEffect(() => {
     if (!order) return;
@@ -135,7 +136,7 @@ const Checkout = () => {
         ) : (
           <div className="grid lg:grid-cols-[minmax(0,1fr)_340px] gap-10 lg:gap-16 items-start">
             <div className="min-w-0 space-y-10">
-              {order ? (
+              {registered ? (
                 <section className="space-y-5">
                   <h2 className="font-heading text-3xl">PEDIDO REGISTRADO</h2>
                   <p className="text-muted-foreground">{paid ? "PayPal confirmó tu pago. Recibirás las actualizaciones de tu pedido en tu cuenta." : "Registrar el pedido no significa que ya esté pagado. Guarda una foto de tu ID y del comprobante para cualquier consulta por Instagram."}</p>
@@ -165,17 +166,23 @@ const Checkout = () => {
                 </section>
               ) : (
                 <section className="space-y-6">
-                  <div><h2 className="font-heading text-3xl">ELIGE CÓMO PAGAR</h2><p className="text-muted-foreground mt-2">Revisa el método antes de registrar tu pedido. No se realizará ningún cobro al seleccionar una opción.</p></div>
-                  <RadioGroup value={method} onValueChange={value => setMethod(value as PaymentMethod)} disabled={saving} className="gap-3">
-                    {methods.map(({ id, title, description, icon: Icon }) => <label key={id} htmlFor={`payment-${id}`} className={`flex gap-4 p-5 border rounded-lg cursor-pointer transition-colors ${method === id ? "border-primary bg-primary/5" : "border-border hover:bg-muted/40"}`}><Icon className="w-6 h-6 text-primary shrink-0" /><span className="min-w-0 flex-1"><span className="block font-semibold">{title}</span><span className="block text-sm text-muted-foreground leading-relaxed mt-1">{description}</span></span><RadioGroupItem id={`payment-${id}`} value={id} aria-label={title} className="shrink-0 mt-1" /></label>)}
+                  <div><h2 className="font-heading text-3xl">ELIGE CÓMO PAGAR</h2><p className="text-muted-foreground mt-2">{order ? "Tu pedido quedó registrado; completa el pago a continuación." : "Revisa el método antes de registrar tu pedido. No se realizará ningún cobro al seleccionar una opción."}</p></div>
+                  {order && <div role="status" className="border border-primary/40 bg-primary/5 rounded-lg p-4 text-sm"><strong className="text-primary">Pedido #{order.id.slice(0, 8).toUpperCase()}</strong> registrado · Total {formatColones(order.total)}. Completa la autorización para confirmar el pago.</div>}
+                  <RadioGroup value={method} onValueChange={value => setMethod(value as PaymentMethod)} disabled={saving || !!order} className="gap-3">
+                    {methods.map(({ id, title, description, icon: Icon }) => <div key={id} className={`p-5 border rounded-lg transition-colors ${method === id ? "border-primary bg-primary/5" : "border-border hover:bg-muted/40"}`}>
+                      <label htmlFor={`payment-${id}`} className="flex gap-4 cursor-pointer"><Icon className="w-6 h-6 text-primary shrink-0" /><span className="min-w-0 flex-1"><span className="block font-semibold">{title}</span><span className="block text-sm text-muted-foreground leading-relaxed mt-1">{description}</span></span><RadioGroupItem id={`payment-${id}`} value={id} aria-label={title} className="shrink-0 mt-1" /></label>
+                      {method === id && (id === "sinpe" ? (
+                        !order && <Button size="lg" disabled={saving} className="w-full mt-4" onClick={submitOrder}>{saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <LockKeyhole className="w-4 h-4 mr-2" />}Registrar pedido y subir comprobante</Button>
+                      ) : (
+                        <div className="mt-4 pt-4 border-t border-border/60"><PayPalPayment method={id === "card" ? "card" : "paypal"} total={order?.total ?? total} ensureOrder={ensureOrder} onPaid={() => { setPaid(true); setShowSuccess(true); toast.success("Pago confirmado por PayPal"); }} /></div>
+                      ))}
+                    </div>)}
                   </RadioGroup>
-                  <div className="flex justify-between gap-3 border-y border-border py-5"><div><h3 className="font-body font-semibold">Entregar a</h3><p className="mt-1">{shipping.recipient_name} · {shipping.phone}</p><p className="text-sm text-muted-foreground">{shipping.province}, {shipping.canton}, {shipping.district}<br />{shipping.exact_address}</p></div><Button variant="link" className="h-auto p-0 shrink-0" disabled={saving} onClick={() => setStep("details")}>Editar</Button></div>
+                  <div className="flex justify-between gap-3 border-y border-border py-5"><div><h3 className="font-body font-semibold">Entregar a</h3><p className="mt-1">{shipping.recipient_name} · {shipping.phone}</p><p className="text-sm text-muted-foreground">{shipping.province}, {shipping.canton}, {shipping.district}<br />{shipping.exact_address}</p></div><Button variant="link" className="h-auto p-0 shrink-0" disabled={saving || !!order} onClick={() => setStep("details")}>Editar</Button></div>
                   <div className="flex justify-between text-lg font-semibold border-b border-border pb-5"><dt>Total a pagar</dt><dd className="text-primary">{formatColones(total)}</dd></div>
-                  {method === "sinpe" && <Button size="lg" disabled={saving} className="w-full sm:w-auto" onClick={submitOrder}>{saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <LockKeyhole className="w-4 h-4 mr-2" />}Registrar pedido y subir comprobante</Button>}
-                  <Button variant="outline" disabled={saving} className="w-full sm:w-auto" onClick={() => setStep("details")}>Volver a los detalles</Button>
+                  <Button variant="outline" disabled={saving || !!order} className="w-full sm:w-auto" onClick={() => setStep("details")}>Volver a los detalles</Button>
                 </section>
               )}
-              {(step === "payment" || order) && shipping && !paid && (order?.method ?? method) !== "sinpe" && <PayPalPayment method={(order?.method ?? method) === "card" ? "card" : "paypal"} total={order?.total ?? total} ensureOrder={ensureOrder} onPaid={() => { setPaid(true); setShowSuccess(true); toast.success("Pago confirmado por PayPal"); }} />}
               {order && <PaymentSuccessModal open={showSuccess} onClose={() => setShowSuccess(false)} orderId={order.id} total={order.total} paid={order.method === "sinpe" ? false : paid} method={order.method} />}
               <OrderProgressGuide />
             </div>
