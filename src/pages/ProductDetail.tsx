@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { fetchSupabaseProductByHandle, formatColones, type SupabaseProductListItem } from "@/lib/supabaseProducts";
 import { supabase } from "@/integrations/supabase/client";
 import { useCartStore } from "@/stores/cartStore";
 import { Button } from "@/components/ui/button";
-import { Loader2, ShoppingCart, Instagram } from "lucide-react";
+import { Loader2, ShoppingCart, Instagram, CreditCard } from "lucide-react";
 import { toast } from "sonner";
 
 const ProductDetail = () => {
@@ -14,7 +14,8 @@ const ProductDetail = () => {
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
-  const { addItem } = useCartStore();
+  const { addItem, startBuyNow } = useCartStore();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!handle) return;
@@ -75,11 +76,10 @@ const ProductDetail = () => {
       `Hola! Me interesa: ${localProduct.title}${selectedSize ? ` (Talla ${selectedSize})` : ""}${colors[selectedColor] ? ` - Color ${colors[selectedColor].color_name}` : ""}`
     );
 
-    const handleAddLocalToCart = () => {
-      if (!canBuy) return;
+    const selectedItem = () => {
       const color = colors[selectedColor];
       const lineId = `${localProduct.id}:${color?.color_name ?? "default"}:${selectedSize || "default"}`;
-      addItem({
+      return {
         id: lineId,
         productId: localProduct.id,
         title: localProduct.title,
@@ -88,7 +88,18 @@ const ProductDetail = () => {
         color: color?.color_name ?? null,
         size: selectedSize || null,
         priceColones: Number(localProduct.price_colones),
-      });
+      };
+    };
+
+    const handleBuyNow = () => {
+      if (!canBuy) return;
+      startBuyNow(selectedItem());
+      navigate("/checkout?buyNow=1");
+    };
+
+    const handleAddLocalToCart = () => {
+      if (!canBuy) return;
+      addItem(selectedItem());
       toast.success("Agregado al carrito", { position: "top-center" });
     };
 
@@ -176,6 +187,10 @@ const ProductDetail = () => {
               >
                 <ShoppingCart className="w-4 h-4 mr-2" />
                 {canBuy ? "Agregar al Carrito" : "Agotado"}
+              </Button>
+
+              <Button onClick={handleBuyNow} size="lg" disabled={!canBuy} className="w-full mb-3 rounded-xl font-body uppercase tracking-wider">
+                <CreditCard className="w-4 h-4 mr-2" /> Comprar ahora
               </Button>
 
               <Button

@@ -56,12 +56,12 @@ export const ShippingDialog = ({
   defaultDistrict,
 }: Props) => {
   const [form, setForm] = useState<ShippingData>({
-    recipient_name: "",
-    province: "",
-    canton: "",
-    district: "",
-    exact_address: "",
-    phone: "",
+    recipient_name: defaultName ?? "",
+    province: defaultProvince ?? "",
+    canton: defaultCanton ?? "",
+    district: defaultDistrict ?? "",
+    exact_address: defaultAddress ?? "",
+    phone: defaultPhone ?? "",
   });
   const [errors, setErrors] = useState<Partial<Record<keyof ShippingData, string>>>({});
   const [acknowledged, setAcknowledged] = useState(false);
@@ -152,7 +152,7 @@ export const ShippingDialog = ({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             <div>
               <Label className="font-body text-xs uppercase tracking-wide">Provincia</Label>
-              <Select value={form.province} onValueChange={(v) => set("province", v)}>
+              <Select value={form.province} onValueChange={(v) => { if (v) set("province", v); }}>
                 <SelectTrigger className="rounded-xl font-body">
                   <SelectValue placeholder="Seleccionar" />
                 </SelectTrigger>
@@ -166,7 +166,7 @@ export const ShippingDialog = ({
             </div>
             <div>
               <Label className="font-body text-xs uppercase tracking-wide">Cantón</Label>
-              <Select value={form.canton} onValueChange={(v) => set("canton", v)} disabled={!form.province}>
+              <Select value={form.canton} onValueChange={(v) => { if (v) set("canton", v); }} disabled={!form.province}>
                 <SelectTrigger className="rounded-xl font-body">
                   <SelectValue placeholder={form.province ? "Seleccionar" : "Elige provincia"} />
                 </SelectTrigger>
@@ -180,7 +180,7 @@ export const ShippingDialog = ({
             </div>
             <div>
               <Label className="font-body text-xs uppercase tracking-wide">Distrito</Label>
-              <Select value={form.district} onValueChange={(v) => set("district", v)} disabled={!form.canton}>
+              <Select value={form.district} onValueChange={(v) => { if (v) set("district", v); }} disabled={!form.canton}>
                 <SelectTrigger className="rounded-xl font-body">
                   <SelectValue placeholder={form.canton ? "Seleccionar" : "Elige cantón"} />
                 </SelectTrigger>
