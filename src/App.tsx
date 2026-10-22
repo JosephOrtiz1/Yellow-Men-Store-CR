@@ -22,7 +22,7 @@ const queryClient = new QueryClient();
 const AppContent = () => (
   <>
       <Header />
-      <main>
+      <main className="pb-28 md:pb-0">
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/product/:handle" element={<ProductDetail />} />
@@ -37,6 +37,7 @@ const AppContent = () => (
         </Routes>
       </main>
       <Footer />
+      <MobileBottomNav />
   </>
 );
 
