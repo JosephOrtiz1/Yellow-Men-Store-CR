@@ -40,7 +40,7 @@ const AdminLogin = ({ onLogin }: AdminLoginProps) => {
   };
 
   return (
-    <div className="min-h-screen pt-20 flex items-center justify-center">
+    <div className="min-h-screen pt-6 md:pt-20 flex items-center justify-center">
       <Card className="w-full max-w-md mx-4">
         <CardHeader className="text-center">
           <Lock className="h-10 w-10 mx-auto mb-3 text-primary" />

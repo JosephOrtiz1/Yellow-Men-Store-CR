@@ -1,8 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Home, Search, User as UserIcon, Menu } from "lucide-react";
+import { Home, Search, User as UserIcon, Menu, Package, ShieldCheck, LogOut, LogIn } from "lucide-react";
 import { useState } from "react";
 import { CartDrawer } from "./CartDrawer";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
+import { NotificationList } from "./NotificationBell";
 import { useAuth } from "@/hooks/useAuth";
 
 const categories = [
@@ -12,10 +13,18 @@ const categories = [
   { name: "Old Money", slug: "old-money" },
 ];
 
+const sheetItem =
+  "flex items-center gap-3 text-left text-base font-medium text-muted-foreground hover:text-primary py-3 uppercase tracking-wide font-body touch-manipulation";
+
 export const MobileBottomNav = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isAdmin, signOut } = useAuth();
+
+  const go = (path: string) => {
+    setMenuOpen(false);
+    navigate(path);
+  };
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 px-4 pb-4 pointer-events-none">
@@ -65,32 +74,59 @@ export const MobileBottomNav = () => {
               <span className="text-[10px] font-body uppercase tracking-wider">Menú</span>
             </button>
           </SheetTrigger>
-          <SheetContent side="bottom" className="rounded-t-2xl bg-secondary/95 backdrop-blur-xl border-t border-white/10">
+          <SheetContent
+            side="bottom"
+            className="rounded-t-2xl bg-secondary/95 backdrop-blur-xl border-t border-white/10 max-h-[80vh] overflow-y-auto"
+          >
             <SheetHeader>
               <SheetTitle className="font-heading text-2xl tracking-wider text-left">CATEGORÍAS</SheetTitle>
             </SheetHeader>
             <div className="flex flex-col gap-1 pt-4 pb-6">
               {categories.map((cat) => (
-                <button
-                  key={cat.slug}
-                  onClick={() => {
-                    setMenuOpen(false);
-                    navigate(`/category/${cat.slug}`);
-                  }}
-                  className="text-left text-base font-medium text-muted-foreground hover:text-primary py-3 uppercase tracking-wide font-body touch-manipulation"
-                >
+                <button key={cat.slug} onClick={() => go(`/category/${cat.slug}`)} className={sheetItem}>
                   {cat.name}
                 </button>
               ))}
-              <button
-                onClick={() => {
-                  setMenuOpen(false);
-                  navigate("/about");
-                }}
-                className="text-left text-base font-medium text-muted-foreground hover:text-primary py-3 uppercase tracking-wide font-body touch-manipulation"
-              >
+              <button onClick={() => go("/about")} className={sheetItem}>
                 Nosotros
               </button>
+
+              <div className="mt-6 pt-4 border-t border-white/10">
+                <h3 className="font-heading text-xl tracking-wider mb-1">CUENTA</h3>
+                {user ? (
+                  <>
+                    <p className="text-xs font-body text-muted-foreground truncate pb-2">{user.email}</p>
+                    <button onClick={() => go("/orders")} className={sheetItem}>
+                      <Package className="h-4 w-4 flex-shrink-0" /> Mis pedidos
+                    </button>
+                    {isAdmin && (
+                      <button onClick={() => go("/admin")} className={sheetItem}>
+                        <ShieldCheck className="h-4 w-4 flex-shrink-0" /> Panel admin
+                      </button>
+                    )}
+                    <button
+                      onClick={() => {
+                        setMenuOpen(false);
+                        signOut();
+                      }}
+                      className={`${sheetItem} text-destructive`}
+                    >
+                      <LogOut className="h-4 w-4 flex-shrink-0" /> Cerrar sesión
+                    </button>
+                  </>
+                ) : (
+                  <button onClick={() => go("/auth")} className={sheetItem}>
+                    <LogIn className="h-4 w-4 flex-shrink-0" /> Iniciar sesión
+                  </button>
+                )}
+              </div>
+
+              {user && (
+                <div className="mt-6 pt-4 border-t border-white/10">
+                  <h3 className="font-heading text-xl tracking-wider mb-2">NOTIFICACIONES</h3>
+                  <NotificationList />
+                </div>
+              )}
             </div>
           </SheetContent>
         </Sheet>

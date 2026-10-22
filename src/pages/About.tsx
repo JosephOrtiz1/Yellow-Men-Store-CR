@@ -2,7 +2,7 @@ import { Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const About = () => (
-  <div className="min-h-screen pt-20">
+  <div className="min-h-screen pt-6 md:pt-20">
     <div className="container mx-auto px-4 py-12 md:py-16 max-w-3xl">
       <h1 className="font-heading text-5xl sm:text-6xl md:text-7xl tracking-wider mb-8 text-center">
         SOBRE <span className="text-primary">NOSOTROS</span>
