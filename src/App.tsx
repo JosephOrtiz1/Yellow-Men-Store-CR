@@ -37,7 +37,9 @@ const AppContent = () => (
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-      <Footer />
+      <div className="pb-24 md:pb-0">
+        <Footer />
+      </div>
       <MobileBottomNav />
   </>
 );
