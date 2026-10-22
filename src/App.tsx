@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { RequireAuth } from "@/components/RequireAuth";
 import Index from "./pages/Index";
 import ProductDetail from "./pages/ProductDetail";
