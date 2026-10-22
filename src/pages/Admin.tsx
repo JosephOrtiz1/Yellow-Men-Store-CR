@@ -406,7 +406,7 @@ const Admin = () => {
   // Loading state
   if (authLoading) {
     return (
-      <div className="min-h-screen pt-20 flex items-center justify-center">
+      <div className="min-h-screen pt-6 md:pt-20 flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
@@ -420,7 +420,7 @@ const Admin = () => {
   // Logged in but not admin
   if (!isAdmin) {
     return (
-      <div className="min-h-screen pt-20 flex items-center justify-center">
+      <div className="min-h-screen pt-6 md:pt-20 flex items-center justify-center">
         <Card className="w-full max-w-md mx-4 text-center">
           <CardContent className="pt-8 pb-6 space-y-4">
             <p className="font-body text-lg text-foreground">No tienes permisos de administrador.</p>
@@ -437,7 +437,7 @@ const Admin = () => {
   }
 
   return (
-    <div className="min-h-screen pt-20">
+    <div className="min-h-screen pt-6 md:pt-20">
       <div className="container mx-auto px-4 py-8">
         {/* Header with Techwear banner */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">

@@ -38,7 +38,7 @@ export const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-secondary border-b border-border">
+    <header className="hidden md:block fixed top-0 left-0 right-0 z-50 bg-secondary border-b border-border">
       <div className="container mx-auto px-4 h-16 flex items-center gap-6">
         <Link to="/about" className="flex items-center gap-2 flex-shrink-0" aria-label="Yellow Men Store - Inicio">
           <img src={isotipo} alt="Yellow Men Store" className="h-10 w-10" />
@@ -47,16 +47,6 @@ export const Header = () => {
           </span>
         </Link>
 
-        {/* Mobile search bar (replaces brand text on small screens) */}
-        <form onSubmit={submitSearch} className="flex md:hidden relative flex-1 min-w-0">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-          <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar..."
-            className="pl-9 font-body bg-background border-border h-9"
-          />
-        </form>
 
         <nav className="hidden lg:flex items-center justify-center gap-7 flex-1">
           {categories.map((cat) => (

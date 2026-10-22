@@ -118,7 +118,7 @@ const Checkout = () => {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-16">
+    <div className="min-h-screen pt-6 md:pt-24 pb-16">
       <div className="container max-w-6xl mx-auto px-4 sm:px-6">
         <Button asChild variant="ghost" className="pl-0 text-muted-foreground"><Link to="/"><ArrowLeft className="w-4 h-4 mr-2" />Seguir comprando</Link></Button>
         <div className="flex flex-wrap items-end justify-between gap-4 mt-4 mb-8">
