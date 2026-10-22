@@ -12,3 +12,7 @@
 
 # Edición de productos
 - [x] Agregar edición de productos existentes; guardado, recarga, conservación de imágenes y cancelación verificados con sesión de administrador.
+
+# Navegación móvil
+- [x] Quitar la barra superior en móvil; el header queda solo desde escritorio.
+- [x] Conservar en el menú inferior los accesos que estaban arriba: cuenta, pedidos, panel admin, cerrar sesión y notificaciones.
