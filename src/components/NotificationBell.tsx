@@ -21,7 +21,7 @@ interface Notification {
   created_at: string;
 }
 
-export const NotificationBell = () => {
+const useNotifications = () => {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
@@ -42,14 +42,23 @@ export const NotificationBell = () => {
     return () => clearInterval(interval);
   }, [user]);
 
-  if (!user) return null;
-
-  const unread = notifications.filter((n) => !n.read).length;
-
   const markRead = async (id: string) => {
     setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
     await supabase.from("notifications").update({ read: true }).eq("id", id);
   };
+
+  return {
+    user,
+    notifications,
+    unread: notifications.filter((n) => !n.read).length,
+    markRead,
+  };
+};
+
+export const NotificationBell = () => {
+  const { user, notifications, unread, markRead } = useNotifications();
+
+  if (!user) return null;
 
   return (
     <DropdownMenu>
@@ -86,5 +95,37 @@ export const NotificationBell = () => {
         )}
       </DropdownMenuContent>
     </DropdownMenu>
+  );
+};
+
+/** Lista de notificaciones para incrustar en el menú inferior de móvil. */
+export const NotificationList = () => {
+  const { user, notifications, markRead } = useNotifications();
+
+  if (!user) return null;
+
+  return (
+    <div className="flex flex-col max-h-60 overflow-y-auto">
+      {notifications.length === 0 ? (
+        <p className="text-xs font-body text-muted-foreground text-center py-4">No tienes notificaciones.</p>
+      ) : (
+        notifications.map((n) => (
+          <button
+            key={n.id}
+            onClick={() => markRead(n.id)}
+            className={`text-left py-3 border-b border-white/5 last:border-0 touch-manipulation ${n.read ? "opacity-60" : ""}`}
+          >
+            <span className="flex items-center gap-2 text-sm font-semibold font-body">
+              {!n.read && <span className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />}
+              {n.title}
+            </span>
+            <span className="block text-xs font-body text-muted-foreground whitespace-normal">{n.message}</span>
+            <span className="block text-[10px] font-body text-muted-foreground/70">
+              {new Date(n.created_at).toLocaleString("es-CR")}
+            </span>
+          </button>
+        ))
+      )}
+    </div>
   );
 };
