@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { RequireAuth } from "@/components/RequireAuth";
 import Index from "./pages/Index";
 import ProductDetail from "./pages/ProductDetail";
@@ -22,7 +23,7 @@ const queryClient = new QueryClient();
 const AppContent = () => (
   <>
       <Header />
-      <main>
+      <main className="pb-28 md:pb-0">
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/product/:handle" element={<ProductDetail />} />
@@ -36,7 +37,10 @@ const AppContent = () => (
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-      <Footer />
+      <div className="pb-24 md:pb-0">
+        <Footer />
+      </div>
+      <MobileBottomNav />
   </>
 );
 
