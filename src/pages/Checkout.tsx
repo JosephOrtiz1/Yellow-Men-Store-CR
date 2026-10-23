@@ -125,10 +125,10 @@ const Checkout = () => {
           <div><p className="text-primary text-sm font-semibold uppercase">Yellow Men Store CR</p><h1 className="font-heading text-5xl mt-1">FINALIZAR COMPRA</h1></div>
           <p className="flex items-center gap-2 text-sm text-muted-foreground"><LockKeyhole className="w-4 h-4" />Tus datos de pago se procesan de forma segura</p>
         </div>
-        <ol aria-label="Pasos de compra" className="grid grid-cols-4 border-y border-border py-5 mb-10 gap-3">
-          {["Envío", "Detalles", "Pago", "Confirmación"].map((label, index) => {
+        <ol aria-label="Pasos de compra" className="grid grid-cols-4 border-y border-border py-4 sm:py-5 mb-10 gap-1 sm:gap-3">
+          {["Envío", "Detalles", "Pago", "Confirmar"].map((label, index) => {
             const current = order ? 3 : step === "payment" ? 2 : step === "details" ? 1 : 0;
-            return <li key={label} aria-current={current === index ? "step" : undefined} className={`flex items-center gap-2 text-sm ${index <= current ? "text-primary" : "text-muted-foreground"}`}><span className="flex items-center justify-center border border-current rounded-full w-7 h-7 shrink-0">{index < current ? <Check className="w-4 h-4" /> : index + 1}</span><span>{label}</span></li>;
+            return <li key={label} aria-current={current === index ? "step" : undefined} className={`flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 min-w-0 text-[11px] sm:text-sm text-center ${index <= current ? "text-primary" : "text-muted-foreground"}`}><span className="flex items-center justify-center border border-current rounded-full w-6 h-6 sm:w-7 sm:h-7 shrink-0 text-xs sm:text-sm">{index < current ? <Check className="w-4 h-4" /> : index + 1}</span><span className="truncate max-w-full">{label}</span></li>;
           })}
         </ol>
         {!items.length && !order ? (
