@@ -50,7 +50,7 @@ export const MobileBottomNav = () => {
           <span className="text-[10px] font-body uppercase tracking-wider">Buscar</span>
         </Link>
 
-        <div className="flex flex-col items-center gap-0.5 p-2 text-foreground/80 [&_button]:h-5 [&_button]:w-5 [&_button]:p-0 [&_button]:text-foreground/80">
+        <div className="flex flex-col items-center gap-0.5 p-2 text-foreground/80 hover:text-primary transition-colors touch-manipulation [&_button]:h-5 [&_button]:w-5 [&_button]:p-0 [&>button]:text-current [&>button:hover]:text-current [&>button:hover]:bg-transparent">
           <CartDrawer />
           <span className="text-[10px] font-body uppercase tracking-wider">Carrito</span>
         </div>
