@@ -16,3 +16,8 @@
 # Navegación móvil
 - [x] Quitar la barra superior en móvil; el header queda solo desde escritorio.
 - [x] Conservar en el menú inferior los accesos que estaban arriba: cuenta, pedidos, panel admin, cerrar sesión y notificaciones.
+
+# Hero y navegación
+- [x] Slider de 4 imágenes en el hero (Techwear, Street Wear, Old Money, Casual) con barra de progreso segmentada, texto fijo y brillo reducido para legibilidad en móvil.
+- [x] Corregir el scroll: cada página nueva abre desde arriba (ScrollToTop en App).
+- [x] Renombrar la categoría visible «Cyber Wear» a «Techwear» (el slug interno cyber-wear se conserva para no perder productos).
