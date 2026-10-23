@@ -26,7 +26,20 @@ Deno.serve(async (req) => {
     const token = await getPayPalToken();
     if (!token) return json({ error: 'PayPal not configured' }, 503);
 
-    const origin = parsed.data.return_origin ?? 'https://yellowmenstore.lovable.app';
+    const DEFAULT_ORIGIN = 'https://yellowmenstore.lovable.app';
+    let origin = DEFAULT_ORIGIN;
+    if (parsed.data.return_origin) {
+      try {
+        const u = new URL(parsed.data.return_origin);
+        const host = u.hostname;
+        const allowed = u.protocol === 'https:' && (
+          host === 'yellowmenstore.lovable.app' ||
+          host.endsWith('.lovable.app') ||
+          host.endsWith('.lovableproject.com')
+        );
+        if (allowed) origin = u.origin;
+      } catch { /* keep default */ }
+    }
     const usd = (Number(order.total_colones) / CRC_PER_USD).toFixed(2);
 
     const res = await fetch(`${PAYPAL_BASE}/v2/checkout/orders`, {
