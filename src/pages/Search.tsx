@@ -16,7 +16,7 @@ interface ProductResult {
 const CATEGORY_LABELS: Record<string, string> = {
   "street-wear": "Street Wear",
   "casual": "Casual",
-  "cyber-wear": "Cyber Wear",
+  "cyber-wear": "Techwear",
   "old-money": "Old Money",
 };
 

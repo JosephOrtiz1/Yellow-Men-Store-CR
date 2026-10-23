@@ -19,7 +19,7 @@ import techwearImg from "@/assets/hero/techwear-hero.jpg";
 const CATEGORIES = [
   { value: "street-wear", label: "Street Wear" },
   { value: "casual", label: "Casual" },
-  { value: "cyber-wear", label: "Cyber Wear" },
+  { value: "cyber-wear", label: "Techwear" },
   { value: "old-money", label: "Old Money" },
 ];
 

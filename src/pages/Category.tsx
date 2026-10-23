@@ -7,7 +7,7 @@ import { Loader2 } from "lucide-react";
 const categoryNames: Record<string, string> = {
   "street-wear": "Street Wear",
   "casual": "Casual",
-  "cyber-wear": "Cyber Wear",
+  "cyber-wear": "Techwear",
   "old-money": "Old Money",
 };
 
