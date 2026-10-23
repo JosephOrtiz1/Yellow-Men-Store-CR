@@ -2,14 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { SupabaseProductCard } from "@/components/SupabaseProductCard";
+import { HeroSlider } from "@/components/HeroSlider";
 import { fetchSupabaseProducts, type SupabaseProductListItem } from "@/lib/supabaseProducts";
 import { ArrowRight, Loader2 } from "lucide-react";
-import techwearHero from "@/assets/hero/hero-techwear.jpg";
 
 const categories = [
   { name: "Street Wear", slug: "street-wear", description: "Estilo urbano y audaz" },
   { name: "Casual", slug: "casual", description: "Comodidad con estilo" },
-  { name: "Cyber Wear", slug: "cyber-wear", description: "Futurismo en cada prenda" },
+  { name: "Techwear", slug: "cyber-wear", description: "Futurismo en cada prenda" },
   { name: "Old Money", slug: "old-money", description: "Elegancia atemporal" },
 ];
 
@@ -39,14 +39,7 @@ const Index = () => {
       {/* Hero — editorial full-height */}
       <section className="relative bg-secondary min-h-[85vh] md:min-h-screen flex items-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-secondary via-secondary/90 to-transparent z-10" />
-        <img
-          src={techwearHero}
-          alt="Yellow Men Store - Techwear"
-          decoding="async"
-          width={1600}
-          height={1600}
-          className="absolute right-0 top-0 h-full w-full md:w-1/2 object-cover object-top opacity-50 md:opacity-90"
-        />
+        <HeroSlider />
         <div className="container mx-auto px-4 relative z-20">
           <div className="max-w-2xl">
             <p className="font-body text-xs md:text-sm uppercase tracking-[0.3em] text-primary mb-4">

@@ -18,7 +18,7 @@ export const Footer = () => (
             {[
               { slug: "street-wear", name: "Street Wear" },
               { slug: "casual", name: "Casual" },
-              { slug: "cyber-wear", name: "Cyber Wear" },
+              { slug: "cyber-wear", name: "Techwear" },
               { slug: "old-money", name: "Old Money" },
             ].map((cat) => (
               <Link

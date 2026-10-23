@@ -9,7 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 const categories = [
   { name: "Street Wear", slug: "street-wear" },
   { name: "Casual", slug: "casual" },
-  { name: "Cyber Wear", slug: "cyber-wear" },
+  { name: "Techwear", slug: "cyber-wear" },
   { name: "Old Money", slug: "old-money" },
 ];
 

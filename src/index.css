@@ -156,3 +156,19 @@
   .success-overlay, .success-card { animation: none; }
   .success-circle, .success-check { animation: none; stroke-dashoffset: 0; }
 }
+
+/* Hero slider — barra de progreso segmentada */
+@keyframes hero-progress-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.hero-progress-fill {
+  animation-name: hero-progress-fill;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-progress-fill { animation: none; transform: scaleX(1); }
+}
