@@ -7,6 +7,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { RequireAuth } from "@/components/RequireAuth";
+import { ScrollToTop } from "@/components/ScrollToTop";
 import Index from "./pages/Index";
 import ProductDetail from "./pages/ProductDetail";
 import Category from "./pages/Category";
@@ -22,6 +23,7 @@ const queryClient = new QueryClient();
 
 const AppContent = () => (
   <>
+      <ScrollToTop />
       <Header />
       <main className="pb-28 md:pb-0">
         <Routes>
