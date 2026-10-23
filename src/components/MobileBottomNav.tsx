@@ -50,9 +50,9 @@ export const MobileBottomNav = () => {
           <span className="text-[10px] font-body uppercase tracking-wider">Buscar</span>
         </Link>
 
-        <div className="flex flex-col items-center gap-0.5 text-foreground/80 [&_button]:text-foreground/80">
+        <div className="flex flex-col items-center gap-0.5 p-2 text-foreground/80 [&_button]:h-5 [&_button]:w-5 [&_button]:p-0 [&_button]:text-foreground/80">
           <CartDrawer />
-          <span className="text-[10px] font-body uppercase tracking-wider -mt-1.5">Carrito</span>
+          <span className="text-[10px] font-body uppercase tracking-wider">Carrito</span>
         </div>
 
         <Link
