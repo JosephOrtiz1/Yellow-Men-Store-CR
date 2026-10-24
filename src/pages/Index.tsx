@@ -38,7 +38,7 @@ const Index = () => {
     <div className="min-h-screen">
       {/* Hero — editorial full-height */}
       <section className="relative bg-secondary min-h-[85vh] md:min-h-screen flex items-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-secondary via-secondary/90 to-transparent z-10" />
+        <div className="absolute inset-0 hero-scrim z-10" />
         <HeroSlider />
         <div className="container mx-auto px-4 relative z-20">
           <div className="max-w-2xl">

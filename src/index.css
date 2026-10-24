@@ -172,3 +172,27 @@
 @media (prefers-reduced-motion: reduce) {
   .hero-progress-fill { animation: none; transform: scaleX(1); }
 }
+
+/* Hero — degradado de portada. En móvil el fundido ocurre más a la izquierda
+   para que la foto se distinga del fondo negro en pantallas AMOLED. */
+.hero-scrim {
+  background: linear-gradient(
+    to right,
+    hsl(var(--secondary)) 0%,
+    hsl(var(--secondary) / 0.8) 30%,
+    hsl(var(--secondary) / 0.45) 55%,
+    transparent 80%
+  );
+}
+
+@media (min-width: 768px) {
+  .hero-scrim {
+    background: linear-gradient(
+      to right,
+      hsl(var(--secondary)) 0%,
+      hsl(var(--secondary) / 0.9) 50%,
+      transparent 100%
+    );
+  }
+}
+
