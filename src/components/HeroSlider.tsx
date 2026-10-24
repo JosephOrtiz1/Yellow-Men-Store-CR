@@ -4,7 +4,7 @@ import heroStreetwear from "@/assets/hero/hero-streetwear.jpg";
 import heroOldMoney from "@/assets/hero/hero-old-money.jpg";
 import heroCasual from "@/assets/hero/hero-casual.jpg";
 
-const SLIDE_DURATION_MS = 6000;
+const SLIDE_DURATION_MS = 4800;
 
 const slides = [
   { src: heroTechwear, label: "Techwear" },
