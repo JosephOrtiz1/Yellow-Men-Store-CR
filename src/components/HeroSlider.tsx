@@ -44,7 +44,7 @@ export const HeroSlider = () => {
           width={1600}
           height={1600}
           aria-hidden={i !== active}
-          className={`absolute right-0 top-0 h-full w-full md:w-1/2 object-cover object-top brightness-[0.55] md:brightness-75 transition-opacity duration-1000 ${
+          className={`absolute right-0 top-0 h-full w-full md:w-1/2 object-cover object-top brightness-[0.62] md:brightness-75 transition-opacity duration-1000 ${
             i === active ? "opacity-100" : "opacity-0"
           }`}
         />
