@@ -20,14 +20,36 @@ export interface SupabaseProductListItem {
   }[];
 }
 
-export async function fetchSupabaseProducts(category?: string, limit = 50): Promise<SupabaseProductListItem[]> {
+/**
+ * Randomizer: Fisher–Yates shuffle over a copy of the list.
+ * `rand` is injectable so the order can be verified deterministically in tests.
+ */
+export function shuffleProducts<T>(items: T[], rand: () => number = Math.random): T[] {
+  const out = [...items];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+// When randomizing we pull a wider pool so older products can also surface,
+// then shuffle and keep only the first `limit`.
+const RANDOM_POOL_SIZE = 200;
+
+export async function fetchSupabaseProducts(
+  category?: string,
+  limit = 50,
+  options: { randomize?: boolean } = {},
+): Promise<SupabaseProductListItem[]> {
+  const { randomize = false } = options;
   let query = supabase
     .from("products")
     .select("id, title, handle, price_colones, category, description, sizes, size_guide_url, available, product_colors(color_name, color_hex, image_url, hover_image_url, sort_order, available)")
     .eq("is_active", true)
     .is("deleted_at", null)
     .order("created_at", { ascending: false })
-    .limit(limit);
+    .limit(randomize ? Math.max(limit, RANDOM_POOL_SIZE) : limit);
 
   if (category) query = query.eq("category", category);
 
@@ -36,7 +58,8 @@ export async function fetchSupabaseProducts(category?: string, limit = 50): Prom
     console.error("Error loading supabase products:", error);
     return [];
   }
-  return (data || []) as SupabaseProductListItem[];
+  const items = (data || []) as SupabaseProductListItem[];
+  return randomize ? shuffleProducts(items).slice(0, limit) : items;
 }
 
 export async function fetchSupabaseProductByHandle(handle: string): Promise<SupabaseProductListItem | null> {

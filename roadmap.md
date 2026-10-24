@@ -21,3 +21,7 @@
 - [x] Slider de 4 imágenes en el hero (Techwear, Street Wear, Old Money, Casual) con barra de progreso segmentada, texto fijo y brillo reducido para legibilidad en móvil.
 - [x] Corregir el scroll: cada página nueva abre desde arriba (ScrollToTop en App).
 - [x] Renombrar la categoría visible «Cyber Wear» a «Techwear» (el slug interno cyber-wear se conserva para no perder productos).
+
+# Productos aleatorios
+- [x] Ordenar la home y las categorías en orden aleatorio (ya no por fecha de publicación), con botón «Mezclar» para volver a mezclar.
+- [x] Verificado: mismo catálogo, orden distinto en cada carga y al mezclar (36 productos en home, 14 en Casual), sin errores de página.

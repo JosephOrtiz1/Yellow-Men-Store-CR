@@ -8,3 +8,4 @@
 - On small screens navigation lives only in the floating bottom bar and the top header renders from the md breakpoint up, so account, admin and notification actions must stay reachable from the bottom sheet's menu instead of the hidden header.- The home hero is a 4-image crossfade slider (HeroSlider) driven by a segmented progress bar; slide timing lives in SLIDE_DURATION_MS and the fill bar remounts via a cycle key so its animation restarts each slide.
 - The visible category name is "Techwear" but the stored slug stays "cyber-wear"; never rename the slug without migrating existing products.
 - ScrollToTop in App resets window scroll on every pathname change so new pages always open from the top.
+- Storefront product listings (home and category) are shuffled client-side per page view via shuffleProducts in src/lib/supabaseProducts.ts; the database query stays newest-first and search results keep that order.
