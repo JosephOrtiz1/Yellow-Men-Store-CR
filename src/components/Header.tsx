@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, X, Home, Search, User as UserIcon, LogOut } from "lucide-react";
+import { Menu, X, Home, Search, User as UserIcon, LogOut, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { CartDrawer } from "./CartDrawer";
 import { NotificationBell } from "./NotificationBell";
@@ -44,16 +44,19 @@ export const Header = () => {
         </Link>
 
 
-        <nav className="hidden lg:flex items-center justify-center gap-7 flex-1">
-          {categories.map((cat) => (
-            <Link
-              key={cat.slug}
-              to={`/category/${cat.slug}`}
-              className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors uppercase tracking-wide font-body whitespace-nowrap"
-            >
-              {cat.name}
-            </Link>
-          ))}
+        <nav className="hidden lg:flex items-center justify-center gap-8 flex-1">
+          <DropdownMenu>
+            <DropdownMenuTrigger className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-primary transition-colors uppercase tracking-wide font-body outline-none">
+              Styles <ChevronDown className="h-3.5 w-3.5" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="center" className="w-48">
+              {categories.map((cat) => (
+                <DropdownMenuItem key={cat.slug} onClick={() => navigate(`/category/${cat.slug}`)} className="font-body cursor-pointer uppercase text-xs tracking-wide">
+                  {cat.name}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Link to="/categories" className="text-xs font-medium text-primary hover:text-primary/80 transition-colors uppercase tracking-wide font-body whitespace-nowrap">
             Categorías
           </Link>
