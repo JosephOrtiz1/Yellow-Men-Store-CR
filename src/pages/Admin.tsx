@@ -1,3 +1,4 @@
+import { STYLES, GARMENT_TYPES } from "@/lib/catalog";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,12 +17,8 @@ import { PAYMENT_METHOD_LABELS, ORDER_STATUS_LABELS } from "@/lib/payments";
 import AdminLogin from "./AdminLogin";
 import techwearImg from "@/assets/hero/techwear-hero.jpg";
 
-const CATEGORIES = [
-  { value: "street-wear", label: "Street Wear" },
-  { value: "casual", label: "Casual" },
-  { value: "cyber-wear", label: "Techwear" },
-  { value: "old-money", label: "Old Money" },
-];
+const CATEGORIES = STYLES.map((s) => ({ value: s.slug, label: s.name }));
+const GARMENTS = GARMENT_TYPES.map((g) => ({ value: g.slug, label: g.name }));
 
 const COMMON_SIZES = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
 
@@ -53,6 +50,7 @@ const Admin = () => {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("casual");
+  const [garmentType, setGarmentType] = useState("otros");
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [colors, setColors] = useState<ColorEntry[]>([]);
   const [sizeGuideFile, setSizeGuideFile] = useState<File | null>(null);
@@ -78,7 +76,7 @@ const Admin = () => {
   const editProduct = async (id: string) => {
     setLoadingEditId(id);
     const { data, error } = await supabase.from("products")
-      .select("id, title, description, price_colones, category, sizes, size_guide_url, product_colors(id, color_name, color_hex, image_url, hover_image_url, sort_order)")
+      .select("id, title, description, price_colones, category, garment_type, sizes, size_guide_url, product_colors(id, color_name, color_hex, image_url, hover_image_url, sort_order)")
       .eq("id", id).is("deleted_at", null).single();
     setLoadingEditId(null);
     if (error || !data) {
@@ -90,6 +88,7 @@ const Admin = () => {
     setDescription(data.description ?? "");
     setPrice(String(data.price_colones));
     setCategory(data.category);
+    setGarmentType(data.garment_type ?? "otros");
     setSelectedSizes(data.sizes);
     setSizeGuideFile(null);
     setSizeGuidePreview(data.size_guide_url ?? "");
@@ -327,6 +326,7 @@ const Admin = () => {
           description: description.trim() || null,
           price_colones: parseFloat(price),
           category,
+          garment_type: garmentType,
           sizes: selectedSizes,
           size_guide_url: sizeGuideUrl,
       };
@@ -511,7 +511,7 @@ const Admin = () => {
 
                 {/* Category */}
                 <div>
-                  <Label className="font-body">Categoría *</Label>
+                  <Label className="font-body">Style *</Label>
                   <Select value={category} onValueChange={setCategory}>
                     <SelectTrigger className="font-body">
                       <SelectValue />
@@ -520,6 +520,23 @@ const Admin = () => {
                       {CATEGORIES.map((cat) => (
                         <SelectItem key={cat.value} value={cat.value} className="font-body">
                           {cat.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Garment category */}
+                <div>
+                  <Label className="font-body">Categoría (tipo de prenda) *</Label>
+                  <Select value={garmentType} onValueChange={setGarmentType}>
+                    <SelectTrigger className="font-body">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {GARMENTS.map((g) => (
+                        <SelectItem key={g.value} value={g.value} className="font-body">
+                          {g.label}
                         </SelectItem>
                       ))}
                     </SelectContent>

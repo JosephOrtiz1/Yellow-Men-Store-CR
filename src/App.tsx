@@ -11,6 +11,7 @@ import { ScrollToTop } from "@/components/ScrollToTop";
 import Index from "./pages/Index";
 import ProductDetail from "./pages/ProductDetail";
 import Category from "./pages/Category";
+import Categories from "./pages/Categories";
 import About from "./pages/About";
 import Admin from "./pages/Admin";
 import SearchPage from "./pages/Search";
@@ -30,6 +31,8 @@ const AppContent = () => (
           <Route path="/" element={<Index />} />
           <Route path="/product/:handle" element={<ProductDetail />} />
           <Route path="/category/:slug" element={<Category />} />
+          <Route path="/categories" element={<Categories />} />
+          <Route path="/categories/:slug" element={<Category key="garment" mode="garment" />} />
           <Route path="/about" element={<About />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/auth" element={<Auth />} />

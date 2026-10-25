@@ -5,6 +5,7 @@ import { CartDrawer } from "./CartDrawer";
 import { NotificationBell } from "./NotificationBell";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { STYLES } from "@/lib/catalog";
 import { useAuth } from "@/hooks/useAuth";
 import {
   DropdownMenu,
@@ -16,12 +17,7 @@ import {
 } from "./ui/dropdown-menu";
 import isotipo from "@/assets/brand/isotipo.png";
 
-const categories = [
-  { name: "Street Wear", slug: "street-wear" },
-  { name: "Casual", slug: "casual" },
-  { name: "Techwear", slug: "cyber-wear" },
-  { name: "Old Money", slug: "old-money" },
-];
+const categories = STYLES;
 
 export const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -58,6 +54,9 @@ export const Header = () => {
               {cat.name}
             </Link>
           ))}
+          <Link to="/categories" className="text-xs font-medium text-primary hover:text-primary/80 transition-colors uppercase tracking-wide font-body whitespace-nowrap">
+            Categorías
+          </Link>
         </nav>
 
         <div className="hidden md:flex lg:hidden flex-1" />
@@ -165,6 +164,9 @@ export const Header = () => {
                   {cat.name}
                 </Link>
               ))}
+              <Link to="/categories" onClick={() => setMenuOpen(false)} className="text-base font-medium text-primary py-3 uppercase tracking-wide font-body touch-manipulation">
+                Categorías
+              </Link>
             </nav>
           </div>
         </div>

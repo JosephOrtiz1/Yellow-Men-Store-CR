@@ -4,14 +4,10 @@ import { Button } from "@/components/ui/button";
 import { SupabaseProductCard } from "@/components/SupabaseProductCard";
 import { HeroSlider } from "@/components/HeroSlider";
 import { fetchSupabaseProducts, type SupabaseProductListItem } from "@/lib/supabaseProducts";
+import { STYLES } from "@/lib/catalog";
 import { ArrowRight, Loader2 } from "lucide-react";
 
-const categories = [
-  { name: "Street Wear", slug: "street-wear", description: "Estilo urbano y audaz" },
-  { name: "Casual", slug: "casual", description: "Comodidad con estilo" },
-  { name: "Techwear", slug: "cyber-wear", description: "Futurismo en cada prenda" },
-  { name: "Old Money", slug: "old-money", description: "Elegancia atemporal" },
-];
+const categories = STYLES;
 
 const Index = () => {
   const [localProducts, setLocalProducts] = useState<SupabaseProductListItem[]>([]);
@@ -127,8 +123,8 @@ const Index = () => {
       {/* Desktop: categorías */}
       <section className="hidden md:block py-16 bg-background">
         <div className="container mx-auto px-4">
-          <h2 className="font-heading text-5xl tracking-wider mb-10 text-center">CATEGORÍAS</h2>
-          <div className="grid grid-cols-4 gap-4">
+          <h2 className="font-heading text-5xl tracking-wider mb-10 text-center">STYLES</h2>
+          <div className="grid grid-cols-3 gap-4">
             {categories.map((cat) => (
               <Link
                 key={cat.slug}

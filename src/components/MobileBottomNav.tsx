@@ -4,14 +4,10 @@ import { useState } from "react";
 import { CartDrawer } from "./CartDrawer";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
 import { NotificationList } from "./NotificationBell";
+import { STYLES } from "@/lib/catalog";
 import { useAuth } from "@/hooks/useAuth";
 
-const categories = [
-  { name: "Street Wear", slug: "street-wear" },
-  { name: "Casual", slug: "casual" },
-  { name: "Techwear", slug: "cyber-wear" },
-  { name: "Old Money", slug: "old-money" },
-];
+const categories = STYLES;
 
 const sheetItem =
   "flex items-center gap-3 text-left text-base font-medium text-muted-foreground hover:text-primary py-3 uppercase tracking-wide font-body touch-manipulation";
@@ -79,7 +75,7 @@ export const MobileBottomNav = () => {
             className="rounded-t-2xl bg-secondary/95 backdrop-blur-xl border-t border-white/10 max-h-[80vh] overflow-y-auto"
           >
             <SheetHeader>
-              <SheetTitle className="font-heading text-2xl tracking-wider text-left">CATEGORÍAS</SheetTitle>
+              <SheetTitle className="font-heading text-2xl tracking-wider text-left">STYLES</SheetTitle>
             </SheetHeader>
             <div className="flex flex-col gap-1 pt-4 pb-6">
               {categories.map((cat) => (
@@ -87,6 +83,9 @@ export const MobileBottomNav = () => {
                   {cat.name}
                 </button>
               ))}
+              <button onClick={() => go("/categories")} className={sheetItem + " text-primary"}>
+                Categorías de prendas
+              </button>
               <button onClick={() => go("/about")} className={sheetItem}>
                 Nosotros
               </button>

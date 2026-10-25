@@ -1,3 +1,4 @@
+import { STYLES } from "@/lib/catalog";
 import { Link } from "react-router-dom";
 import { Instagram } from "lucide-react";
 import logoFull from "@/assets/brand/logo-full.png";
@@ -13,17 +14,12 @@ export const Footer = () => (
           </p>
         </div>
         <div>
-          <h4 className="font-heading text-lg tracking-wider mb-3 text-primary">CATEGORÍAS</h4>
+          <h4 className="font-heading text-lg tracking-wider mb-3 text-primary">STYLES</h4>
           <div className="flex flex-col gap-2">
-            {[
-              { slug: "street-wear", name: "Street Wear" },
-              { slug: "casual", name: "Casual" },
-              { slug: "cyber-wear", name: "Techwear" },
-              { slug: "old-money", name: "Old Money" },
-            ].map((cat) => (
+            {[...STYLES, { slug: "__cats", name: "Categorías de prendas" }].map((cat) => (
               <Link
                 key={cat.slug}
-                to={`/category/${cat.slug}`}
+                to={cat.slug === "__cats" ? "/categories" : `/category/${cat.slug}`}
                 className="text-sm text-muted-foreground hover:text-primary transition-colors font-body touch-manipulation"
               >
                 {cat.name}
