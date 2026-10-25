@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { SupabaseProductCard } from "@/components/SupabaseProductCard";
 import { HeroSlider } from "@/components/HeroSlider";
-import { ShuffleButton } from "@/components/ShuffleButton";
 import { fetchSupabaseProducts, type SupabaseProductListItem } from "@/lib/supabaseProducts";
 import { ArrowRight, Loader2 } from "lucide-react";
 
@@ -108,7 +107,6 @@ const Index = () => {
             <div id="products">
               <div className="flex items-center justify-between px-4 mb-4">
                 <h2 className="font-heading text-3xl tracking-wider">TODOS LOS PRODUCTOS</h2>
-                <ShuffleButton onClick={() => setShuffleKey((k) => k + 1)} />
               </div>
               {localProducts.length === 0 ? (
                 <div className="text-center py-16 mx-4 bg-card rounded-sm">
@@ -150,7 +148,6 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-10">
             <h2 className="font-heading text-5xl tracking-wider">PRODUCTOS</h2>
-            <ShuffleButton onClick={() => setShuffleKey((k) => k + 1)} />
           </div>
           {loading ? (
             <div className="flex justify-center py-20">
