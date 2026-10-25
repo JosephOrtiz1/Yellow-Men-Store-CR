@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { fetchSupabaseProducts, type SupabaseProductListItem } from "@/lib/supabaseProducts";
 import { SupabaseProductCard } from "@/components/SupabaseProductCard";
-import { ShuffleButton } from "@/components/ShuffleButton";
 import { Loader2 } from "lucide-react";
 
 const categoryNames: Record<string, string> = {
@@ -37,7 +36,6 @@ const Category = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-8 md:mb-10">
           <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl tracking-wider">{categoryName.toUpperCase()}</h1>
-          <ShuffleButton onClick={() => setShuffleKey((k) => k + 1)} />
         </div>
 
         {loading ? (
