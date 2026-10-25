@@ -67,6 +67,7 @@ const Admin = () => {
     setDescription("");
     setPrice("");
     setCategory("casual");
+    setGarmentType("otros");
     setSelectedSizes([]);
     setColors([]);
     setSizeGuideFile(null);
