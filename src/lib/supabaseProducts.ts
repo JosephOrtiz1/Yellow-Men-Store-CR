@@ -6,6 +6,7 @@ export interface SupabaseProductListItem {
   handle: string | null;
   price_colones: number;
   category: string;
+  garment_type?: string | null;
   description: string | null;
   sizes: string[];
   size_guide_url: string | null;
@@ -40,18 +41,19 @@ const RANDOM_POOL_SIZE = 200;
 export async function fetchSupabaseProducts(
   category?: string,
   limit = 50,
-  options: { randomize?: boolean } = {},
+  options: { randomize?: boolean; garmentType?: string } = {},
 ): Promise<SupabaseProductListItem[]> {
-  const { randomize = false } = options;
+  const { randomize = false, garmentType } = options;
   let query = supabase
     .from("products")
-    .select("id, title, handle, price_colones, category, description, sizes, size_guide_url, available, product_colors(color_name, color_hex, image_url, hover_image_url, sort_order, available)")
+    .select("id, title, handle, price_colones, category, garment_type, description, sizes, size_guide_url, available, product_colors(color_name, color_hex, image_url, hover_image_url, sort_order, available)")
     .eq("is_active", true)
     .is("deleted_at", null)
     .order("created_at", { ascending: false })
     .limit(randomize ? Math.max(limit, RANDOM_POOL_SIZE) : limit);
 
   if (category) query = query.eq("category", category);
+  if (garmentType) query = query.eq("garment_type", garmentType);
 
   const { data, error } = await query;
   if (error) {
@@ -65,7 +67,7 @@ export async function fetchSupabaseProducts(
 export async function fetchSupabaseProductByHandle(handle: string): Promise<SupabaseProductListItem | null> {
   const { data, error } = await supabase
     .from("products")
-    .select("id, title, handle, price_colones, category, description, sizes, size_guide_url, available, product_colors(color_name, color_hex, image_url, hover_image_url, sort_order, available)")
+    .select("id, title, handle, price_colones, category, garment_type, description, sizes, size_guide_url, available, product_colors(color_name, color_hex, image_url, hover_image_url, sort_order, available)")
     .eq("handle", handle)
     .eq("is_active", true)
     .is("deleted_at", null)

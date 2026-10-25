@@ -1,3 +1,4 @@
+import { styleName } from "@/lib/catalog";
 import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,12 +14,6 @@ interface ProductResult {
   product_colors: { image_url: string }[];
 }
 
-const CATEGORY_LABELS: Record<string, string> = {
-  "street-wear": "Street Wear",
-  "casual": "Casual",
-  "cyber-wear": "Techwear",
-  "old-money": "Old Money",
-};
 
 const SearchPage = () => {
   const [params, setParams] = useSearchParams();
@@ -105,7 +100,7 @@ const SearchPage = () => {
                 </div>
                 <div className="p-3">
                   <p className="text-[10px] text-muted-foreground uppercase font-body tracking-wide">
-                    {CATEGORY_LABELS[p.category] || p.category}
+                    {styleName(p.category)}
                   </p>
                   <h3 className="font-body font-semibold text-sm truncate">{p.title}</h3>
                   <p className="text-primary font-body font-bold text-sm mt-1">

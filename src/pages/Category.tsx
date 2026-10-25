@@ -3,33 +3,30 @@ import { useParams } from "react-router-dom";
 import { fetchSupabaseProducts, type SupabaseProductListItem } from "@/lib/supabaseProducts";
 import { SupabaseProductCard } from "@/components/SupabaseProductCard";
 import { Loader2 } from "lucide-react";
+import { styleName, garmentName } from "@/lib/catalog";
 
-const categoryNames: Record<string, string> = {
-  "street-wear": "Street Wear",
-  "casual": "Casual",
-  "cyber-wear": "Techwear",
-  "old-money": "Old Money",
-};
 
-const Category = () => {
+const Category = ({ mode = "style" }: { mode?: "style" | "garment" }) => {
   const { slug } = useParams<{ slug: string }>();
   const [localProducts, setLocalProducts] = useState<SupabaseProductListItem[]>([]);
   const [loading, setLoading] = useState(true);
   // Bumping this re-runs the fetch, which shuffles the category again.
   const [shuffleKey, setShuffleKey] = useState(0);
 
-  const categoryName = categoryNames[slug || ""] || slug || "";
+  const categoryName = mode === "garment" ? garmentName(slug) : styleName(slug);
 
   useEffect(() => {
     if (!slug) return;
     let alive = true;
     setLoading(true);
-    fetchSupabaseProducts(slug, 50, { randomize: true })
+    (mode === "garment"
+      ? fetchSupabaseProducts(undefined, 50, { randomize: true, garmentType: slug })
+      : fetchSupabaseProducts(slug, 50, { randomize: true }))
       .catch((e) => { console.error(e); return [] as SupabaseProductListItem[]; })
       .then((local) => { if (alive) setLocalProducts(local); })
       .finally(() => { if (alive) setLoading(false); });
     return () => { alive = false; };
-  }, [slug, shuffleKey]);
+  }, [slug, mode, shuffleKey]);
 
   return (
     <div className="min-h-screen pt-6 md:pt-20">

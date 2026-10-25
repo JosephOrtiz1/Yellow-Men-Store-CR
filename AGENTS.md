@@ -9,3 +9,4 @@
 - The visible category name is "Techwear" but the stored slug stays "cyber-wear"; never rename the slug without migrating existing products.
 - ScrollToTop in App resets window scroll on every pathname change so new pages always open from the top.
 - Storefront product listings (home and category) are shuffled client-side per page view via shuffleProducts in src/lib/supabaseProducts.ts; the database query stays newest-first and search results keep that order.
+- Styles live in products.category and garment categories in products.garment_type; both lists are defined once in src/lib/catalog.ts so storefront, admin and nav stay in sync.
