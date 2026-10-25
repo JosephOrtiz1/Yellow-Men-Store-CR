@@ -226,6 +226,7 @@ export type Database = {
           created_by: string | null
           deleted_at: string | null
           description: string | null
+          garment_type: string | null
           handle: string | null
           id: string
           is_active: boolean
@@ -242,6 +243,7 @@ export type Database = {
           created_by?: string | null
           deleted_at?: string | null
           description?: string | null
+          garment_type?: string | null
           handle?: string | null
           id?: string
           is_active?: boolean
@@ -258,6 +260,7 @@ export type Database = {
           created_by?: string | null
           deleted_at?: string | null
           description?: string | null
+          garment_type?: string | null
           handle?: string | null
           id?: string
           is_active?: boolean

@@ -8,6 +8,13 @@
       "when": 1792532587614,
       "tag": "0000_payments_receipts_notifications_shipping",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792960316092,
+      "tag": "0001_add_garment_type",
+      "breakpoints": true
     }
   ]
 }
