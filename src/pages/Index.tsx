@@ -139,12 +139,9 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Desktop: productos */}
+      {/* Desktop: productos organizados por style */}
       <section id="products" className="hidden md:block py-16 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-10">
-            <h2 className="font-heading text-5xl tracking-wider">PRODUCTOS</h2>
-          </div>
+        <div className="container mx-auto px-4 space-y-16">
           {loading ? (
             <div className="flex justify-center py-20">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -155,11 +152,28 @@ const Index = () => {
               <p className="font-body text-sm text-muted-foreground mt-2">Los productos aparecerán aquí cuando se agreguen a la tienda.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-3 lg:grid-cols-4 gap-6">
-              {localProducts.map((p) => (
-                <SupabaseProductCard key={`local-${p.id}`} product={p} />
-              ))}
-            </div>
+            categories.map((cat) => {
+              const items = byCategory.get(cat.slug) || [];
+              if (items.length === 0) return null;
+              return (
+                <div key={`d-${cat.slug}`}>
+                  <div className="flex items-baseline justify-between mb-8">
+                    <h2 className="font-heading text-5xl tracking-wider">{cat.name.toUpperCase()}</h2>
+                    <Link
+                      to={`/category/${cat.slug}`}
+                      className="font-body text-sm text-muted-foreground hover:text-primary uppercase tracking-wider inline-flex items-center gap-2"
+                    >
+                      Ver todo <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </div>
+                  <div className="grid grid-cols-3 lg:grid-cols-4 gap-6">
+                    {items.slice(0, 4).map((p) => (
+                      <SupabaseProductCard key={`local-${p.id}`} product={p} />
+                    ))}
+                  </div>
+                </div>
+              );
+            })
           )}
         </div>
       </section>
