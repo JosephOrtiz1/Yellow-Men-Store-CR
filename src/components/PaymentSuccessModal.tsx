@@ -70,7 +70,7 @@ export const PaymentSuccessModal = ({ open, onClose: closeModal, orderId, total,
       onClick={onClose}
     >
       <div
-        className="success-card relative w-full max-w-md border border-border bg-card p-8 text-center"
+        className="success-card relative w-full max-w-md max-h-[90vh] overflow-y-auto border border-border bg-card p-8 text-center"
         onClick={event => event.stopPropagation()}
       >
         <button
