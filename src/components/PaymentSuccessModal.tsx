@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Copy, Home, Package, X } from "lucide-react";
+import { AlertTriangle, Copy, Home, Package, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { ReceiptUpload } from "@/components/ReceiptUpload";
 import { formatColones } from "@/lib/supabaseProducts";
-import { PAYMENT_METHOD_LABELS, type PaymentMethod } from "@/lib/payments";
+import { PAYMENT_METHOD_LABELS, SINPE_IBAN, SINPE_PHONE, type PaymentMethod } from "@/lib/payments";
 
 type Props = {
   open: boolean;
@@ -15,8 +16,18 @@ type Props = {
   method?: PaymentMethod | null;
 };
 
-export const PaymentSuccessModal = ({ open, onClose, orderId, total, paid, method }: Props) => {
+export const PaymentSuccessModal = ({ open, onClose: closeModal, orderId, total, paid, method }: Props) => {
   const [copied, setCopied] = useState(false);
+  const [showSinpe, setShowSinpe] = useState(false);
+  const [uploaded, setUploaded] = useState(false);
+  const needsReceipt = !paid && method === "sinpe";
+
+  const warnIfMissing = () => {
+    if (needsReceipt && !uploaded) {
+      toast.warning("Tu pedido aún no está completo: sube el comprobante SINPE para que podamos procesarlo. Puedes hacerlo desde Mis pedidos.", { position: "top-center", duration: 7000 });
+    }
+  };
+  const onClose = () => { warnIfMissing(); closeModal(); };
 
   useEffect(() => {
     if (!open) return;
@@ -30,9 +41,14 @@ export const PaymentSuccessModal = ({ open, onClose, orderId, total, paid, metho
     const onKey = (event: KeyboardEvent) => { if (event.key === "Escape") onClose(); };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+  });
 
   if (!open) return null;
+
+  const copyText = async (value: string, label: string) => {
+    try { await navigator.clipboard.writeText(value); toast.success(`${label} copiado`); }
+    catch { toast.error("No se pudo copiar"); }
+  };
 
   const copyId = async () => {
     try {
@@ -105,12 +121,45 @@ export const PaymentSuccessModal = ({ open, onClose, orderId, total, paid, metho
           )}
         </div>
 
+        {needsReceipt && (
+          <div className="mt-6 text-left">
+            {!uploaded && (
+              <p role="alert" className="flex gap-2 text-sm border border-primary/40 bg-primary/5 rounded-lg p-3">
+                <AlertTriangle className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                <span>Debes subir el comprobante de tu SINPE Móvil para completar el pedido. Sin él no podemos procesarlo.</span>
+              </p>
+            )}
+            {!showSinpe ? (
+              <Button size="lg" className="w-full mt-3" onClick={() => setShowSinpe(true)}>
+                <Upload className="w-4 h-4 mr-2" />Subir comprobante SINPE
+              </Button>
+            ) : (
+              <div className="mt-3 space-y-3">
+                <dl className="space-y-2 bg-muted/40 p-4 rounded-lg text-sm">
+                  {[
+                    { label: "SINPE Móvil", value: SINPE_PHONE },
+                    { label: "IBAN", value: SINPE_IBAN },
+                    ...(typeof total === "number" ? [{ label: "Monto", value: formatColones(total) }] : []),
+                  ].map(row => (
+                    <div key={row.label} className="flex items-center justify-between gap-2">
+                      <div className="min-w-0"><dt className="text-xs text-muted-foreground">{row.label}</dt><dd className="font-semibold break-all">{row.value}</dd></div>
+                      <Button variant="ghost" size="sm" aria-label={`Copiar ${row.label}`} onClick={() => copyText(row.value.replace(/\s/g, ""), row.label)}><Copy className="w-4 h-4" /></Button>
+                    </div>
+                  ))}
+                </dl>
+                <p className="text-xs text-muted-foreground">Haz la transferencia y luego sube aquí la captura del comprobante.</p>
+                <ReceiptUpload orderId={orderId} onUploaded={() => setUploaded(true)} />
+              </div>
+            )}
+          </div>
+        )}
+
         <div className="grid gap-3 mt-7">
-          <Button asChild size="lg">
-            <Link to="/orders"><Package className="w-4 h-4 mr-2" />Ver mi pedido y su estado</Link>
+          <Button asChild size="lg" variant={needsReceipt ? "outline" : "default"}>
+            <Link to="/orders" onClick={warnIfMissing}><Package className="w-4 h-4 mr-2" />Ver mi pedido y su estado</Link>
           </Button>
           <Button asChild variant="outline">
-            <Link to="/"><Home className="w-4 h-4 mr-2" />Ir al inicio</Link>
+            <Link to="/" onClick={warnIfMissing}><Home className="w-4 h-4 mr-2" />Ir al inicio</Link>
           </Button>
         </div>
       </div>
