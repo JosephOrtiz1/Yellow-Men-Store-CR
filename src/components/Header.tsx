@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, X, Home, Search, User as UserIcon, LogOut } from "lucide-react";
+import { Menu, X, Home, Search, User as UserIcon, LogOut, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { CartDrawer } from "./CartDrawer";
 import { NotificationBell } from "./NotificationBell";
