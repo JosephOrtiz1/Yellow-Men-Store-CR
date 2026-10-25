@@ -15,9 +15,10 @@ interface Receipt {
 
 interface Props {
   orderId: string;
+  onUploaded?: () => void;
 }
 
-export const ReceiptUpload = ({ orderId }: Props) => {
+export const ReceiptUpload = ({ orderId, onUploaded }: Props) => {
   const { user } = useAuth();
   const [receipt, setReceipt] = useState<Receipt | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -62,6 +63,7 @@ export const ReceiptUpload = ({ orderId }: Props) => {
       if (insErr) throw insErr;
 
       setReceipt(data as Receipt);
+      onUploaded?.();
       toast.success("Comprobante enviado. Lo revisaremos pronto.", { position: "top-center" });
     } catch (err) {
       console.error(err);
