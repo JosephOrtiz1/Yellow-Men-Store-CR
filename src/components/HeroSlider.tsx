@@ -6,7 +6,7 @@ import heroCasual from "@/assets/hero/hero-casual.jpg";
 import heroDarkwear from "@/assets/hero/hero-darkwear.jpg.asset.json";
 import heroJapanStyle from "@/assets/hero/hero-japan-style.jpg.asset.json";
 
-const SLIDE_DURATION_MS = 4800;
+const SLIDE_DURATION_MS = 4000;
 
 const slides = [
   { src: heroTechwear, label: "Techwear" },
