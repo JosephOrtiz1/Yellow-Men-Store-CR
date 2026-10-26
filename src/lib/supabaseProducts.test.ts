@@ -10,7 +10,7 @@ const items = Array.from({ length: 6 }, (_, i) => ({ id: `p${i}` }));
 /** Chainable PostgREST stub: every modifier returns itself, awaiting resolves the rows. */
 function makeQuery(data: unknown[]): any {
   const query: any = {};
-  for (const method of ["select", "eq", "is", "order", "limit"]) {
+  for (const method of ["select", "eq", "is", "order", "limit", "range"]) {
     query[method] = vi.fn(() => query);
   }
   query.then = (onFulfilled: (v: { data: unknown[]; error: null }) => unknown) =>
@@ -48,5 +48,18 @@ describe("product randomizer", () => {
     const result = await fetchSupabaseProducts(undefined, 50);
     expect(result.map((p) => p.id)).toEqual(["p0", "p1", "p2", "p3", "p4", "p5"]);
     expect(query.limit).toHaveBeenCalledWith(50);
+  });
+
+  it("loads every product across pages without the 50-product or 200-product cap", async () => {
+    const catalog = Array.from({ length: 237 }, (_, i) => ({ id: `product-${i}` }));
+    const firstPage = makeQuery(catalog.slice(0, 200));
+    const lastPage = makeQuery(catalog.slice(200));
+    from.mockReturnValueOnce(firstPage).mockReturnValueOnce(lastPage);
+    const result = await fetchSupabaseProducts(undefined, 50, { all: true, randomize: true });
+    expect(result).toHaveLength(237);
+    expect(new Set(result.map((p) => p.id))).toEqual(new Set(catalog.map((p) => p.id)));
+    expect(firstPage.range).toHaveBeenCalledWith(0, 199);
+    expect(lastPage.range).toHaveBeenCalledWith(200, 399);
+    expect(firstPage.limit).not.toHaveBeenCalled();
   });
 });

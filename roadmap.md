@@ -1,4 +1,6 @@
 # Checkout completo
+- [ ] Añadir fotos de Darkwear y Japan Style al slider y verificar su carga.
+- [ ] Mostrar y verificar todos los productos al final de la vista de PC, sin límites de catálogo.
 - [x] Guardar y autollenar los datos de envío al confirmar el formulario, verificado tras recargar.
 - [x] Agregar compra individual sin modificar el carrito; pedido SINPE creado y visible en Mis pedidos, con cuatro pruebas aprobadas.
 - [x] Sustituir los diálogos de compra por una página de checkout con envío, pago y confirmación.
