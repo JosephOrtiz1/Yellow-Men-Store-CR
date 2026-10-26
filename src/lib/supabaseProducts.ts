@@ -41,21 +41,38 @@ const RANDOM_POOL_SIZE = 200;
 export async function fetchSupabaseProducts(
   category?: string,
   limit = 50,
-  options: { randomize?: boolean; garmentType?: string } = {},
+  options: { randomize?: boolean; garmentType?: string; all?: boolean } = {},
 ): Promise<SupabaseProductListItem[]> {
-  const { randomize = false, garmentType } = options;
-  let query = supabase
+  const { randomize = false, garmentType, all = false } = options;
+  const createQuery = () => {
+    let query = supabase
     .from("products")
     .select("id, title, handle, price_colones, category, garment_type, description, sizes, size_guide_url, available, product_colors(color_name, color_hex, image_url, hover_image_url, sort_order, available)")
     .eq("is_active", true)
     .is("deleted_at", null)
-    .order("created_at", { ascending: false })
-    .limit(randomize ? Math.max(limit, RANDOM_POOL_SIZE) : limit);
+    .order("created_at", { ascending: false });
 
   if (category) query = query.eq("category", category);
   if (garmentType) query = query.eq("garment_type", garmentType);
+    return query;
+  };
 
-  const { data, error } = await query;
+  if (all) {
+    const items: SupabaseProductListItem[] = [];
+    for (let offset = 0; ; offset += RANDOM_POOL_SIZE) {
+      const { data, error } = await createQuery().range(offset, offset + RANDOM_POOL_SIZE - 1);
+      if (error) {
+        console.error("Error loading complete catalog:", error);
+        throw error;
+      }
+      const page = (data || []) as SupabaseProductListItem[];
+      items.push(...page);
+      if (page.length < RANDOM_POOL_SIZE) break;
+    }
+    return randomize ? shuffleProducts(items) : items;
+  }
+
+  const { data, error } = await createQuery().limit(randomize ? Math.max(limit, RANDOM_POOL_SIZE) : limit);
   if (error) {
     console.error("Error loading supabase products:", error);
     return [];

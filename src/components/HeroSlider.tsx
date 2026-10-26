@@ -3,6 +3,8 @@ import heroTechwear from "@/assets/hero/hero-techwear.jpg";
 import heroStreetwear from "@/assets/hero/hero-streetwear.jpg";
 import heroOldMoney from "@/assets/hero/hero-old-money.jpg";
 import heroCasual from "@/assets/hero/hero-casual.jpg";
+import heroDarkwear from "@/assets/hero/hero-darkwear.jpg.asset.json";
+import heroJapanStyle from "@/assets/hero/hero-japan-style.jpg.asset.json";
 
 const SLIDE_DURATION_MS = 4800;
 
@@ -11,6 +13,8 @@ const slides = [
   { src: heroStreetwear, label: "Street Wear" },
   { src: heroOldMoney, label: "Old Money" },
   { src: heroCasual, label: "Casual" },
+  { src: heroDarkwear.url, label: "Darkwear" },
+  { src: heroJapanStyle.url, label: "Japan Style" },
 ];
 
 /**

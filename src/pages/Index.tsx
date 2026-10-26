@@ -17,7 +17,7 @@ const Index = () => {
 
   useEffect(() => {
     let alive = true;
-    fetchSupabaseProducts(undefined, 50, { randomize: true })
+    fetchSupabaseProducts(undefined, 50, { randomize: true, all: true })
       .catch((e) => { console.error(e); return [] as SupabaseProductListItem[]; })
       .then((local) => { if (alive) setLocalProducts(local); })
       .finally(() => { if (alive) setLoading(false); });
@@ -174,6 +174,26 @@ const Index = () => {
                 </div>
               );
             })
+          )}
+        </div>
+      </section>
+
+      {/* Desktop: catálogo completo, después de los styles */}
+      <section className="hidden md:block py-16 bg-background">
+        <div className="container mx-auto px-4">
+          <h2 className="font-heading text-5xl tracking-wider mb-10">TODOS LOS PRODUCTOS</h2>
+          {loading ? (
+            <div className="flex justify-center py-20">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : localProducts.length === 0 ? (
+            <p className="font-body text-muted-foreground">No hay productos aún.</p>
+          ) : (
+            <div className="grid grid-cols-3 lg:grid-cols-4 gap-6">
+              {localProducts.map((p) => (
+                <SupabaseProductCard key={`desktop-all-${p.id}`} product={p} />
+              ))}
+            </div>
           )}
         </div>
       </section>
