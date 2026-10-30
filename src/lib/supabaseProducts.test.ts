@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 const { from } = vi.hoisted(() => ({ from: vi.fn() }));
 vi.mock("@/integrations/supabase/client", () => ({ supabase: { from } }));
 
-import { fetchSupabaseProducts, shuffleProducts } from "./supabaseProducts";
+import { fetchSupabaseProducts, getFeaturedProducts, shuffleProducts } from "./supabaseProducts";
 
 const items = Array.from({ length: 6 }, (_, i) => ({ id: `p${i}` }));
 
@@ -19,6 +19,13 @@ function makeQuery(data: unknown[]): any {
 }
 
 describe("product randomizer", () => {
+  it("shows only products selected as featured by admin, without a cap", () => {
+    const featured = Array.from({ length: 60 }, (_, i) => ({ id: `featured-${i}`, is_featured: true }));
+    const catalog: { id: string; is_featured?: boolean }[] = [...featured, { id: "normal", is_featured: false }, { id: "unset" }];
+    expect(getFeaturedProducts(catalog))
+      .toEqual(featured);
+  });
+
   it("keeps every product exactly once and drops the publication order", () => {
     const shuffled = shuffleProducts(items, () => 0.5);
     expect(shuffled.map((p) => p.id)).toEqual(["p0", "p5", "p1", "p4", "p2", "p3"]);

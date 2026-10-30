@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -51,6 +52,7 @@ const Admin = () => {
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("casual");
   const [garmentType, setGarmentType] = useState("otros");
+  const [isFeatured, setIsFeatured] = useState(false);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [colors, setColors] = useState<ColorEntry[]>([]);
   const [sizeGuideFile, setSizeGuideFile] = useState<File | null>(null);
@@ -68,6 +70,7 @@ const Admin = () => {
     setPrice("");
     setCategory("casual");
     setGarmentType("otros");
+    setIsFeatured(false);
     setSelectedSizes([]);
     setColors([]);
     setSizeGuideFile(null);
@@ -77,7 +80,7 @@ const Admin = () => {
   const editProduct = async (id: string) => {
     setLoadingEditId(id);
     const { data, error } = await supabase.from("products")
-      .select("id, title, description, price_colones, category, garment_type, sizes, size_guide_url, product_colors(id, color_name, color_hex, image_url, hover_image_url, sort_order)")
+      .select("id, title, description, price_colones, category, garment_type, is_featured, sizes, size_guide_url, product_colors(id, color_name, color_hex, image_url, hover_image_url, sort_order)")
       .eq("id", id).is("deleted_at", null).single();
     setLoadingEditId(null);
     if (error || !data) {
@@ -90,6 +93,7 @@ const Admin = () => {
     setPrice(String(data.price_colones));
     setCategory(data.category);
     setGarmentType(data.garment_type ?? "otros");
+    setIsFeatured(data.is_featured);
     setSelectedSizes(data.sizes);
     setSizeGuideFile(null);
     setSizeGuidePreview(data.size_guide_url ?? "");
@@ -328,6 +332,7 @@ const Admin = () => {
           price_colones: parseFloat(price),
           category,
           garment_type: garmentType,
+          is_featured: isFeatured,
           sizes: selectedSizes,
           size_guide_url: sizeGuideUrl,
       };
@@ -542,6 +547,11 @@ const Admin = () => {
                       ))}
                     </SelectContent>
                   </Select>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <Checkbox id="product-featured" checked={isFeatured} onCheckedChange={(checked) => setIsFeatured(checked === true)} />
+                  <Label htmlFor="product-featured" className="font-body cursor-pointer">Producto destacado</Label>
                 </div>
 
                 {/* Sizes */}

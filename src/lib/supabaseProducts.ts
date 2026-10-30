@@ -11,6 +11,7 @@ export interface SupabaseProductListItem {
   sizes: string[];
   size_guide_url: string | null;
   available?: boolean;
+  is_featured?: boolean;
   product_colors: {
     color_name: string;
     color_hex: string | null;
@@ -34,6 +35,10 @@ export function shuffleProducts<T>(items: T[], rand: () => number = Math.random)
   return out;
 }
 
+export function getFeaturedProducts<T extends { is_featured?: boolean }>(items: T[]): T[] {
+  return items.filter((product) => product.is_featured === true);
+}
+
 // When randomizing we pull a wider pool so older products can also surface,
 // then shuffle and keep only the first `limit`.
 const RANDOM_POOL_SIZE = 200;
@@ -47,7 +52,7 @@ export async function fetchSupabaseProducts(
   const createQuery = () => {
     let query = supabase
     .from("products")
-    .select("id, title, handle, price_colones, category, garment_type, description, sizes, size_guide_url, available, product_colors(color_name, color_hex, image_url, hover_image_url, sort_order, available)")
+    .select("id, title, handle, price_colones, category, garment_type, description, sizes, size_guide_url, available, is_featured, product_colors(color_name, color_hex, image_url, hover_image_url, sort_order, available)")
     .eq("is_active", true)
     .is("deleted_at", null)
     .order("created_at", { ascending: false });

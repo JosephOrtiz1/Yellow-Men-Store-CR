@@ -6,6 +6,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "./ui
 import { NotificationList } from "./NotificationBell";
 import { STYLES } from "@/lib/catalog";
 import { useAuth } from "@/hooks/useAuth";
+import { Button } from "./ui/button";
 
 const categories = STYLES;
 
@@ -83,9 +84,12 @@ export const MobileBottomNav = () => {
                   {cat.name}
                 </button>
               ))}
-              <button onClick={() => go("/categories")} className={sheetItem + " text-primary"}>
+              <button onClick={() => go("/categories")} className={sheetItem}>
                 Categorías de prendas
               </button>
+              <Button variant="ghost" onClick={() => go("/#featured")} className={`${sheetItem} justify-start h-auto px-0 whitespace-normal`}>
+                Productos destacados
+              </Button>
               <button onClick={() => go("/about")} className={sheetItem}>
                 Nosotros
               </button>

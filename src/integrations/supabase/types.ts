@@ -230,6 +230,7 @@ export type Database = {
           handle: string | null
           id: string
           is_active: boolean
+          is_featured: boolean
           price_colones: number
           size_guide_url: string | null
           sizes: string[]
@@ -247,6 +248,7 @@ export type Database = {
           handle?: string | null
           id?: string
           is_active?: boolean
+          is_featured?: boolean
           price_colones: number
           size_guide_url?: string | null
           sizes?: string[]
@@ -264,6 +266,7 @@ export type Database = {
           handle?: string | null
           id?: string
           is_active?: boolean
+          is_featured?: boolean
           price_colones?: number
           size_guide_url?: string | null
           sizes?: string[]

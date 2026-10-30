@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { SupabaseProductCard } from "@/components/SupabaseProductCard";
 import { HeroSlider } from "@/components/HeroSlider";
-import { fetchSupabaseProducts, type SupabaseProductListItem } from "@/lib/supabaseProducts";
+import { fetchSupabaseProducts, getFeaturedProducts, type SupabaseProductListItem } from "@/lib/supabaseProducts";
 import { STYLES } from "@/lib/catalog";
 import { ArrowRight, Loader2 } from "lucide-react";
 
@@ -12,6 +12,14 @@ const categories = STYLES;
 const Index = () => {
   const [localProducts, setLocalProducts] = useState<SupabaseProductListItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const { hash } = useLocation();
+  const featuredProducts = useMemo(() => getFeaturedProducts(localProducts), [localProducts]);
+
+  useEffect(() => {
+    if (hash !== "#featured") return;
+    const frame = requestAnimationFrame(() => document.getElementById("featured")?.scrollIntoView({ block: "start" }));
+    return () => cancelAnimationFrame(frame);
+  }, [hash, loading]);
   // Bumping this re-runs the fetch, which shuffles the catalog again.
   const [shuffleKey, setShuffleKey] = useState(0);
 
@@ -100,22 +108,6 @@ const Index = () => {
               );
             })}
 
-            <div id="products">
-              <div className="flex items-center justify-between px-4 mb-4">
-                <h2 className="font-heading text-3xl tracking-wider">TODOS LOS PRODUCTOS</h2>
-              </div>
-              {localProducts.length === 0 ? (
-                <div className="text-center py-16 mx-4 bg-card rounded-sm">
-                  <p className="font-body text-lg text-muted-foreground">No hay productos aún.</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 gap-3 px-4">
-                  {localProducts.map((p) => (
-                    <SupabaseProductCard key={`all-${p.id}`} product={p} />
-                  ))}
-                </div>
-              )}
-            </div>
           </>
         )}
       </section>
@@ -136,6 +128,21 @@ const Index = () => {
               </Link>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section id="featured" className="py-10 md:py-16 bg-background scroll-mt-4 md:scroll-mt-20">
+        <div className="container mx-auto px-4">
+          <h2 className="font-heading text-3xl md:text-5xl mb-6 md:mb-10">PRODUCTOS DESTACADOS</h2>
+          {loading ? (
+            <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+          ) : featuredProducts.length === 0 ? (
+            <p className="font-body text-muted-foreground">No hay productos destacados por el momento.</p>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
+              {featuredProducts.map((product) => <SupabaseProductCard key={`featured-${product.id}`} product={product} />)}
+            </div>
+          )}
         </div>
       </section>
 
@@ -178,10 +185,10 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Desktop: catálogo completo, después de los styles */}
-      <section className="hidden md:block py-16 bg-background">
+      {/* Catálogo completo, después de los styles y destacados */}
+      <section id="all-products" className="py-10 md:py-16 bg-background">
         <div className="container mx-auto px-4">
-          <h2 className="font-heading text-5xl tracking-wider mb-10">TODOS LOS PRODUCTOS</h2>
+          <h2 className="font-heading text-3xl md:text-5xl mb-6 md:mb-10">TODOS LOS PRODUCTOS</h2>
           {loading ? (
             <div className="flex justify-center py-20">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -189,7 +196,7 @@ const Index = () => {
           ) : localProducts.length === 0 ? (
             <p className="font-body text-muted-foreground">No hay productos aún.</p>
           ) : (
-            <div className="grid grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
               {localProducts.map((p) => (
                 <SupabaseProductCard key={`desktop-all-${p.id}`} product={p} />
               ))}
