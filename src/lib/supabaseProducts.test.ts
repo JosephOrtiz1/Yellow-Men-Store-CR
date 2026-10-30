@@ -21,7 +21,7 @@ function makeQuery(data: unknown[]): any {
 describe("product randomizer", () => {
   it("shows only products selected as featured by admin, without a cap", () => {
     const featured = Array.from({ length: 60 }, (_, i) => ({ id: `featured-${i}`, is_featured: true }));
-    const catalog = [...featured, { id: "normal", is_featured: false }, { id: "unset" }];
+    const catalog: { id: string; is_featured?: boolean }[] = [...featured, { id: "normal", is_featured: false }, { id: "unset" }];
     expect(getFeaturedProducts(catalog))
       .toEqual(featured);
   });
