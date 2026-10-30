@@ -15,6 +15,13 @@
       "when": 1792960316092,
       "tag": "0001_add_garment_type",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793350967708,
+      "tag": "0002_add_featured_products",
+      "breakpoints": true
     }
   ]
 }
