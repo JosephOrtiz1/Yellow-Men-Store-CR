@@ -35,16 +35,16 @@ export const Header = () => {
 
   return (
     <header className="hidden md:block fixed top-0 left-0 right-0 z-50 bg-secondary border-b border-border">
-      <div className="container mx-auto px-4 h-16 flex items-center gap-6">
+        <div className="container mx-auto px-4 h-16 flex items-center gap-3 xl:gap-6">
         <Link to="/about" className="flex items-center gap-2 flex-shrink-0" aria-label="Yellow Men Store - Inicio">
           <img src={isotipo} alt="Yellow Men Store" className="h-10 w-10" />
-          <span className="hidden md:inline font-heading text-xl md:text-2xl text-primary tracking-wider whitespace-nowrap">
+          <span className="hidden xl:inline font-heading text-2xl text-primary tracking-wider whitespace-nowrap">
             YELLOW MEN STORE
           </span>
         </Link>
 
 
-        <nav className="hidden lg:flex items-center justify-center gap-8 flex-1">
+        <nav className="hidden lg:flex items-center justify-center gap-4 xl:gap-8 flex-1">
           <DropdownMenu>
             <DropdownMenuTrigger className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-primary transition-colors uppercase tracking-wide font-body outline-none">
               Styles <ChevronDown className="h-3.5 w-3.5" />
@@ -57,8 +57,11 @@ export const Header = () => {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Link to="/categories" className="text-xs font-medium text-primary hover:text-primary/80 transition-colors uppercase tracking-wide font-body whitespace-nowrap">
+          <Link to="/categories" className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors uppercase tracking-wide font-body whitespace-nowrap">
             Categorías
+          </Link>
+          <Link to="/#featured" className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors uppercase tracking-wide font-body whitespace-nowrap">
+            Productos destacados
           </Link>
         </nav>
 
@@ -167,8 +170,11 @@ export const Header = () => {
                   {cat.name}
                 </Link>
               ))}
-              <Link to="/categories" onClick={() => setMenuOpen(false)} className="text-base font-medium text-primary py-3 uppercase tracking-wide font-body touch-manipulation">
+              <Link to="/categories" onClick={() => setMenuOpen(false)} className="text-base font-medium text-muted-foreground hover:text-primary py-3 uppercase tracking-wide font-body touch-manipulation">
                 Categorías
+              </Link>
+              <Link to="/#featured" onClick={() => setMenuOpen(false)} className="text-base font-medium text-muted-foreground hover:text-primary py-3 uppercase tracking-wide font-body touch-manipulation">
+                Productos destacados
               </Link>
             </nav>
           </div>

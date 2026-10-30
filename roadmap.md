@@ -1,4 +1,6 @@
 # Checkout completo
+- [ ] Agregar selección admin de destacados, sección compartida en portada y acceso desde navegación; verificar guardado y pantallas.
+- [ ] Corregir Categorías siempre amarillo en navegación de escritorio y móvil.
 - [x] Añadir fotos de Darkwear y Japan Style al slider; seis fotos cargadas y rotación verificada en navegador.
 - [x] Mostrar todos los productos al final de la vista de PC, sin límites de catálogo; catálogo real y prueba de 237 productos verificados.
 - [x] Guardar y autollenar los datos de envío al confirmar el formulario, verificado tras recargar.
