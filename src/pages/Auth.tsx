@@ -15,7 +15,6 @@ const signupSchema = z.object({
   fullName: z.string().trim().min(2, "Nombre muy corto").max(100),
   email: z.string().trim().email("Email inválido").max(255),
   phone: z.string().trim().min(6, "Teléfono inválido").max(30),
-  address: z.string().trim().min(5, "Dirección muy corta").max(500),
   password: z.string().min(6, "Mínimo 6 caracteres").max(72),
 });
 
@@ -39,7 +38,6 @@ const Auth = () => {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -65,7 +63,7 @@ const Auth = () => {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    const parsed = signupSchema.safeParse({ fullName, email, phone, address, password });
+    const parsed = signupSchema.safeParse({ fullName, email, phone, password });
     if (!parsed.success) {
       toast.error(parsed.error.errors[0].message, { position: "top-center" });
       return;
@@ -79,7 +77,6 @@ const Auth = () => {
         data: {
           full_name: parsed.data.fullName,
           phone: parsed.data.phone,
-          address: parsed.data.address,
         },
       },
     });
@@ -174,10 +171,6 @@ const Auth = () => {
                 <div>
                   <Label className="font-body">Teléfono</Label>
                   <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+506 8888 8888" className="font-body" />
-                </div>
-                <div>
-                  <Label className="font-body">Dirección</Label>
-                  <Input value={address} onChange={(e) => setAddress(e.target.value)} className="font-body" />
                 </div>
                 <div>
                   <Label className="font-body">Contraseña</Label>
