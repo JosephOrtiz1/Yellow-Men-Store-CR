@@ -133,7 +133,7 @@ const Index = () => {
 
       <section id="featured" className="py-10 md:py-16 bg-background scroll-mt-4 md:scroll-mt-20">
         <div className="container mx-auto px-4">
-          <h2 className="font-heading text-3xl md:text-5xl mb-6 md:mb-10">PRODUCTOS DESTACADOS</h2>
+          <h2 className="font-heading text-3xl md:text-5xl mb-6 md:mb-10">DESTACADOS</h2>
           {loading ? (
             <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
           ) : featuredProducts.length === 0 ? (

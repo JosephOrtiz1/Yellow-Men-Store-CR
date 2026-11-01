@@ -61,7 +61,7 @@ export const Header = () => {
             Categorías
           </Link>
           <Link to="/#featured" className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors uppercase tracking-wide font-body whitespace-nowrap">
-            Productos destacados
+            Destacados
           </Link>
         </nav>
 
@@ -174,7 +174,7 @@ export const Header = () => {
                 Categorías
               </Link>
               <Link to="/#featured" onClick={() => setMenuOpen(false)} className="text-base font-medium text-muted-foreground hover:text-primary py-3 uppercase tracking-wide font-body touch-manipulation">
-                Productos destacados
+                Destacados
               </Link>
             </nav>
           </div>

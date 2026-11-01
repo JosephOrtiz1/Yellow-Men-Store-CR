@@ -10,24 +10,21 @@ const About = () => (
 
       <div className="space-y-6 font-body text-base md:text-lg text-muted-foreground leading-relaxed">
         <p>
-          <strong className="text-foreground">Yellow Men Store</strong> nació como un proyecto de pasión en Instagram. 
-          Lo que comenzó como una cuenta compartiendo las últimas tendencias de moda masculina, rápidamente se convirtió 
-          en una comunidad de hombres que buscan vestirse diferente.
+          <strong className="text-foreground">Yellow Men Store</strong> es un espacio premium para quienes encuentran 
+          en la moda una forma de expresión y personalidad. Aquí reunimos una variedad de estilos y prendas poco 
+          convencionales, difíciles de encontrar en el mercado nacional, pensadas para quienes buscan algo más que vestir.
         </p>
         <p>
-          Durante años, cada venta se hacía por mensaje directo: fotos del producto, tallas disponibles, precios, 
-          y coordinar el envío, todo en un chat de Instagram. Funcionaba, pero sabíamos que podíamos ofrecer más.
+          Nuestra intención es ofrecer artículos únicos para personas únicas. Queremos romper con lo cotidiano, 
+          salir de lo convencional y darle a cada persona la oportunidad de expresar su identidad a través de su estilo.
         </p>
         <p>
-          Hoy, Yellow Men Store es tu destino online para encontrar ropa que refleja tu personalidad. 
-          Desde el <strong className="text-foreground">Street Wear</strong> más audaz hasta el estilo 
-          <strong className="text-foreground"> Old Money</strong> más refinado, pasando por 
-          <strong className="text-foreground"> Techwear</strong> futurista y piezas 
-          <strong className="text-foreground"> Casual</strong> para el día a día.
+          Si buscas destacar, atraer miradas y marcar la diferencia, estás en el lugar indicado. Explora nuestras 
+          colecciones, encuentra el estilo con el que más te identificas y deja que cada outfit hable por ti, 
+          estés donde estés.
         </p>
-        <p>
-          Nuestra misión es simple: traerte las mejores piezas de ropa moderna para hombres que no siguen reglas, 
-          con una experiencia de compra directa y sin complicaciones.
+        <p className="font-heading text-2xl md:text-3xl tracking-wider text-primary text-center pt-4">
+          NO SIGAS TENDENCIAS. CONSTRUYE TU PROPIO ESTILO.
         </p>
       </div>
 
