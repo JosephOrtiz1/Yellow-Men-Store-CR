@@ -4,7 +4,7 @@ import { useState } from "react";
 import { CartDrawer } from "./CartDrawer";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
 import { NotificationList } from "./NotificationBell";
-import { STYLES } from "@/lib/catalog";
+import { STYLES, GARMENT_TYPES } from "@/lib/catalog";
 import { useAuth } from "@/hooks/useAuth";
 
 const categories = STYLES;
@@ -87,8 +87,13 @@ export const MobileBottomNav = () => {
 
               <div className="mt-4 pt-4 border-t border-white/10">
                 <h3 className="font-heading text-xl tracking-wider mb-1 text-primary">CATEGORÍAS</h3>
+                {GARMENT_TYPES.map((g) => (
+                  <button key={g.slug} onClick={() => go(`/categories/${g.slug}`)} className={sheetItem}>
+                    {g.name}
+                  </button>
+                ))}
                 <button onClick={() => go("/categories")} className={sheetItem}>
-                  Categorías de prendas
+                  Ver todas
                 </button>
               </div>
 
