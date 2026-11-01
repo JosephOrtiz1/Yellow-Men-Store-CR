@@ -6,7 +6,6 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "./ui
 import { NotificationList } from "./NotificationBell";
 import { STYLES } from "@/lib/catalog";
 import { useAuth } from "@/hooks/useAuth";
-import { Button } from "./ui/button";
 
 const categories = STYLES;
 
