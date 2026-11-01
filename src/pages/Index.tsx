@@ -17,7 +17,13 @@ const Index = () => {
 
   useEffect(() => {
     if (hash !== "#featured") return;
-    const frame = requestAnimationFrame(() => document.getElementById("featured")?.scrollIntoView({ block: "start" }));
+    const frame = requestAnimationFrame(() => {
+      // On mobile the featured grid is hidden; scroll to whichever block is visible.
+      const target = ["featured-m", "featured"]
+        .map((id) => document.getElementById(id))
+        .find((el) => el && el.offsetParent !== null);
+      target?.scrollIntoView({ block: "start" });
+    });
     return () => cancelAnimationFrame(frame);
   }, [hash, loading]);
   // Bumping this re-runs the fetch, which shuffles the catalog again.
@@ -84,7 +90,7 @@ const Index = () => {
         ) : (
           <>
             {featuredProducts.length > 0 && (
-              <div>
+              <div id="featured-m" className="scroll-mt-4">
                 <div className="flex items-baseline justify-between px-4 mb-4">
                   <h2 className="font-heading text-3xl tracking-wider">DESTACADOS</h2>
                 </div>
