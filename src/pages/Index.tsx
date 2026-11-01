@@ -17,7 +17,13 @@ const Index = () => {
 
   useEffect(() => {
     if (hash !== "#featured") return;
-    const frame = requestAnimationFrame(() => document.getElementById("featured")?.scrollIntoView({ block: "start" }));
+    const frame = requestAnimationFrame(() => {
+      // On mobile the featured grid is hidden; scroll to whichever block is visible.
+      const target = ["featured-m", "featured"]
+        .map((id) => document.getElementById(id))
+        .find((el) => el && el.offsetParent !== null);
+      target?.scrollIntoView({ block: "start" });
+    });
     return () => cancelAnimationFrame(frame);
   }, [hash, loading]);
   // Bumping this re-runs the fetch, which shuffles the catalog again.
@@ -83,6 +89,20 @@ const Index = () => {
           </div>
         ) : (
           <>
+            {featuredProducts.length > 0 && (
+              <div id="featured-m" className="scroll-mt-4">
+                <div className="flex items-baseline justify-between px-4 mb-4">
+                  <h2 className="font-heading text-3xl tracking-wider">DESTACADOS</h2>
+                </div>
+                <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory px-4 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                  {featuredProducts.map((p) => (
+                    <div key={`m-feat-${p.id}`} className="w-44 flex-shrink-0 snap-start">
+                      <SupabaseProductCard product={p} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             {categories.map((cat) => {
               const items = byCategory.get(cat.slug) || [];
               if (items.length === 0) return null;
@@ -131,7 +151,7 @@ const Index = () => {
         </div>
       </section>
 
-      <section id="featured" className="py-10 md:py-16 bg-background scroll-mt-4 md:scroll-mt-20">
+      <section id="featured" className="hidden md:block py-10 md:py-16 bg-background scroll-mt-4 md:scroll-mt-20">
         <div className="container mx-auto px-4">
           <h2 className="font-heading text-3xl md:text-5xl mb-6 md:mb-10">DESTACADOS</h2>
           {loading ? (
