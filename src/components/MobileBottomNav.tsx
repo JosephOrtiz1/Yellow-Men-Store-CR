@@ -76,23 +76,36 @@ export const MobileBottomNav = () => {
             className="rounded-t-2xl bg-secondary/95 backdrop-blur-xl border-t border-white/10 max-h-[80vh] overflow-y-auto"
           >
             <SheetHeader>
-              <SheetTitle className="font-heading text-2xl tracking-wider text-left">STYLES</SheetTitle>
+              <SheetTitle className="font-heading text-2xl tracking-wider text-left">MENÚ</SheetTitle>
             </SheetHeader>
             <div className="flex flex-col gap-1 pt-4 pb-6">
+              <h3 className="font-heading text-xl tracking-wider mb-1 text-primary">STYLES</h3>
               {categories.map((cat) => (
                 <button key={cat.slug} onClick={() => go(`/category/${cat.slug}`)} className={sheetItem}>
                   {cat.name}
                 </button>
               ))}
-              <button onClick={() => go("/categories")} className={sheetItem}>
-                Categorías de prendas
-              </button>
-              <Button variant="ghost" onClick={() => go("/#featured")} className={`${sheetItem} justify-start h-auto px-0 whitespace-normal`}>
-                Productos destacados
-              </Button>
-              <button onClick={() => go("/about")} className={sheetItem}>
-                Nosotros
-              </button>
+
+              <div className="mt-4 pt-4 border-t border-white/10">
+                <h3 className="font-heading text-xl tracking-wider mb-1 text-primary">CATEGORÍAS</h3>
+                <button onClick={() => go("/categories")} className={sheetItem}>
+                  Categorías de prendas
+                </button>
+              </div>
+
+              <div className="mt-4 pt-4 border-t border-white/10">
+                <h3 className="font-heading text-xl tracking-wider mb-1 text-primary">DESTACADOS</h3>
+                <button onClick={() => go("/#featured")} className={sheetItem}>
+                  Destacados
+                </button>
+              </div>
+
+              <div className="mt-4 pt-4 border-t border-white/10">
+                <h3 className="font-heading text-xl tracking-wider mb-1 text-primary">SOBRE NOSOTROS</h3>
+                <button onClick={() => go("/about")} className={sheetItem}>
+                  Nosotros
+                </button>
+              </div>
 
               <div className="mt-6 pt-4 border-t border-white/10">
                 <h3 className="font-heading text-xl tracking-wider mb-1">CUENTA</h3>
