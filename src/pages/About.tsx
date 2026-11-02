@@ -31,7 +31,7 @@ const About = () => (
       <div className="mt-12 text-center">
         <p className="font-heading text-2xl tracking-wider mb-4 text-primary">SÍGUENOS EN INSTAGRAM</p>
         <Button asChild variant="outline" size="lg" className="font-body uppercase tracking-wider border-primary text-primary hover:bg-primary hover:text-primary-foreground touch-manipulation">
-          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.instagram.com/yellowmenstore" target="_blank" rel="noopener noreferrer">
             <Instagram className="mr-2 h-5 w-5" />
             @yellowmenstore
           </a>

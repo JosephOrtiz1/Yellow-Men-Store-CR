@@ -44,7 +44,7 @@ export const Footer = () => (
         <div>
           <h4 className="font-heading text-lg tracking-wider mb-3 text-primary">SÍGUENOS</h4>
           <a
-            href="https://instagram.com"
+            href="https://www.instagram.com/yellowmenstore"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors font-body touch-manipulation"

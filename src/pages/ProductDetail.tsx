@@ -199,7 +199,7 @@ const ProductDetail = () => {
                 variant="outline"
                 className="w-full rounded-xl font-body uppercase tracking-wider"
               >
-                <a href={`https://ig.me/m/yellowmen.store?text=${igMessage}`} target="_blank" rel="noopener noreferrer">
+                <a href={`https://ig.me/m/yellowmenstore?text=${igMessage}`} target="_blank" rel="noopener noreferrer">
                   <Instagram className="w-4 h-4 mr-2" /> Consultar por Instagram
                 </a>
               </Button>
