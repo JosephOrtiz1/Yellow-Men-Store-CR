@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const { from } = vi.hoisted(() => ({ from: vi.fn() }));
 vi.mock("@/integrations/supabase/client", () => ({ supabase: { from } }));
@@ -19,6 +19,10 @@ function makeQuery(data: unknown[]): any {
 }
 
 describe("live product search", () => {
+  beforeEach(() => {
+    from.mockReset();
+  });
+
   it("strips characters PostgREST reads as filter syntax and caps the length", () => {
     expect(sanitizeSearchQuery("camisa (negra)'x*,y\\*")).toBe("camisa negraxy");
     expect(sanitizeSearchQuery("a".repeat(500))).toHaveLength(100);
