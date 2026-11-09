@@ -144,7 +144,7 @@ export const LiveSearch = ({
               Sin resultados para "{trimmed}".
             </p>
           ) : (
-            <ul role="listbox" aria-label="Sugerencias de productos" className="max-h-80 overflow-y-auto divide-y divide-border">
+            <ul role="listbox" aria-label="Sugerencias de productos" className="max-h-[22rem] overflow-y-auto divide-y divide-border">
               {results.map((product) => (
                 <li key={product.id} role="option" aria-selected="false">
                   <Link
@@ -166,7 +166,7 @@ export const LiveSearch = ({
                       <p className="text-xs font-body text-foreground truncate">
                         <Highlight text={product.title} query={trimmed} />
                       </p>
-                      <p className="text-[10px] font-body uppercase tracking-wide text-muted-foreground truncate">
+                      <p className="text-[11px] font-body uppercase tracking-wide text-foreground/70 truncate">
                         {styleName(product.category)}
                       </p>
                     </div>

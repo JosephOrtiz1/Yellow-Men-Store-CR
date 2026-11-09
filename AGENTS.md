@@ -13,3 +13,4 @@
 - The home fetches the complete active catalog with paginated queries before shuffling, so its final all-products grid never truncates the catalog; style previews reuse that same list.
 - Styles live in products.category and garment categories in products.garment_type; both lists are defined once in src/lib/catalog.ts so storefront, admin and nav stay in sync.
 - Featured products use products.is_featured, saved by the shared admin form under existing admin-only policies; the home filters its complete catalog and exposes one shared responsive section at /#featured.
+- Live search suggestions and the /search page both go through searchProducts in src/lib/productSearch.ts (debounced, sanitized, newest-first) and show skeleton rows while the request is in flight.
