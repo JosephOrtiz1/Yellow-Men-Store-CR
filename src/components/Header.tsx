@@ -1,9 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, X, Home, Search, User as UserIcon, LogOut, ChevronDown } from "lucide-react";
+import { Menu, X, Home, User as UserIcon, LogOut, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { CartDrawer } from "./CartDrawer";
 import { NotificationBell } from "./NotificationBell";
-import { Input } from "./ui/input";
+import { LiveSearch } from "./LiveSearch";
 import { Button } from "./ui/button";
 import { STYLES } from "@/lib/catalog";
 import { useAuth } from "@/hooks/useAuth";
@@ -68,15 +68,14 @@ export const Header = () => {
         <div className="hidden md:flex lg:hidden flex-1" />
 
         <div className="flex items-center gap-3 flex-shrink-0">
-          <form onSubmit={submitSearch} className="hidden md:flex relative w-56 lg:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar productos..."
-              className="pl-9 font-body bg-background border-border h-9"
-            />
-          </form>
+          <LiveSearch
+            value={search}
+            onChange={setSearch}
+            onSubmit={submitSearch}
+            align="right"
+            className="hidden md:flex w-56 lg:w-64"
+            inputClassName="h-9"
+          />
 
           <div className="flex items-center gap-2 pl-1 md:border-l md:border-border md:pl-3">
             <Link
@@ -150,15 +149,12 @@ export const Header = () => {
       {menuOpen && (
         <div className="lg:hidden bg-secondary border-t border-border pb-4">
           <div className="container mx-auto px-4 pt-3 space-y-3">
-            <form onSubmit={submitSearch} className="hidden md:block relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-              <Input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Buscar productos..."
-                className="pl-9 font-body bg-background border-border"
-              />
-            </form>
+            <LiveSearch
+              value={search}
+              onChange={setSearch}
+              onSubmit={submitSearch}
+              className="hidden md:block w-full"
+            />
             <nav className="flex flex-col gap-1">
               {categories.map((cat) => (
                 <Link
