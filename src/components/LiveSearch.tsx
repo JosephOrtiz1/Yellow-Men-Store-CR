@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Search } from "lucide-react";
 import { Input } from "./ui/input";
 import { Skeleton } from "./ui/skeleton";
@@ -61,7 +61,6 @@ export const LiveSearch = ({
   align = "left",
   limit = SUGGESTION_LIMIT,
 }: LiveSearchProps) => {
-  const navigate = useNavigate();
   const location = useLocation();
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [results, setResults] = useState<ProductSearchResult[]>([]);
@@ -145,7 +144,7 @@ export const LiveSearch = ({
               Sin resultados para "{trimmed}".
             </p>
           ) : (
-            <ul id="search-suggestions" role="listbox" aria-label="Sugerencias de productos" className="max-h-80 overflow-y-auto divide-y divide-border">
+            <ul role="listbox" aria-label="Sugerencias de productos" className="max-h-80 overflow-y-auto divide-y divide-border">
               {results.map((product) => (
                 <li key={product.id} role="option" aria-selected="false">
                   <Link
