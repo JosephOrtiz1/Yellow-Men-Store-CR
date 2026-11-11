@@ -1,6 +1,8 @@
 # Google y SEO
-- [ ] Corregir sitemap, icono, metadatos por página, datos de productos y accesibilidad; verificar tienda en PC y móvil.
-- [ ] Comprobar indexación con Google Search Console: requiere conexión y propiedad verificadas.
+- [x] Publicar sitemap de 68 páginas, icono, metadatos por página, datos de productos y mejoras de accesibilidad; 13 pruebas y tienda PC/móvil verificadas.
+- [x] Conectar y verificar Google Search Console para yellowmenstore.lovable.app y enviar sitemap; Google indica que aún desconoce el inicio.
+- [ ] Verificar yellowmenstore.app en Google y decidir cambio de URLs SEO al dominio propio recién conectado; sitemap y canonical conservan el dominio indicado en el encargo.
+- [ ] Validar Core Web Vitals con tráfico real y cumplimiento integral de accesibilidad/políticas comerciales: faltan mediciones y revisión específica, no cubiertos por el chequeo básico.
 
 # Navegación de colecciones
 - [x] Crear listado de Styles reutilizando Categorías y conectar navegación y «Ver más estilos»; verificar PC y móvil.
