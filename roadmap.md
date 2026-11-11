@@ -1,3 +1,7 @@
+# Google y SEO
+- [ ] Corregir sitemap, icono, metadatos por página, datos de productos y accesibilidad; verificar tienda en PC y móvil.
+- [ ] Comprobar indexación con Google Search Console: requiere conexión y propiedad verificadas.
+
 # Navegación de colecciones
 - [x] Crear listado de Styles reutilizando Categorías y conectar navegación y «Ver más estilos»; verificar PC y móvil.
 - [x] Añadir y verificar «Ver más estilos» y «Volver al inicio» en estilos y categorías, en PC y móvil.

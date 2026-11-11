@@ -118,15 +118,18 @@ const ProductDetail = () => {
               {allImages.length > 1 && (
                 <div className="flex gap-2 overflow-x-auto pb-2">
                   {allImages.map((img, i) => (
-                    <button
+                    <Button
                       key={i}
+                      variant="ghost"
+                      aria-label={`Ver imagen ${i + 1}: ${img.label}`}
+                      aria-pressed={i === selectedImage}
                       onClick={() => { setSelectedImage(i); setSelectedColor(img.colorIndex); }}
-                    className={`w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border-2 transition-colors ${
+                    className={`w-16 h-16 p-0 rounded-xl overflow-hidden flex-shrink-0 border-2 transition-colors ${
                         i === selectedImage ? "border-primary" : "border-transparent"
                       }`}
                     >
                       <img src={img.url} alt={img.label} className="w-full h-full object-cover" />
-                    </button>
+                    </Button>
                   ))}
                 </div>
               )}
@@ -206,7 +209,7 @@ const ProductDetail = () => {
 
               {localProduct.description && (
                 <div className="mt-8 pt-6 border-t border-border">
-                  <h3 className="font-heading text-xl tracking-wider mb-3">DESCRIPCIÓN</h3>
+                  <h2 className="font-heading text-xl tracking-wider mb-3">DESCRIPCIÓN</h2>
                   <p className="font-body text-muted-foreground leading-relaxed whitespace-pre-line">{localProduct.description}</p>
                 </div>
               )}
