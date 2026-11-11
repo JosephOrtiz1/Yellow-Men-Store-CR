@@ -130,7 +130,7 @@ const Auth = () => {
           <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
             <UserIcon className="w-6 h-6 text-primary" />
           </div>
-          <CardTitle className="font-heading text-3xl tracking-wider">CUENTA</CardTitle>
+          <h1 className="font-heading text-3xl tracking-wider">CUENTA</h1>
           <CardDescription className="font-body">Inicia sesión o regístrate para continuar</CardDescription>
         </CardHeader>
         <CardContent>
@@ -143,12 +143,12 @@ const Auth = () => {
             <TabsContent value="login">
               <form onSubmit={handleLogin} className="space-y-4">
                 <div>
-                  <Label className="font-body">Email</Label>
-                  <Input type="email" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} className="font-body" />
+                  <Label htmlFor="login-email" className="font-body">Email</Label>
+                  <Input id="login-email" autoComplete="email" type="email" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} className="font-body" />
                 </div>
                 <div>
-                  <Label className="font-body">Contraseña</Label>
-                  <Input type="password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} className="font-body" />
+                  <Label htmlFor="login-password" className="font-body">Contraseña</Label>
+                  <Input id="login-password" autoComplete="current-password" type="password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} className="font-body" />
                 </div>
                 <Button type="submit" disabled={loading} className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-body uppercase tracking-wider">
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Entrar"}
@@ -161,20 +161,20 @@ const Auth = () => {
             <TabsContent value="signup">
               <form onSubmit={handleSignup} className="space-y-3">
                 <div>
-                  <Label className="font-body">Nombre completo</Label>
-                  <Input value={fullName} onChange={(e) => setFullName(e.target.value)} className="font-body" />
+                  <Label htmlFor="signup-name" className="font-body">Nombre completo</Label>
+                  <Input id="signup-name" autoComplete="name" value={fullName} onChange={(e) => setFullName(e.target.value)} className="font-body" />
                 </div>
                 <div>
-                  <Label className="font-body">Email</Label>
-                  <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="font-body" />
+                  <Label htmlFor="signup-email" className="font-body">Email</Label>
+                  <Input id="signup-email" autoComplete="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="font-body" />
                 </div>
                 <div>
-                  <Label className="font-body">Teléfono</Label>
-                  <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+506 8888 8888" className="font-body" />
+                  <Label htmlFor="signup-phone" className="font-body">Teléfono</Label>
+                  <Input id="signup-phone" type="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+506 8888 8888" className="font-body" />
                 </div>
                 <div>
-                  <Label className="font-body">Contraseña</Label>
-                  <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="font-body" />
+                  <Label htmlFor="signup-password" className="font-body">Contraseña</Label>
+                  <Input id="signup-password" autoComplete="new-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="font-body" />
                 </div>
                 <Button type="submit" disabled={loading} className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-body uppercase tracking-wider">
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Crear cuenta"}

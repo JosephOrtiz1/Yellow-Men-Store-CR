@@ -125,7 +125,7 @@ const SearchPage = () => {
                     <p className="text-[10px] text-muted-foreground uppercase font-body tracking-wide">
                       {styleName(p.category)}
                     </p>
-                    <h3 className="font-body font-semibold text-sm truncate">{p.title}</h3>
+                    <h2 className="font-body font-semibold text-sm truncate">{p.title}</h2>
                     <p className="text-primary font-body font-bold text-sm mt-1">
                       {formatColones(p.price_colones)}
                     </p>

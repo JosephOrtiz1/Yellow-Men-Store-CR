@@ -60,6 +60,7 @@ const Index = () => {
               Nueva colección
             </p>
             <h1 className="font-heading text-7xl sm:text-8xl md:text-[10rem] tracking-wider leading-[0.85] mb-6">
+              <span className="sr-only">Yellow Men Store — Ropa masculina en Costa Rica. </span>
               LAS CALLES
               <br />
               <span className="text-primary">SON TUYAS.</span>
