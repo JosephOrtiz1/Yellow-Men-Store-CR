@@ -11,7 +11,7 @@
 - The home hero uses a crossfade slide list (HeroSlider) driven by a segmented progress bar; derive the segment count from the slides so new styles stay synchronized, with timing in SLIDE_DURATION_MS and a cycle key restarting the fill animation.
 - The visible category name is "Techwear" but the stored slug stays "cyber-wear"; never rename the slug without migrating existing products.
 - ScrollToTop in App resets window scroll on every pathname change so new pages always open from the top.
-- Collection navigation links to /#styles; resolve its home anchor to the visible desktop or mobile section so both layouts open at the styles.
+- Styles and garment directories share the Categories page with a mode prop; style navigation links to /styles so visitors can browse every style without returning to the home.
 - Storefront product listings (home and category) are shuffled client-side per page view via shuffleProducts in src/lib/supabaseProducts.ts; the database query stays newest-first and search results keep that order.
 - The home fetches the complete active catalog with paginated queries before shuffling, so its final all-products grid never truncates the catalog; style previews reuse that same list.
 - Styles live in products.category and garment categories in products.garment_type; both lists are defined once in src/lib/catalog.ts so storefront, admin and nav stay in sync.
