@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { fetchSupabaseProducts, type SupabaseProductListItem } from "@/lib/supabaseProducts";
 import { SupabaseProductCard } from "@/components/SupabaseProductCard";
-import { Loader2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { styleName, garmentName } from "@/lib/catalog";
 
 
@@ -33,6 +34,14 @@ const Category = ({ mode = "style" }: { mode?: "style" | "garment" }) => {
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-8 md:mb-10">
           <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl tracking-wider">{categoryName.toUpperCase()}</h1>
+          <nav aria-label="Navegación de colección" className="flex flex-wrap gap-2">
+            <Button asChild variant="outline" className="font-body">
+              <Link to="/"><ArrowLeft />Volver al inicio</Link>
+            </Button>
+            <Button asChild className="font-body">
+              <Link to="/#styles">Ver más estilos<ArrowRight /></Link>
+            </Button>
+          </nav>
         </div>
 
         {loading ? (

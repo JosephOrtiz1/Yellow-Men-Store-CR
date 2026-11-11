@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search } from "lucide-react";
+import { ArrowLeft, ArrowRight, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { GARMENT_TYPES } from "@/lib/catalog";
 
 const Categories = () => {
@@ -14,7 +15,17 @@ const Categories = () => {
   return (
     <div className="min-h-screen pt-6 md:pt-24">
       <div className="container mx-auto px-4 py-8">
-        <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl tracking-wider mb-6">CATEGORÍAS</h1>
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+          <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl tracking-wider">CATEGORÍAS</h1>
+          <nav aria-label="Navegación de categorías" className="flex flex-wrap gap-2">
+            <Button asChild variant="outline" className="font-body">
+              <Link to="/"><ArrowLeft />Volver al inicio</Link>
+            </Button>
+            <Button asChild className="font-body">
+              <Link to="/#styles">Ver más estilos<ArrowRight /></Link>
+            </Button>
+          </nav>
+        </div>
         <form
           onSubmit={(e) => {
             e.preventDefault();

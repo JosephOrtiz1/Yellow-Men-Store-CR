@@ -16,10 +16,10 @@ const Index = () => {
   const featuredProducts = useMemo(() => getFeaturedProducts(localProducts), [localProducts]);
 
   useEffect(() => {
-    if (hash !== "#featured") return;
+    if (hash !== "#featured" && hash !== "#styles") return;
     const frame = requestAnimationFrame(() => {
       // On mobile the featured grid is hidden; scroll to whichever block is visible.
-      const target = ["featured-m", "featured"]
+      const target = (hash === "#styles" ? ["styles-m", "styles"] : ["featured-m", "featured"])
         .map((id) => document.getElementById(id))
         .find((el) => el && el.offsetParent !== null);
       target?.scrollIntoView({ block: "start" });
@@ -82,7 +82,7 @@ const Index = () => {
       </section>
 
       {/* Mobile: carruseles horizontales por categoría */}
-      <section className="md:hidden py-10 bg-background space-y-10">
+      <section id="styles-m" className="md:hidden py-10 bg-background space-y-10 scroll-mt-4">
         {loading ? (
           <div className="flex justify-center py-20">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -133,7 +133,7 @@ const Index = () => {
       </section>
 
       {/* Desktop: categorías */}
-      <section className="hidden md:block py-16 bg-background">
+      <section id="styles" className="hidden md:block py-16 bg-background scroll-mt-20">
         <div className="container mx-auto px-4">
           <h2 className="font-heading text-5xl tracking-wider mb-10 text-center">STYLES</h2>
           <div className="grid grid-cols-3 gap-4">
