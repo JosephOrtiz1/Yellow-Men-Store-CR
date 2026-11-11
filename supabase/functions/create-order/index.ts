@@ -110,7 +110,8 @@ Deno.serve(async (req) => {
     // Server-side total calculation using authoritative prices
     let subtotal = 0;
     const orderItems = items.map((it) => {
-      const p = productMap.get(it.product_id)!;
+      const p = productMap.get(it.product_id);
+      if (!p) throw new Error('Product unavailable');
       const price = Number(p.price_colones);
       subtotal += price * it.quantity;
       return {
@@ -147,6 +148,7 @@ Deno.serve(async (req) => {
         payment_status: 'unpaid',
         payment_method,
         payment_provider: payment_method === 'sinpe' ? 'sinpe' : 'paypal',
+        payment_environment: 'live',
         contact_name: shipping.recipient_name,
         contact_email: contactEmail,
         contact_phone: shipping.phone,

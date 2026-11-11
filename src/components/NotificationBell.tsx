@@ -33,10 +33,10 @@ const useNotifications = () => {
     const load = () =>
       supabase
         .from("notifications")
-        .select("id, title, message, read, created_at")
+        .select("id, title, message, read, created_at, orders(archived_at)")
         .order("created_at", { ascending: false })
         .limit(20)
-        .then(({ data }) => setNotifications((data as Notification[]) || []));
+        .then(({ data }) => setNotifications((data || []).filter(n => !n.orders?.archived_at) as Notification[]));
     load();
     const interval = setInterval(load, 30000);
     return () => clearInterval(interval);

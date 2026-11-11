@@ -44,7 +44,7 @@ const Auth = () => {
     e.preventDefault();
     const parsed = loginSchema.safeParse({ email: loginEmail, password: loginPassword });
     if (!parsed.success) {
-      toast.error(parsed.error.errors[0].message, { position: "top-center" });
+      toast.error(parsed.error.issues[0].message, { position: "top-center" });
       return;
     }
     setLoading(true);
@@ -65,7 +65,7 @@ const Auth = () => {
     e.preventDefault();
     const parsed = signupSchema.safeParse({ fullName, email, phone, password });
     if (!parsed.success) {
-      toast.error(parsed.error.errors[0].message, { position: "top-center" });
+      toast.error(parsed.error.issues[0].message, { position: "top-center" });
       return;
     }
     setLoading(true);

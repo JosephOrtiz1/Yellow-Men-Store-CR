@@ -45,6 +45,7 @@ const Orders = () => {
       supabase
         .from("orders")
         .select("id, total_colones, subtotal_colones, shipping_cost_colones, status, payment_status, payment_method, payment_checkout_url, items, created_at")
+        .is("archived_at", null)
         .order("created_at", { ascending: false })
         .then(({ data }) => {
           setOrders((data as unknown as Order[]) || []);
