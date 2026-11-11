@@ -1,5 +1,5 @@
 # Navegación de colecciones
-- [ ] Añadir y verificar «Ver más estilos» y «Volver al inicio» en estilos y categorías, en PC y móvil.
+- [x] Añadir y verificar «Ver más estilos» y «Volver al inicio» en estilos y categorías, en PC y móvil.
 
 # Producción
 - [x] Conectar PayPal Live; configuración y botón verificados sin realizar cobros.
