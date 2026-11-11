@@ -54,10 +54,10 @@ const Checkout = () => {
   const registered = !!order && (order.method === "sinpe" || paid);
 
   useEffect(() => {
-    if (!order) return;
+    if (!registered) return;
     if (directBuy) clearBuyNow();
     else clearCart();
-  }, [order, directBuy, clearCart, clearBuyNow]);
+  }, [registered, directBuy, clearCart, clearBuyNow]);
 
   useEffect(() => {
     if (!user) return;

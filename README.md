@@ -18,6 +18,8 @@ E-commerce de ropa masculina urbana (street wear, casual, cyber wear, old money)
 - `src/lib/supabaseProducts.ts` — acceso al catálogo
 - `supabase/functions/` — funciones serverless
 
-## Variables sensibles
+## Pagos de producción
 
-Las credenciales de PayPal (sandbox) (`PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET` (y opcionales `PAYPAL_ENV=live`, `CRC_PER_USD`)) se configuran como secrets de Lovable Cloud. Mientras no estén presentes, los pedidos se registran como `unpaid` y la pasarela responde 503.
+PayPal usa la conexión Live a través del gateway, con `LOVABLE_API_KEY` y `PAYPAL_API_KEY` solo en funciones. El identificador público `PAYPAL_CLIENT_ID` carga el SDK. `PAYPAL_WEBHOOK_ID` identifica el webhook registrado; sin él no se habilita el checkout PayPal.
+
+La conversión actual es ₡510/USD. Creación y captura usan claves de idempotencia por pedido. Solo `paypal-webhook`, tras verificar firma y comprobar importe, moneda e identidad de pedido con PayPal, guarda el pago confirmado. Los pedidos anteriores a producción se conservan archivados y no se muestran en las listas operativas.
