@@ -1,11 +1,13 @@
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { z } from 'npm:zod@3.23.8';
-import { PAYPAL_BASE, CRC_PER_USD, json, getPayPalToken, getUserId, adminClient } from '../_shared/paypal.ts';
+import { CRC_PER_USD, json, paypal, paymentError, getUserId, adminClient } from '../_shared/paypal.ts';
+import { trustedOrigin } from '../_shared/paymentRules.ts';
 
 const BodySchema = z.object({ order_id: z.string().uuid(), return_origin: z.string().url().optional() });
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405);
   try {
     const userId = await getUserId(req);
     if (!userId) return json({ error: 'Unauthorized' }, 401);
@@ -16,35 +18,21 @@ Deno.serve(async (req) => {
     const admin = adminClient();
     const { data: order } = await admin
       .from('orders')
-      .select('id, user_id, total_colones, payment_status')
+      .select('id, user_id, total_colones, payment_status, payment_reference, archived_at, payment_environment, status')
       .eq('id', parsed.data.order_id)
       .maybeSingle();
     if (!order) return json({ error: 'Order not found' }, 404);
     if (order.user_id !== userId) return json({ error: 'Forbidden' }, 403);
+    if (order.archived_at || order.payment_environment !== 'live' || order.status === 'cancelled') return json({ error: 'Order not payable' }, 409);
     if (order.payment_status === 'paid') return json({ error: 'Order already paid' }, 400);
-
-    const token = await getPayPalToken();
-    if (!token) return json({ error: 'PayPal not configured' }, 503);
-
-    const DEFAULT_ORIGIN = 'https://yellowmenstore.lovable.app';
-    let origin = DEFAULT_ORIGIN;
-    if (parsed.data.return_origin) {
-      try {
-        const u = new URL(parsed.data.return_origin);
-        const host = u.hostname;
-        const allowed = u.protocol === 'https:' && (
-          host === 'yellowmenstore.lovable.app' ||
-          host.endsWith('.lovable.app') ||
-          host.endsWith('.lovableproject.com')
-        );
-        if (allowed) origin = u.origin;
-      } catch { /* keep default */ }
-    }
+    if (!Deno.env.get('PAYPAL_WEBHOOK_ID')) return json({ error: 'Live payment setup incomplete' }, 503);
+    if (order.payment_reference) return json({ paypal_order_id: order.payment_reference });
+    const origin = trustedOrigin(parsed.data.return_origin);
     const usd = (Number(order.total_colones) / CRC_PER_USD).toFixed(2);
 
-    const res = await fetch(`${PAYPAL_BASE}/v2/checkout/orders`, {
+    const data = await paypal('/v2/checkout/orders', {
       method: 'POST',
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      headers: { 'PayPal-Request-Id': `create-${order.id}` },
       body: JSON.stringify({
         intent: 'CAPTURE',
         purchase_units: [{
@@ -62,11 +50,6 @@ Deno.serve(async (req) => {
         },
       }),
     });
-    const data = await res.json();
-    if (!res.ok) {
-      console.error('paypal create error', data);
-      return json({ error: 'Could not create PayPal order' }, 502);
-    }
     const approve = data.links?.find((l: { rel: string }) => l.rel === 'approve' || l.rel === 'payer-action')?.href;
 
     const { error: saveError } = await admin.from('orders').update({
@@ -78,7 +61,6 @@ Deno.serve(async (req) => {
 
     return json({ checkout_url: approve, paypal_order_id: data.id, amount_usd: usd });
   } catch (err) {
-    console.error(err);
-    return json({ error: 'Internal error' }, 500);
+    return paymentError(err);
   }
 });
