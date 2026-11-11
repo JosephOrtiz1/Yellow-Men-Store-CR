@@ -157,6 +157,7 @@ const Admin = () => {
     const { data } = await supabase
       .from("orders")
       .select("id, user_id, items, total_colones, status, payment_status, payment_method, contact_name, contact_email, contact_phone, created_at, shipping_recipient_name, shipping_province, shipping_canton, shipping_district, shipping_exact_address, shipping_phone")
+      .is("archived_at", null)
       .order("created_at", { ascending: false });
     setOrders(data || []);
     setLoadingOrders(false);
@@ -166,7 +167,8 @@ const Admin = () => {
     setLoadingReceipts(true);
     const { data } = await supabase
       .from("payment_receipts")
-      .select("id, order_id, user_id, image_path, status, admin_note, created_at")
+      .select("id, order_id, user_id, image_path, status, admin_note, created_at, orders!inner(archived_at)")
+      .is("orders.archived_at", null)
       .order("created_at", { ascending: false });
     const rows = data || [];
     setReceipts(rows);
