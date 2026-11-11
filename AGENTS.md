@@ -1,4 +1,6 @@
 # Architecture
+- RouteSeo owns self-referencing route metadata and public product schema; private and search surfaces use noindex, and index.html retains sitewide fallback tags.
+- Generate the public sitemap from shared catalog paths and all active, non-deleted products before dev/build; omit lastmod without an authoritative page-specific timestamp.
 - New orders use the live payment environment; archive pre-production orders and filter orders, receipts and notifications without deleting audit history.
 - PayPal runs through the linked connector gateway with stable per-order idempotency keys; only signature-verified webhook events persist payment confirmation after exact USD amount and order checks.
 - Admin product creation and editing share one form; update existing color rows by ID and preserve unchanged image URLs and availability to avoid resetting catalog data.

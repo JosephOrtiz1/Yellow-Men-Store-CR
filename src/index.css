@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -84,6 +82,11 @@
   [role="button"]:focus, [role="button"]:focus-visible {
     outline: none !important;
     box-shadow: none !important;
+  }
+
+  button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
+    outline: 2px solid hsl(var(--ring)) !important;
+    outline-offset: 3px;
   }
 
   /* Custom scrollbar — dark theme to match the store */
