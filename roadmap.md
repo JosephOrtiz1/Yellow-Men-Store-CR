@@ -1,5 +1,5 @@
 # Navegación de colecciones
-- [ ] Crear listado de Styles reutilizando Categorías y conectar navegación y «Ver más estilos»; verificar PC y móvil.
+- [x] Crear listado de Styles reutilizando Categorías y conectar navegación y «Ver más estilos»; verificar PC y móvil.
 - [x] Añadir y verificar «Ver más estilos» y «Volver al inicio» en estilos y categorías, en PC y móvil.
 
 # Producción
