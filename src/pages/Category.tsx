@@ -39,7 +39,7 @@ const Category = ({ mode = "style" }: { mode?: "style" | "garment" }) => {
               <Link to="/"><ArrowLeft />Volver al inicio</Link>
             </Button>
             <Button asChild className="font-body">
-              <Link to={mode === "garment" ? "/categories" : "/#styles"}>
+              <Link to={mode === "garment" ? "/categories" : "/styles"}>
                 {mode === "garment" ? "Ver más categorías" : "Ver más estilos"}<ArrowRight />
               </Link>
             </Button>

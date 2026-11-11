@@ -6,6 +6,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "./ui
 import { NotificationList } from "./NotificationBell";
 import { STYLES, GARMENT_TYPES } from "@/lib/catalog";
 import { useAuth } from "@/hooks/useAuth";
+import { Button } from "./ui/button";
 
 const categories = STYLES;
 
@@ -84,6 +85,9 @@ export const MobileBottomNav = () => {
                   {cat.name}
                 </button>
               ))}
+              <Button asChild variant="ghost" className={`${sheetItem} justify-start h-auto px-0`}>
+                <Link to="/styles" onClick={() => setMenuOpen(false)}>Ver más estilos</Link>
+              </Button>
 
               <div className="mt-4 pt-4 border-t border-white/10">
                 <h3 className="font-heading text-xl tracking-wider mb-1 text-primary">CATEGORÍAS</h3>

@@ -31,6 +31,7 @@ const AppContent = () => (
           <Route path="/" element={<Index />} />
           <Route path="/product/:handle" element={<ProductDetail />} />
           <Route path="/category/:slug" element={<Category />} />
+          <Route path="/styles" element={<Categories key="styles" mode="style" />} />
           <Route path="/categories" element={<Categories />} />
           <Route path="/categories/:slug" element={<Category key="garment" mode="garment" />} />
           <Route path="/about" element={<About />} />

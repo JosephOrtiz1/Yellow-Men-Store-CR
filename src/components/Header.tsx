@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, X, Home, User as UserIcon, LogOut, ChevronDown } from "lucide-react";
+import { Menu, X, Home, User as UserIcon, LogOut } from "lucide-react";
 import { useState } from "react";
 import { CartDrawer } from "./CartDrawer";
 import { NotificationBell } from "./NotificationBell";
@@ -45,18 +45,9 @@ export const Header = () => {
 
 
         <nav className="hidden lg:flex items-center justify-center gap-4 xl:gap-8 flex-1">
-          <DropdownMenu>
-            <DropdownMenuTrigger className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-primary transition-colors uppercase tracking-wide font-body outline-none">
-              Styles <ChevronDown className="h-3.5 w-3.5" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="center" className="w-48">
-              {categories.map((cat) => (
-                <DropdownMenuItem key={cat.slug} onClick={() => navigate(`/category/${cat.slug}`)} className="font-body cursor-pointer uppercase text-xs tracking-wide">
-                  {cat.name}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Link to="/styles" className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors uppercase tracking-wide font-body whitespace-nowrap">
+            Styles
+          </Link>
           <Link to="/categories" className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors uppercase tracking-wide font-body whitespace-nowrap">
             Categorías
           </Link>
@@ -156,6 +147,9 @@ export const Header = () => {
               className="hidden md:block w-full"
             />
             <nav className="flex flex-col gap-1">
+              <Link to="/styles" onClick={() => setMenuOpen(false)} className="text-base font-medium text-muted-foreground hover:text-primary py-3 uppercase tracking-wide font-body touch-manipulation">
+                Styles
+              </Link>
               {categories.map((cat) => (
                 <Link
                   key={cat.slug}
