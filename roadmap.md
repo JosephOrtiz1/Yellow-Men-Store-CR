@@ -1,8 +1,9 @@
 # Producción
-- [ ] Conectar credenciales PayPal Live y verificar configuración sin realizar cobros.
-- [ ] Archivar todos los pedidos anteriores y separar los nuevos pedidos reales.
-- [ ] Revisar seguridad, corregir riesgos comprobados y ejecutar pruebas.
-- [ ] Verificar compra, pedidos y administración antes de publicar.
+- [x] Conectar PayPal Live; configuración y botón verificados sin realizar cobros.
+- [x] Archivar los 38 pedidos anteriores; ocultar pedidos, comprobantes y notificaciones vinculados.
+- [x] Corregir los dos hallazgos del escaneo profundo y actualizar dependencias; 21 pruebas aprobadas, sin vulnerabilidades conocidas en dependencias.
+- [x] Verificar envío guardado, detalles, botón PayPal Live y pedidos/admin con sesión; rechazo de webhook sin firma confirmado.
+- [ ] Verificar una compra real completa: requiere autorización de un comprador y dinero real; no se realizó ningún cobro.
 
 # Checkout completo
 - [x] Agregar selección admin de destacados, sección compartida en portada y acceso desde navegación; guardado y recarga verificados, junto a pantallas de 375, 768, 1024 y 1974 px.
@@ -18,7 +19,7 @@
 # Tarjeta y cuenta PayPal
 - [x] Integrar campos seguros de tarjeta y botón de cuenta PayPal con ventana pequeña.
 - [x] Conectar creación y captura autenticadas; comprobar creación real en sandbox, ventana abierta y reglas de confirmación con pruebas.
-- [ ] Habilitar y probar Visa/Mastercard: PayPal devuelve CardFields no elegible para la cuenta de comercio actual; requiere habilitación por PayPal. No se ha realizado una captura de prueba completa.
+- [ ] Completar una compra real Visa/Mastercard con el botón oficial de PayPal: requiere autorización del comprador; no usar CardFields no elegibles para esta cuenta.
 
 # Edición de productos
 - [x] Agregar edición de productos existentes; guardado, recarga, conservación de imágenes y cancelación verificados con sesión de administrador.
