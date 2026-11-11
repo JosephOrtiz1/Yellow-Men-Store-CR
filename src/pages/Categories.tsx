@@ -22,7 +22,7 @@ const Categories = () => {
               <Link to="/"><ArrowLeft />Volver al inicio</Link>
             </Button>
             <Button asChild className="font-body">
-              <Link to="/#styles">Ver más estilos<ArrowRight /></Link>
+              <Link to="/categories">Ver más categorías<ArrowRight /></Link>
             </Button>
           </nav>
         </div>
