@@ -1,0 +1,11 @@
+ALTER TABLE public.orders ADD COLUMN archived_at timestamptz;
+ALTER TABLE public.orders ADD COLUMN payment_environment text NOT NULL DEFAULT 'live';
+UPDATE public.orders SET archived_at = now(), payment_environment = 'sandbox' WHERE archived_at IS NULL;
+CREATE INDEX orders_current_idx ON public.orders (created_at DESC) WHERE archived_at IS NULL;
+CREATE UNIQUE INDEX orders_payment_reference_unique ON public.orders(payment_reference) WHERE payment_reference IS NOT NULL;
+DROP POLICY "Users can upload own receipts" ON public.payment_receipts;
+CREATE POLICY "Users can upload own receipts" ON public.payment_receipts FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id AND status = 'pending' AND admin_note IS NULL AND reviewed_at IS NULL AND split_part(image_path, '/', 1) = auth.uid()::text AND EXISTS (SELECT 1 FROM public.orders o WHERE o.id = order_id AND o.user_id = auth.uid() AND o.archived_at IS NULL AND o.payment_method = 'sinpe' AND o.payment_status = 'unpaid' AND o.status <> 'cancelled'));
+CREATE OR REPLACE FUNCTION public.validate_receipt_order() RETURNS trigger LANGUAGE plpgsql SET search_path = public AS $$ BEGIN IF NOT EXISTS (SELECT 1 FROM public.orders o WHERE o.id = NEW.order_id AND o.user_id = NEW.user_id AND o.archived_at IS NULL AND o.payment_method = 'sinpe') THEN RAISE EXCEPTION 'Receipt does not belong to an active SINPE order'; END IF; RETURN NEW; END; $$;
+CREATE TRIGGER validate_receipt_order BEFORE INSERT OR UPDATE ON public.payment_receipts FOR EACH ROW EXECUTE FUNCTION public.validate_receipt_order();
+CREATE OR REPLACE FUNCTION public.protect_notification_fields() RETURNS trigger LANGUAGE plpgsql SET search_path = public AS $$ BEGIN IF NOT public.has_role(auth.uid(), 'admin') AND (NEW.user_id IS DISTINCT FROM OLD.user_id OR NEW.order_id IS DISTINCT FROM OLD.order_id OR NEW.title IS DISTINCT FROM OLD.title OR NEW.message IS DISTINCT FROM OLD.message OR NEW.created_at IS DISTINCT FROM OLD.created_at OR NEW.id IS DISTINCT FROM OLD.id) THEN RAISE EXCEPTION 'Only the read flag can be changed'; END IF; RETURN NEW; END; $$;
+CREATE TRIGGER protect_notification_fields BEFORE UPDATE ON public.notifications FOR EACH ROW EXECUTE FUNCTION public.protect_notification_fields();

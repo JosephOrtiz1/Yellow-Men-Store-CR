@@ -54,6 +54,7 @@ export type Database = {
       }
       orders: {
         Row: {
+          archived_at: string | null
           contact_address: string | null
           contact_email: string | null
           contact_name: string | null
@@ -62,6 +63,7 @@ export type Database = {
           id: string
           items: Json
           payment_checkout_url: string | null
+          payment_environment: string
           payment_method: string | null
           payment_provider: string | null
           payment_reference: string | null
@@ -81,6 +83,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          archived_at?: string | null
           contact_address?: string | null
           contact_email?: string | null
           contact_name?: string | null
@@ -89,6 +92,7 @@ export type Database = {
           id?: string
           items?: Json
           payment_checkout_url?: string | null
+          payment_environment?: string
           payment_method?: string | null
           payment_provider?: string | null
           payment_reference?: string | null
@@ -108,6 +112,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          archived_at?: string | null
           contact_address?: string | null
           contact_email?: string | null
           contact_name?: string | null
@@ -116,6 +121,7 @@ export type Database = {
           id?: string
           items?: Json
           payment_checkout_url?: string | null
+          payment_environment?: string
           payment_method?: string | null
           payment_provider?: string | null
           payment_reference?: string | null
