@@ -1,3 +1,9 @@
+# Producción
+- [ ] Conectar credenciales PayPal Live y verificar configuración sin realizar cobros.
+- [ ] Archivar todos los pedidos anteriores y separar los nuevos pedidos reales.
+- [ ] Revisar seguridad, corregir riesgos comprobados y ejecutar pruebas.
+- [ ] Verificar compra, pedidos y administración antes de publicar.
+
 # Checkout completo
 - [x] Agregar selección admin de destacados, sección compartida en portada y acceso desde navegación; guardado y recarga verificados, junto a pantallas de 375, 768, 1024 y 1974 px.
 - [x] Corregir Categorías siempre amarillo en navegación de escritorio y móvil.
