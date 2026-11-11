@@ -5,7 +5,7 @@ import { SupabaseProductCard } from "@/components/SupabaseProductCard";
 import { HeroSlider } from "@/components/HeroSlider";
 import { fetchSupabaseProducts, getFeaturedProducts, type SupabaseProductListItem } from "@/lib/supabaseProducts";
 import { STYLES } from "@/lib/catalog";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 
 const categories = STYLES;
 
@@ -91,8 +91,13 @@ const Index = () => {
           <>
             {featuredProducts.length > 0 && (
               <div id="featured-m" className="scroll-mt-4">
-                <div className="flex items-baseline justify-between px-4 mb-4">
+                <div className="flex flex-wrap items-center justify-between gap-3 px-4 mb-4">
                   <h2 className="font-heading text-3xl tracking-wider">DESTACADOS</h2>
+                  <Button asChild variant="outline" size="sm" className="font-body">
+                    <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: "instant" })}>
+                      <ArrowLeft />Volver al inicio
+                    </Link>
+                  </Button>
                 </div>
                 <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory px-4 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                   {featuredProducts.map((p) => (
@@ -153,7 +158,14 @@ const Index = () => {
 
       <section id="featured" className="hidden md:block py-10 md:py-16 bg-background scroll-mt-4 md:scroll-mt-20">
         <div className="container mx-auto px-4">
-          <h2 className="font-heading text-3xl md:text-5xl mb-6 md:mb-10">DESTACADOS</h2>
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-6 md:mb-10">
+            <h2 className="font-heading text-3xl md:text-5xl">DESTACADOS</h2>
+            <Button asChild variant="outline" className="font-body">
+              <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: "instant" })}>
+                <ArrowLeft />Volver al inicio
+              </Link>
+            </Button>
+          </div>
           {loading ? (
             <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
           ) : featuredProducts.length === 0 ? (
