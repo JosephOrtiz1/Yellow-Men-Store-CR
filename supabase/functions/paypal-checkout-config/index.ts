@@ -8,8 +8,8 @@ Deno.serve(async (req) => {
     if (!await getUserId(req)) return json({ error: 'Unauthorized' }, 401);
     // The client ID is PayPal's public SDK identifier; never return the client secret.
     const clientId = Deno.env.get('PAYPAL_CLIENT_ID');
-    if (!clientId || !Deno.env.get('PAYPAL_CLIENT_SECRET')) return json({ error: 'PayPal not configured' }, 503);
-    return json({ client_id: clientId, sandbox: (Deno.env.get('PAYPAL_ENV') ?? 'sandbox') !== 'live', crc_per_usd: CRC_PER_USD });
+    if (!clientId || !Deno.env.get('PAYPAL_API_KEY') || !Deno.env.get('PAYPAL_WEBHOOK_ID')) return json({ error: 'Live payment setup incomplete' }, 503);
+    return json({ client_id: clientId, sandbox: false, crc_per_usd: CRC_PER_USD });
   } catch {
     return json({ error: 'Could not load payment configuration' }, 500);
   }
