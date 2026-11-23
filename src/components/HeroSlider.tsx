@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import heroTechwear from "@/assets/hero/hero-techwear.jpg";
-import heroStreetwear from "@/assets/hero/hero-streetwear.jpg";
+import heroStreetwear from "@/assets/hero/hero-streetwear-wide.jpg.asset.json";
+import heroStreetwearCover from "@/assets/hero/hero-streetwear.jpg.asset.json";
 import heroOldMoney from "@/assets/hero/hero-old-money.jpg";
 import heroCasual from "@/assets/hero/hero-casual.jpg";
 import heroDarkwear from "@/assets/hero/hero-darkwear.jpg.asset.json";
@@ -10,7 +11,7 @@ const SLIDE_DURATION_MS = 4000;
 
 const slides = [
   { src: heroTechwear, label: "Techwear", slug: "cyber-wear" },
-  { src: heroStreetwear, label: "Street Wear", slug: "street-wear" },
+  { src: heroStreetwear.url, cover: heroStreetwearCover.url, label: "Street Wear", slug: "street-wear", position: "object-right" },
   { src: heroOldMoney, label: "Old Money", slug: "old-money" },
   { src: heroCasual, label: "Casual", slug: "casual" },
   { src: heroDarkwear.url, label: "Darkwear", slug: "darkwear" },
@@ -18,7 +19,9 @@ const slides = [
 ];
 
 /** Cover image per style slug, shared with the style collection pages. */
-export const STYLE_COVERS: Record<string, string> = Object.fromEntries(slides.map((s) => [s.slug, s.src]));
+export const STYLE_COVERS: Record<string, string> = Object.fromEntries(
+  slides.map((s) => [s.slug, "cover" in s && s.cover ? s.cover : s.src]),
+);
 
 /**
  * Hero image slider with a segmented progress bar.
@@ -51,7 +54,7 @@ export const HeroSlider = () => {
           width={1600}
           height={1600}
           aria-hidden={i !== active}
-          className={`absolute right-0 top-0 h-full w-full md:w-1/2 object-cover object-top brightness-[0.62] md:brightness-75 transition-opacity duration-1000 ${
+          className={`absolute right-0 top-0 h-full w-full md:w-1/2 object-cover ${"position" in slide && slide.position ? slide.position : "object-top"} brightness-[0.62] md:brightness-75 transition-opacity duration-1000 ${
             i === active ? "opacity-100" : "opacity-0"
           }`}
         />
