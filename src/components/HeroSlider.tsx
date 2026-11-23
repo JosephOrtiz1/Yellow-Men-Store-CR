@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
-import heroTechwear from "@/assets/hero/hero-techwear-wide.jpg.asset.json";
+import heroTechwear from "@/assets/hero/hero-techwear.jpg";
+import heroTechwearBanner from "@/assets/hero/hero-techwear-wide.jpg.asset.json";
 import heroTechwearCover from "@/assets/hero/hero-techwear-portrait.jpg.asset.json";
-import heroStreetwear from "@/assets/hero/hero-streetwear-wide.jpg.asset.json";
+import heroStreetwear from "@/assets/hero/hero-streetwear.jpg";
+import heroStreetwearBanner from "@/assets/hero/hero-streetwear-wide.jpg.asset.json";
 import heroStreetwearCover from "@/assets/hero/hero-streetwear.jpg.asset.json";
 import heroOldMoney from "@/assets/hero/hero-old-money.jpg";
-import heroCasual from "@/assets/hero/hero-casual-wide.jpg.asset.json";
+import heroCasual from "@/assets/hero/hero-casual.jpg";
+import heroCasualBanner from "@/assets/hero/hero-casual-wide.jpg.asset.json";
 import heroCasualCover from "@/assets/hero/hero-casual-portrait.jpg.asset.json";
 import heroDarkwear from "@/assets/hero/hero-darkwear.jpg.asset.json";
 import heroJapanStyle from "@/assets/hero/hero-japan-style.jpg.asset.json";
@@ -12,10 +15,10 @@ import heroJapanStyle from "@/assets/hero/hero-japan-style.jpg.asset.json";
 const SLIDE_DURATION_MS = 4000;
 
 const slides = [
-  { src: heroTechwear.url, cover: heroTechwearCover.url, label: "Techwear", slug: "cyber-wear", position: "object-right" },
-  { src: heroStreetwear.url, cover: heroStreetwearCover.url, label: "Street Wear", slug: "street-wear", position: "object-right" },
+  { src: heroTechwear, banner: heroTechwearBanner.url, cover: heroTechwearCover.url, label: "Techwear", slug: "cyber-wear" },
+  { src: heroStreetwear, banner: heroStreetwearBanner.url, cover: heroStreetwearCover.url, label: "Street Wear", slug: "street-wear" },
   { src: heroOldMoney, label: "Old Money", slug: "old-money" },
-  { src: heroCasual.url, cover: heroCasualCover.url, label: "Casual", slug: "casual", position: "object-right" },
+  { src: heroCasual, banner: heroCasualBanner.url, cover: heroCasualCover.url, label: "Casual", slug: "casual" },
   { src: heroDarkwear.url, label: "Darkwear", slug: "darkwear" },
   { src: heroJapanStyle.url, label: "Japan Style", slug: "japan-style" },
 ];
@@ -25,9 +28,9 @@ export const STYLE_COVERS: Record<string, string> = Object.fromEntries(
   slides.map((s) => [s.slug, "cover" in s && s.cover ? s.cover : s.src]),
 );
 
-/** Wide banner per style slug (the same image shown in the home hero). */
+/** Wide banner per style slug, shown on the style collection pages. */
 export const STYLE_BANNERS: Record<string, string> = Object.fromEntries(
-  slides.map((s) => [s.slug, s.src]),
+  slides.map((s) => [s.slug, "banner" in s && s.banner ? s.banner : s.src]),
 );
 
 /**
