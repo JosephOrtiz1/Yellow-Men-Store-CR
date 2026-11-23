@@ -3,7 +3,8 @@ import heroTechwear from "@/assets/hero/hero-techwear.jpg";
 import heroStreetwear from "@/assets/hero/hero-streetwear-wide.jpg.asset.json";
 import heroStreetwearCover from "@/assets/hero/hero-streetwear.jpg.asset.json";
 import heroOldMoney from "@/assets/hero/hero-old-money.jpg";
-import heroCasual from "@/assets/hero/hero-casual.jpg";
+import heroCasual from "@/assets/hero/hero-casual-wide.jpg.asset.json";
+import heroCasualCover from "@/assets/hero/hero-casual-portrait.jpg.asset.json";
 import heroDarkwear from "@/assets/hero/hero-darkwear.jpg.asset.json";
 import heroJapanStyle from "@/assets/hero/hero-japan-style.jpg.asset.json";
 
@@ -13,7 +14,7 @@ const slides = [
   { src: heroTechwear, label: "Techwear", slug: "cyber-wear" },
   { src: heroStreetwear.url, cover: heroStreetwearCover.url, label: "Street Wear", slug: "street-wear", position: "object-right" },
   { src: heroOldMoney, label: "Old Money", slug: "old-money" },
-  { src: heroCasual, label: "Casual", slug: "casual" },
+  { src: heroCasual.url, cover: heroCasualCover.url, label: "Casual", slug: "casual", position: "object-right" },
   { src: heroDarkwear.url, label: "Darkwear", slug: "darkwear" },
   { src: heroJapanStyle.url, label: "Japan Style", slug: "japan-style" },
 ];
