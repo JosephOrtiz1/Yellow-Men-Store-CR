@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import heroTechwear from "@/assets/hero/hero-techwear.jpg";
+import heroTechwear from "@/assets/hero/hero-techwear-wide.jpg.asset.json";
+import heroTechwearCover from "@/assets/hero/hero-techwear-portrait.jpg.asset.json";
 import heroStreetwear from "@/assets/hero/hero-streetwear-wide.jpg.asset.json";
 import heroStreetwearCover from "@/assets/hero/hero-streetwear.jpg.asset.json";
 import heroOldMoney from "@/assets/hero/hero-old-money.jpg";
@@ -11,7 +12,7 @@ import heroJapanStyle from "@/assets/hero/hero-japan-style.jpg.asset.json";
 const SLIDE_DURATION_MS = 4000;
 
 const slides = [
-  { src: heroTechwear, label: "Techwear", slug: "cyber-wear" },
+  { src: heroTechwear.url, cover: heroTechwearCover.url, label: "Techwear", slug: "cyber-wear", position: "object-right" },
   { src: heroStreetwear.url, cover: heroStreetwearCover.url, label: "Street Wear", slug: "street-wear", position: "object-right" },
   { src: heroOldMoney, label: "Old Money", slug: "old-money" },
   { src: heroCasual.url, cover: heroCasualCover.url, label: "Casual", slug: "casual", position: "object-right" },
