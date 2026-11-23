@@ -119,6 +119,21 @@
   }
 }
 
+/* Hide only the scroll indicator; preserve native touch and keyboard scrolling. */
+.scrollbar-invisible,
+.scrollbar-invisible > .overflow-auto {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scrollbar-invisible::-webkit-scrollbar,
+.scrollbar-invisible > .overflow-auto::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
 /* Confirmación de pago — animación del check */
 @keyframes success-circle-draw {
   from { stroke-dashoffset: 300; }

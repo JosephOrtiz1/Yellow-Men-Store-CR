@@ -461,7 +461,7 @@ const Admin = () => {
         </div>
 
         <Tabs defaultValue="products" className="w-full min-w-0 [&_[role=tabpanel]]:min-w-0 [&_[role=tabpanel]>div]:min-w-0">
-          <div className="mb-6 max-w-full overflow-x-auto overscroll-x-contain pb-2" role="region" aria-label="Secciones de administración" tabIndex={0}>
+          <div className="scrollbar-invisible mb-6 max-w-full overflow-x-auto overscroll-x-contain pb-2" role="region" aria-label="Secciones de administración" tabIndex={0}>
           <TabsList className="w-max min-w-full justify-start">
             <TabsTrigger value="products" className="font-body"><Package className="w-4 h-4 mr-2" />Productos</TabsTrigger>
             <TabsTrigger value="users" className="font-body"><Users className="w-4 h-4 mr-2" />Usuarios ({users.length})</TabsTrigger>
@@ -917,7 +917,7 @@ const Admin = () => {
                 ) : users.length === 0 ? (
                   <p className="text-center text-muted-foreground font-body py-10">No hay usuarios registrados.</p>
                 ) : (
-                  <div className="max-w-full overflow-x-auto overscroll-x-contain" role="region" aria-label="Usuarios registrados" tabIndex={0}>
+                  <div className="scrollbar-invisible max-w-full overflow-x-auto overscroll-x-contain" role="region" aria-label="Usuarios registrados" tabIndex={0}>
                     <Table className="min-w-[960px] table-fixed">
                       <TableHeader>
                         <TableRow>
