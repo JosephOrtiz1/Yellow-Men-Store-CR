@@ -24,9 +24,7 @@ const Categories = ({ mode = "garment" }: { mode?: "style" | "garment" }) => {
             </Button>
           </nav>
         </div>
-        {filtered.length === 0 ? (
-          <p className="font-body text-muted-foreground">{isStyle ? "No hay estilos con ese nombre." : "No hay categorías con ese nombre."}</p>
-        ) : (
+        {(
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
             {filtered.map((g) => (
               <Link
