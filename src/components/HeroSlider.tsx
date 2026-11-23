@@ -23,6 +23,11 @@ export const STYLE_COVERS: Record<string, string> = Object.fromEntries(
   slides.map((s) => [s.slug, "cover" in s && s.cover ? s.cover : s.src]),
 );
 
+/** Wide banner per style slug (the same image shown in the home hero). */
+export const STYLE_BANNERS: Record<string, string> = Object.fromEntries(
+  slides.map((s) => [s.slug, s.src]),
+);
+
 /**
  * Hero image slider with a segmented progress bar.
  * Each segment fills over SLIDE_DURATION_MS; when it completes, the next
