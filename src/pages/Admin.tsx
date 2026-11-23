@@ -446,7 +446,7 @@ const Admin = () => {
 
   return (
     <div className="min-h-screen pt-6 md:pt-20">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto min-w-0 px-4 py-8">
         {/* Header with Techwear banner */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
           <h1 className="font-heading text-4xl md:text-5xl tracking-wider">PANEL DE ADMIN</h1>
@@ -460,18 +460,20 @@ const Admin = () => {
           </div>
         </div>
 
-        <Tabs defaultValue="products" className="w-full">
-          <TabsList className="mb-6">
+        <Tabs defaultValue="products" className="w-full min-w-0 [&_[role=tabpanel]]:min-w-0 [&_[role=tabpanel]>div]:min-w-0">
+          <div className="mb-6 max-w-full overflow-x-auto overscroll-x-contain pb-2" role="region" aria-label="Secciones de administración" tabIndex={0}>
+          <TabsList className="w-max min-w-full justify-start">
             <TabsTrigger value="products" className="font-body"><Package className="w-4 h-4 mr-2" />Productos</TabsTrigger>
             <TabsTrigger value="users" className="font-body"><Users className="w-4 h-4 mr-2" />Usuarios ({users.length})</TabsTrigger>
             <TabsTrigger value="orders" className="font-body"><Package className="w-4 h-4 mr-2" />Pedidos ({orders.length})</TabsTrigger>
             <TabsTrigger value="receipts" className="font-body"><Receipt className="w-4 h-4 mr-2" />Comprobantes ({receipts.filter((r) => r.status === "pending").length})</TabsTrigger>
           </TabsList>
+          </div>
 
           <TabsContent value="products">
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        <div className="grid min-w-0 grid-cols-1 xl:grid-cols-2 gap-6 md:gap-8 [&>div]:min-w-0">
           {/* Create product form */}
-          <Card id="admin-product-form" className="scroll-mt-24">
+          <Card id="admin-product-form" className="min-w-0 scroll-mt-24">
             <CardHeader>
               <CardTitle className="font-heading text-2xl tracking-wider">{editingId ? "EDITAR PRODUCTO" : "CREAR PRODUCTO"}</CardTitle>
             </CardHeader>
@@ -600,26 +602,26 @@ const Admin = () => {
                             type="color"
                             value={color.hex}
                             onChange={(e) => updateColor(i, "hex", e.target.value)}
-                            className="w-10 h-10 rounded-sm cursor-pointer border border-border"
+                            className="w-10 h-10 shrink-0 rounded-sm cursor-pointer border border-border"
                           />
                           <Input
                             value={color.name}
                             onChange={(e) => updateColor(i, "name", e.target.value)}
                             placeholder="Nombre del color (ej: Negro)"
-                            className="font-body flex-1"
+                            className="font-body min-w-0 flex-1"
                           />
                           <Button
                             type="button"
                             variant="ghost"
                             size="icon"
                             onClick={() => removeColor(i)}
-                            className="text-destructive hover:text-destructive"
+                            className="shrink-0 text-destructive hover:text-destructive"
                           >
                             <X className="w-4 h-4" />
                           </Button>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-3 [&>div]:min-w-0">
                           {/* Primary image */}
                           <div>
                             <p className="text-xs font-body text-muted-foreground mb-1">Imagen principal *</p>
@@ -766,7 +768,7 @@ const Admin = () => {
                       }}
                     >
                       <Ruler className="w-6 h-6 text-muted-foreground mb-2" />
-                      <span className="text-sm text-muted-foreground font-body">Arrastra o haz clic para subir guía de tallas</span>
+                      <span className="text-sm text-muted-foreground font-body text-center px-3">Arrastra o haz clic para subir guía de tallas</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -803,7 +805,7 @@ const Admin = () => {
 
           {/* Product list */}
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
+            <CardHeader className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
               <CardTitle className="font-heading text-2xl tracking-wider">PRODUCTOS</CardTitle>
               <Button variant="outline" size="sm" onClick={loadProducts} disabled={loadingProducts} className="font-body">
                 {loadingProducts ? <Loader2 className="w-4 h-4 animate-spin" /> : "Actualizar"}
@@ -836,7 +838,7 @@ const Admin = () => {
                 return (
                 <div className="space-y-3 max-h-[600px] overflow-y-auto">
                   {filtered.map((p) => (
-                    <div key={p.id} className="flex items-center gap-3 p-3 border border-border rounded-sm">
+                    <div key={p.id} className="grid min-w-0 grid-cols-[3.5rem_minmax(0,1fr)] sm:grid-cols-[3.5rem_minmax(0,1fr)_auto] items-center gap-3 p-3 border border-border rounded-sm">
                       <div className="w-14 h-14 bg-card rounded-sm overflow-hidden flex-shrink-0 border border-border">
                         {p.product_colors?.[0]?.image_url ? (
                           <img src={p.product_colors[0].image_url} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
@@ -847,7 +849,7 @@ const Admin = () => {
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-body font-semibold text-sm truncate">{p.title}</h4>
+                        <h4 className="font-body font-semibold text-sm break-words">{p.title}</h4>
                         <p className="text-[10px] text-muted-foreground font-mono truncate" title={p.id}>ID: {p.id}</p>
                         <p className="text-xs text-primary font-body font-semibold">
                           ₡{Math.round(p.price_colones).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
@@ -868,6 +870,7 @@ const Admin = () => {
                           )}
                         </div>
                       </div>
+                      <div className="col-start-2 flex items-center justify-end gap-1 sm:col-start-auto">
                       <Button
                         variant="outline"
                         size="sm"
@@ -883,11 +886,13 @@ const Admin = () => {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleDeleteProduct(p.id)}
+                        aria-label={`Eliminar ${p.title}`}
                         disabled={submitting || loadingEditId !== null}
                         className="text-destructive hover:text-destructive flex-shrink-0"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -900,7 +905,7 @@ const Admin = () => {
 
           <TabsContent value="users">
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
+              <CardHeader className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
                 <CardTitle className="font-heading text-2xl tracking-wider">USUARIOS REGISTRADOS</CardTitle>
                 <Button variant="outline" size="sm" onClick={loadUsers} disabled={loadingUsers} className="font-body">
                   {loadingUsers ? <Loader2 className="w-4 h-4 animate-spin" /> : "Actualizar"}
@@ -912,8 +917,8 @@ const Admin = () => {
                 ) : users.length === 0 ? (
                   <p className="text-center text-muted-foreground font-body py-10">No hay usuarios registrados.</p>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <Table>
+                  <div className="max-w-full overflow-x-auto overscroll-x-contain" role="region" aria-label="Usuarios registrados" tabIndex={0}>
+                    <Table className="min-w-[960px] table-fixed">
                       <TableHeader>
                         <TableRow>
                           <TableHead className="font-body">Nombre</TableHead>
@@ -930,13 +935,13 @@ const Admin = () => {
                           const userOrders = orders.filter((o) => o.user_id === u.user_id);
                           return (
                             <TableRow key={u.user_id}>
-                              <TableCell className="font-body">{u.full_name || "—"}</TableCell>
-                              <TableCell className="font-body text-xs">{u.email}</TableCell>
+                              <TableCell className="font-body break-words">{u.full_name || "—"}</TableCell>
+                              <TableCell className="font-body text-xs break-all">{u.email}</TableCell>
                               <TableCell className="font-body text-xs">{u.shipping_phone || u.phone || "—"}</TableCell>
-                              <TableCell className="font-body text-xs max-w-[200px] truncate" title={[u.shipping_district, u.shipping_canton, u.shipping_province].filter(Boolean).join(", ")}>
+                              <TableCell className="font-body text-xs break-words" title={[u.shipping_district, u.shipping_canton, u.shipping_province].filter(Boolean).join(", ")}>
                                 {[u.shipping_district, u.shipping_canton, u.shipping_province].filter(Boolean).join(", ") || "—"}
                               </TableCell>
-                              <TableCell className="font-body text-xs max-w-[200px] truncate" title={u.shipping_exact_address || u.address}>{u.shipping_exact_address || u.address || "—"}</TableCell>
+                              <TableCell className="font-body text-xs break-words" title={u.shipping_exact_address || u.address}>{u.shipping_exact_address || u.address || "—"}</TableCell>
                               <TableCell className="font-body">{userOrders.length}</TableCell>
                               <TableCell className="font-body text-xs">{new Date(u.created_at).toLocaleDateString("es-CR")}</TableCell>
                             </TableRow>
@@ -952,7 +957,7 @@ const Admin = () => {
 
           <TabsContent value="orders">
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
+              <CardHeader className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
                 <CardTitle className="font-heading text-2xl tracking-wider">PEDIDOS</CardTitle>
                 <Button variant="outline" size="sm" onClick={loadOrders} disabled={loadingOrders} className="font-body">
                   {loadingOrders ? <Loader2 className="w-4 h-4 animate-spin" /> : "Actualizar"}
@@ -966,7 +971,7 @@ const Admin = () => {
                 ) : (
                   <div className="space-y-4">
                     {orders.map((o) => (
-                      <div key={o.id} className="border border-border rounded-sm p-4">
+                      <div key={o.id} className="min-w-0 [overflow-wrap:anywhere] border border-border rounded-sm p-4">
                         <div className="flex justify-between items-start mb-2 flex-wrap gap-2">
                           <div>
                             <p className="font-body font-semibold text-sm">Pedido #{o.id.slice(0, 8).toUpperCase()}</p>
@@ -977,7 +982,7 @@ const Admin = () => {
                               {new Date(o.created_at).toLocaleString("es-CR")}
                             </p>
                           </div>
-                          <div className="text-right space-y-1">
+                          <div className="w-full min-w-0 text-right space-y-1 sm:w-auto">
                              <p className="font-body font-bold text-primary">₡{Math.round(Number(o.total_colones)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}</p>
                             <div className="flex gap-1 justify-end flex-wrap">
                               {o.payment_method && (
@@ -1012,9 +1017,9 @@ const Admin = () => {
                         )}
                         <ul className="text-xs font-body space-y-1 mt-2 border-t border-border pt-2">
                           {(o.items || []).map((it: any, i: number) => (
-                            <li key={i} className="flex justify-between">
-                              <span className="truncate">{it.title} {it.variantTitle ? `(${it.variantTitle})` : ""} × {it.quantity}</span>
-                              <span className="text-muted-foreground">₡{Math.round(Number(it.price) * it.quantity).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}</span>
+                            <li key={i} className="flex justify-between gap-3">
+                              <span className="min-w-0 flex-1 break-words">{it.title} {it.variantTitle ? `(${it.variantTitle})` : ""} × {it.quantity}</span>
+                              <span className="shrink-0 text-muted-foreground">₡{Math.round(Number(it.price) * it.quantity).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}</span>
                             </li>
                           ))}
                         </ul>
@@ -1028,7 +1033,7 @@ const Admin = () => {
 
           <TabsContent value="receipts">
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
+              <CardHeader className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
                 <CardTitle className="font-heading text-2xl tracking-wider">COMPROBANTES SINPE</CardTitle>
                 <Button variant="outline" size="sm" onClick={loadReceipts} disabled={loadingReceipts} className="font-body">
                   {loadingReceipts ? <Loader2 className="w-4 h-4 animate-spin" /> : "Actualizar"}
@@ -1056,7 +1061,7 @@ const Admin = () => {
                               <Eye className="w-5 h-5 text-muted-foreground" />
                             )}
                           </button>
-                          <div className="flex-1 min-w-0 space-y-1">
+                          <div className="flex-1 min-w-0 space-y-1 [overflow-wrap:anywhere]">
                             <p className="font-body font-semibold text-sm">
                               Pedido #{r.order_id.slice(0, 8).toUpperCase()}
                               {order && <span className="text-primary ml-2">₡{Math.round(Number(order.total_colones)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}</span>}
@@ -1077,7 +1082,7 @@ const Admin = () => {
                             {r.admin_note && <p className="text-xs font-body text-muted-foreground">Nota: {r.admin_note}</p>}
                           </div>
                           {r.status === "pending" && (
-                            <div className="flex md:flex-col gap-2 flex-shrink-0">
+                            <div className="flex flex-wrap md:flex-col gap-2 md:shrink-0">
                               <Button size="sm" onClick={() => reviewReceipt(r, true)} className="rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-body">
                                 <CheckCircle2 className="w-4 h-4 mr-1" /> Aprobar
                               </Button>

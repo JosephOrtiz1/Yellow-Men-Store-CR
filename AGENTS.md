@@ -1,4 +1,5 @@
 # Architecture
+- Admin layouts constrain grid children with min-width zero and keep horizontal scrolling inside the tab strip and user table, so mobile pages never expand to their contents' intrinsic width.
 - RouteSeo owns self-referencing route metadata and public product schema; private and search surfaces use noindex, and index.html retains sitewide fallback tags.
 - Generate the public sitemap from shared catalog paths and all active, non-deleted products before dev/build; omit lastmod without an authoritative page-specific timestamp.
 - New orders use the live payment environment; archive pre-production orders and filter orders, receipts and notifications without deleting audit history.

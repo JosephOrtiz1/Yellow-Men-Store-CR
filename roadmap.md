@@ -1,3 +1,7 @@
+# Ajustes móviles de administración y footer
+- [x] Evitar desplazamiento horizontal general del admin, con pestañas y tablas desplazables dentro de su sección; verificado a 320, 393, 768 y 1280 px en las cuatro pestañas.
+- [x] Reorganizar información y acciones en pantallas pequeñas y distribuir el footer en dos columnas; comprobados edición sin guardar, tabla desplazable y presentación móvil/escritorio con sesión admin.
+
 # Google y SEO
 - [x] Publicar sitemap de 68 páginas, icono, metadatos por página, datos de productos y mejoras de accesibilidad; 13 pruebas y tienda PC/móvil verificadas.
 - [x] Conectar y verificar Google Search Console para yellowmenstore.lovable.app y enviar sitemap; Google indica que aún desconoce el inicio.

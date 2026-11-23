@@ -6,14 +6,14 @@ import logoFull from "@/assets/brand/logo-full.png";
 export const Footer = () => (
   <footer className="bg-secondary text-foreground py-12 mt-20 border-t border-border">
     <div className="container mx-auto px-4">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-        <div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-8">
+        <div className="col-span-2 md:col-span-1 min-w-0">
           <img src={logoFull} alt="Yellow Men Store" className="h-12 mb-4" />
           <p className="text-muted-foreground text-sm font-body">
             Ropa moderna para hombres. De Instagram al mundo.
           </p>
         </div>
-        <div>
+        <div className="min-w-0">
           <h4 className="font-heading text-lg tracking-wider mb-3 text-primary">STYLES</h4>
           <div className="flex flex-col gap-2">
             {STYLES.map((cat) => (
@@ -27,7 +27,7 @@ export const Footer = () => (
             ))}
           </div>
         </div>
-        <div>
+        <div className="min-w-0">
           <h4 className="font-heading text-lg tracking-wider mb-3 text-primary">CATEGORÍAS</h4>
           <div className="flex flex-col gap-2">
             {GARMENT_TYPES.map((g) => (
@@ -41,7 +41,7 @@ export const Footer = () => (
             ))}
           </div>
         </div>
-        <div>
+        <div className="col-span-2 md:col-span-1 min-w-0">
           <h4 className="font-heading text-lg tracking-wider mb-3 text-primary">SÍGUENOS</h4>
           <a
             href="https://www.instagram.com/yellowmenstore"
@@ -54,7 +54,7 @@ export const Footer = () => (
           </a>
         </div>
       </div>
-      <div className="border-t border-border mt-8 pt-6 text-center space-y-1">
+      <div className="border-t border-border mt-8 pt-6 grid grid-cols-2 gap-4 text-left md:text-center">
         <p className="text-xs text-muted-foreground font-body">
           © {new Date().getFullYear()} Yellow Men Store. Todos los derechos reservados.
         </p>
