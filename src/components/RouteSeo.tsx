@@ -11,7 +11,7 @@ export function RouteSeo() {
   const { data: product, isPending } = useQuery({ queryKey: ["seo-product", productHandle], queryFn: () => fetchSupabaseProductByHandle(productHandle), enabled: Boolean(productHandle) });
   const style = STYLES.find(s => pathname === `/category/${s.slug}`);
   const garment = GARMENT_TYPES.find(g => pathname === `/categories/${g.slug}`);
-  const label = style?.name || garment?.name || ({ "/styles": "Styles de ropa masculina", "/categories": "Categorías de ropa masculina", "/about": "Sobre nosotros", "/auth": "Mi cuenta", "/search": "Buscar productos", "/orders": "Mis pedidos", "/checkout": "Finalizar compra", "/admin": "Administración" } as Record<string, string>)[pathname];
+  const label = style?.name || garment?.name || ({ "/styles": "Styles de ropa masculina", "/categories": "Categorías de ropa masculina", "/about": "Sobre nosotros", "/terminos": "Términos y condiciones", "/auth": "Mi cuenta", "/search": "Buscar productos", "/orders": "Mis pedidos", "/checkout": "Finalizar compra", "/admin": "Administración" } as Record<string, string>)[pathname];
   const title = product ? `${product.title} — Yellow Men Store CR` : label ? `${label} — Yellow Men Store CR` : SITE_TITLE;
   const description = product?.description || (label ? `${label} en Yellow Men Store CR. Explora ropa masculina y prendas únicas con envíos a Costa Rica.` : SITE_DESCRIPTION);
   const canonical = `${SITE_URL}${product ? `/product/${encodeURIComponent(product.handle || product.id)}` : pathname}`;

@@ -52,6 +52,27 @@ export const Footer = () => (
             <Instagram className="h-5 w-5" />
             @yellowmenstore
           </a>
+          <h4 className="font-heading text-lg tracking-wider mb-3 mt-6 text-primary">LEGAL</h4>
+          <div className="flex flex-col gap-2">
+            <Link
+              to="/terminos"
+              className="text-sm text-muted-foreground hover:text-primary transition-colors font-body touch-manipulation"
+            >
+              Términos y condiciones
+            </Link>
+            <Link
+              to="/terminos#devoluciones"
+              className="text-sm text-muted-foreground hover:text-primary transition-colors font-body touch-manipulation"
+            >
+              Devoluciones y garantías
+            </Link>
+            <Link
+              to="/terminos#privacidad"
+              className="text-sm text-muted-foreground hover:text-primary transition-colors font-body touch-manipulation"
+            >
+              Política de privacidad
+            </Link>
+          </div>
         </div>
       </div>
       <div className="border-t border-border mt-8 pt-6 grid grid-cols-2 gap-4 text-left md:text-center">

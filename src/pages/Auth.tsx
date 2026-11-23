@@ -179,6 +179,13 @@ const Auth = () => {
                 <Button type="submit" disabled={loading} className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-body uppercase tracking-wider">
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Crear cuenta"}
                 </Button>
+                <p className="text-center text-xs text-muted-foreground font-body">
+                  Al registrarte aceptas los{" "}
+                  <Link to="/terminos" className="text-blue-500 hover:underline">
+                    Términos y Condiciones
+                  </Link>{" "}
+                  de Yellow Men Store.
+                </p>
               </form>
               <Divider />
               <GoogleButton />

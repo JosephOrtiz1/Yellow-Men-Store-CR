@@ -14,6 +14,7 @@ import ProductDetail from "./pages/ProductDetail";
 import Category from "./pages/Category";
 import Categories from "./pages/Categories";
 import About from "./pages/About";
+import Terms from "./pages/Terms";
 import Admin from "./pages/Admin";
 import SearchPage from "./pages/Search";
 import Auth from "./pages/Auth";
@@ -37,6 +38,7 @@ const AppContent = () => (
           <Route path="/categories" element={<Categories />} />
           <Route path="/categories/:slug" element={<Category key="garment" mode="garment" />} />
           <Route path="/about" element={<About />} />
+          <Route path="/terminos" element={<Terms />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/search" element={<SearchPage />} />

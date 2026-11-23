@@ -4,7 +4,7 @@ import type { SupabaseProductListItem } from "./supabaseProducts";
 export const SITE_URL = "https://yellowmenstore.app";
 export const SITE_TITLE = "Yellow Men Store CR — Ropa masculina en Costa Rica";
 export const SITE_DESCRIPTION = "Ropa masculina en Costa Rica: Street Wear, Casual, Techwear, Old Money, Japan Style y Darkwear. Explora prendas únicas y compra en línea.";
-export const PUBLIC_PATHS = ["/", "/about", "/styles", "/categories", ...STYLES.map(s => `/category/${s.slug}`), ...GARMENT_TYPES.map(g => `/categories/${g.slug}`)];
+export const PUBLIC_PATHS = ["/", "/about", "/styles", "/categories", "/terminos", ...STYLES.map(s => `/category/${s.slug}`), ...GARMENT_TYPES.map(g => `/categories/${g.slug}`)];
 
 export function productSchema(product: SupabaseProductListItem) {
   const url = `${SITE_URL}/product/${encodeURIComponent(product.handle || product.id)}`;
