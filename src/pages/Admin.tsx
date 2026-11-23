@@ -174,7 +174,7 @@ const Admin = () => {
     setReceipts(rows);
     const urls: Record<string, string> = {};
     for (const r of rows) {
-      const { data: s } = await supabase.storage.from("payment-receipts").createSignedUrl(r.image_path, 600);
+      const { data: s } = await supabase.storage.from("payment-receipts").createSignedUrl(r.image_path, 60);
       if (s?.signedUrl) urls[r.id] = s.signedUrl;
     }
     setReceiptUrls(urls);
