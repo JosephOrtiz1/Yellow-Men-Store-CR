@@ -35,19 +35,32 @@ const Category = ({ mode = "style" }: { mode?: "style" | "garment" }) => {
   return (
     <div className={`min-h-screen md:pt-20 ${cover ? "pt-0" : "pt-6"}`}>
       {cover && (
-        <section key={slug} aria-label={`Portada ${categoryName}`} className="relative h-[42vh] min-h-[260px] overflow-hidden bg-background md:h-[600px]">
+        <section key={slug} aria-label={`Portada ${categoryName}`} className="relative h-[42vh] min-h-[260px] overflow-hidden bg-background md:h-[720px]">
           {/* Desktop: blurred copy of the cover tints the glass panel on the left */}
           <img
             src={cover}
             alt=""
             aria-hidden
-            className="absolute inset-0 hidden h-full w-full scale-125 object-cover opacity-50 blur-3xl md:block"
+            className="absolute inset-0 hidden h-full w-full scale-125 object-cover opacity-60 blur-3xl md:block"
           />
+          {/* Mobile: full-bleed cover */}
           <img
             src={cover}
             alt={`Estilo ${categoryName}`}
-            className="absolute right-0 top-0 h-full w-full object-cover object-top animate-cover-reveal md:w-[42%] lg:w-[38%] md:[mask-image:linear-gradient(to_right,transparent,black_25%)]"
+            className="absolute inset-0 h-full w-full object-cover object-top animate-cover-reveal md:hidden"
           />
+          {/* Desktop: framed portrait at (or below) native size so it stays sharp */}
+          <div className="absolute inset-y-0 right-0 hidden w-1/2 items-center justify-center md:flex">
+            <div className="relative h-[85%] aspect-[2/3] max-h-[640px] animate-cover-reveal">
+              <div className="absolute -inset-3 rounded-sm border border-primary/30 translate-x-4 translate-y-4" aria-hidden />
+              <img
+                src={cover}
+                alt=""
+                aria-hidden
+                className="relative h-full w-full rounded-sm object-cover object-top shadow-2xl ring-1 ring-foreground/10"
+              />
+            </div>
+          </div>
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent md:hidden" />
           <div className="absolute inset-0 hidden md:block bg-gradient-to-t from-background/80 via-transparent to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 px-4 pb-6 md:inset-y-0 md:left-0 md:right-auto md:flex md:w-1/2 md:items-center md:px-0 md:pb-0">
