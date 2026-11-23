@@ -9,13 +9,16 @@ import heroJapanStyle from "@/assets/hero/hero-japan-style.jpg.asset.json";
 const SLIDE_DURATION_MS = 4000;
 
 const slides = [
-  { src: heroTechwear, label: "Techwear" },
-  { src: heroStreetwear, label: "Street Wear" },
-  { src: heroOldMoney, label: "Old Money" },
-  { src: heroCasual, label: "Casual" },
-  { src: heroDarkwear.url, label: "Darkwear" },
-  { src: heroJapanStyle.url, label: "Japan Style" },
+  { src: heroTechwear, label: "Techwear", slug: "cyber-wear" },
+  { src: heroStreetwear, label: "Street Wear", slug: "street-wear" },
+  { src: heroOldMoney, label: "Old Money", slug: "old-money" },
+  { src: heroCasual, label: "Casual", slug: "casual" },
+  { src: heroDarkwear.url, label: "Darkwear", slug: "darkwear" },
+  { src: heroJapanStyle.url, label: "Japan Style", slug: "japan-style" },
 ];
+
+/** Cover image per style slug, shared with the style collection pages. */
+export const STYLE_COVERS: Record<string, string> = Object.fromEntries(slides.map((s) => [s.slug, s.src]));
 
 /**
  * Hero image slider with a segmented progress bar.

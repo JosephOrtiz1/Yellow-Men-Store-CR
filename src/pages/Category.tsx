@@ -5,6 +5,7 @@ import { SupabaseProductCard } from "@/components/SupabaseProductCard";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { styleName, garmentName } from "@/lib/catalog";
+import { STYLE_COVERS } from "@/components/HeroSlider";
 
 
 const Category = ({ mode = "style" }: { mode?: "style" | "garment" }) => {
@@ -29,11 +30,29 @@ const Category = ({ mode = "style" }: { mode?: "style" | "garment" }) => {
     return () => { alive = false; };
   }, [slug, mode, shuffleKey]);
 
+  const cover = mode === "style" && slug ? STYLE_COVERS[slug] : undefined;
+
   return (
     <div className="min-h-screen pt-6 md:pt-20">
+      {cover && (
+        <section key={slug} aria-label={`Portada ${categoryName}`} className="relative h-[42vh] min-h-[260px] md:h-[55vh] overflow-hidden bg-background">
+          <img
+            src={cover}
+            alt={`Estilo ${categoryName}`}
+            className="absolute inset-0 h-full w-full object-cover animate-cover-reveal"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 container mx-auto px-4 pb-6 md:pb-10">
+            <h1 className="font-heading text-5xl sm:text-6xl md:text-8xl tracking-wider text-foreground animate-cover-title">
+              {categoryName.toUpperCase()}
+            </h1>
+            <span className="mt-2 block h-1 w-24 origin-left bg-primary animate-cover-line" />
+          </div>
+        </section>
+      )}
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-8 md:mb-10">
-          <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl tracking-wider">{categoryName.toUpperCase()}</h1>
+          {!cover && <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl tracking-wider">{categoryName.toUpperCase()}</h1>}
           <nav aria-label="Navegación de colección" className="flex flex-wrap gap-2">
             <Button asChild variant="outline" className="font-body">
               <Link to="/"><ArrowLeft />Volver al inicio</Link>

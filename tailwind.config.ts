@@ -68,6 +68,19 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
+        "cover-reveal": {
+          "0%": { opacity: "0", transform: "scale(1.15)", clipPath: "inset(0 0 100% 0)" },
+          "60%": { opacity: "1", clipPath: "inset(0 0 0% 0)" },
+          "100%": { opacity: "1", transform: "scale(1)", clipPath: "inset(0 0 0% 0)" },
+        },
+        "cover-title": {
+          "0%": { opacity: "0", transform: "translateY(40px)", letterSpacing: "0.3em" },
+          "100%": { opacity: "1", transform: "translateY(0)", letterSpacing: "0.05em" },
+        },
+        "cover-line": {
+          "0%": { transform: "scaleX(0)" },
+          "100%": { transform: "scaleX(1)" },
+        },
         "accordion-down": {
           from: { height: "0" },
           to: { height: "var(--radix-accordion-content-height)" },
@@ -78,6 +91,9 @@ export default {
         },
       },
       animation: {
+        "cover-reveal": "cover-reveal 1.4s cubic-bezier(0.22,1,0.36,1) both",
+        "cover-title": "cover-title 1s cubic-bezier(0.22,1,0.36,1) 0.5s both",
+        "cover-line": "cover-line 0.8s cubic-bezier(0.22,1,0.36,1) 1s both",
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
