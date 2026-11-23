@@ -92,14 +92,7 @@ const Index = () => {
           <>
             {featuredProducts.length > 0 && (
               <div id="featured-m" className="scroll-mt-4">
-                <div className="flex flex-wrap items-center justify-between gap-3 px-4 mb-4">
-                  <h2 className="font-heading text-3xl tracking-wider">DESTACADOS</h2>
-                  <Button asChild variant="outline" size="sm" className="font-body">
-                    <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: "instant" })}>
-                      <ArrowLeft />Volver al inicio
-                    </Link>
-                  </Button>
-                </div>
+                <h2 className="font-heading text-3xl tracking-wider px-4 mb-4">DESTACADOS</h2>
                 <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory px-4 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                   {featuredProducts.map((p) => (
                     <div key={`m-feat-${p.id}`} className="w-44 flex-shrink-0 snap-start">
