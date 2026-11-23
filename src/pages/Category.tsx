@@ -36,18 +36,11 @@ const Category = ({ mode = "style" }: { mode?: "style" | "garment" }) => {
     <div className={`min-h-screen md:pt-20 ${cover ? "pt-0" : "pt-6"}`}>
       {cover && (
         <section key={slug} aria-label={`Portada ${categoryName}`} className="relative h-[42vh] min-h-[260px] overflow-hidden bg-background md:h-[720px]">
-          {/* Desktop: blurred copy of the cover tints the glass panel on the left */}
-          <img
-            src={cover}
-            alt=""
-            aria-hidden
-            className="absolute inset-0 hidden h-full w-full scale-125 object-cover opacity-60 blur-3xl md:block"
-          />
-          {/* Mobile: full-bleed cover */}
+          {/* Mobile: full-bleed cover, right-anchored so the person stays centered */}
           <img
             src={cover}
             alt={`Estilo ${categoryName}`}
-            className="absolute inset-0 h-full w-full object-cover object-top animate-cover-reveal md:hidden"
+            className="absolute inset-0 h-full w-full object-cover object-right animate-cover-reveal md:hidden"
           />
           {/* Desktop: framed portrait at (or below) native size so it stays sharp */}
           <div className="absolute inset-y-0 right-0 hidden w-1/2 items-center justify-center md:flex">
@@ -64,7 +57,7 @@ const Category = ({ mode = "style" }: { mode?: "style" | "garment" }) => {
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent md:hidden" />
           <div className="absolute inset-0 hidden md:block bg-gradient-to-t from-background/80 via-transparent to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 px-4 pb-6 md:inset-y-0 md:left-0 md:right-auto md:flex md:w-1/2 md:items-center md:px-0 md:pb-0">
-            <div className="md:ml-[max(1rem,calc((100vw-1400px)/2+2rem))] md:rounded-sm md:border md:border-foreground/10 md:bg-background/30 md:px-10 md:py-10 md:shadow-2xl md:backdrop-blur-xl animate-cover-title">
+            <div className="md:ml-[max(1rem,calc((100vw-1400px)/2+2rem))] md:rounded-sm md:border md:border-foreground/10 md:bg-background md:px-10 md:py-10 md:shadow-2xl animate-cover-title">
               <h1 className="font-heading text-5xl sm:text-6xl md:text-8xl tracking-wider text-foreground">
                 {categoryName.toUpperCase()}
               </h1>
