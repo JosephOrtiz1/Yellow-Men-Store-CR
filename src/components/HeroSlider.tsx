@@ -6,21 +6,27 @@ import heroStreetwear from "@/assets/hero/hero-streetwear.jpg";
 import heroStreetwearBanner from "@/assets/hero/hero-streetwear-wide.jpg.asset.json";
 import heroStreetwearCover from "@/assets/hero/hero-streetwear.jpg.asset.json";
 import heroOldMoney from "@/assets/hero/hero-old-money.jpg";
+import heroOldMoneyBanner from "@/assets/hero/hero-old-money-wide.jpg.asset.json";
+import heroOldMoneyCover from "@/assets/hero/hero-old-money-portrait.jpg.asset.json";
 import heroCasual from "@/assets/hero/hero-casual.jpg";
 import heroCasualBanner from "@/assets/hero/hero-casual-wide.jpg.asset.json";
 import heroCasualCover from "@/assets/hero/hero-casual-portrait.jpg.asset.json";
 import heroDarkwear from "@/assets/hero/hero-darkwear.jpg.asset.json";
+import heroDarkwearBanner from "@/assets/hero/hero-darkwear-wide.jpg.asset.json";
+import heroDarkwearCover from "@/assets/hero/hero-darkwear-portrait.jpg.asset.json";
 import heroJapanStyle from "@/assets/hero/hero-japan-style.jpg.asset.json";
+import heroJapanStyleBanner from "@/assets/hero/hero-japan-style-wide.jpg.asset.json";
+import heroJapanStyleCover from "@/assets/hero/hero-japan-style-portrait.jpg.asset.json";
 
 const SLIDE_DURATION_MS = 4000;
 
 const slides = [
   { src: heroTechwear, banner: heroTechwearBanner.url, cover: heroTechwearCover.url, label: "Techwear", slug: "cyber-wear" },
   { src: heroStreetwear, banner: heroStreetwearBanner.url, cover: heroStreetwearCover.url, label: "Street Wear", slug: "street-wear" },
-  { src: heroOldMoney, label: "Old Money", slug: "old-money" },
+  { src: heroOldMoney, banner: heroOldMoneyBanner.url, cover: heroOldMoneyCover.url, label: "Old Money", slug: "old-money" },
   { src: heroCasual, banner: heroCasualBanner.url, cover: heroCasualCover.url, label: "Casual", slug: "casual" },
-  { src: heroDarkwear.url, label: "Darkwear", slug: "darkwear" },
-  { src: heroJapanStyle.url, label: "Japan Style", slug: "japan-style" },
+  { src: heroDarkwear.url, banner: heroDarkwearBanner.url, cover: heroDarkwearCover.url, label: "Darkwear", slug: "darkwear" },
+  { src: heroJapanStyle.url, banner: heroJapanStyleBanner.url, cover: heroJapanStyleCover.url, label: "Japan Style", slug: "japan-style" },
 ];
 
 /** Cover image per style slug, shared with the style collection pages. */
